@@ -1,0 +1,66 @@
+body
+{
+  font-size: 12px;
+}
+#list_form {
+  clear: both;
+}
+#listing {
+  //border: solid 1px;
+  border-collapse: collapse;
+  width: 100%;
+}
+#listing td {
+  padding: 1px;
+}
+#listing tr.header {
+  font-weight: bold;
+  background: #ddd;
+}
+#list_form tr:hover {
+  background: #bbb;
+}
+#list_form tr.checked {
+  background: #bfb;
+}
+#list_form tr.checked.even {
+  background: #cfc;
+}
+#list_form tr.checked:hover {
+  background: #bdb;
+}
+a {
+  color: #000;
+}
+a.active {
+    font-weight: bold;
+}
+input.hidden {
+  visibility: hidden;
+  margin: 0;
+}
+tr.even {
+  background: #eee;
+}
+td.right {
+  text-align: right;
+}
+#quicks {
+    float: right;
+}
+#quicks a {
+    display: inline-block;
+}
+#quicks a:hover {
+    background: #ccc;
+}
+
+.ui_columns {
+    clear: both;
+}
+
+#info {
+    float: right;
+    color: #d22;
+    margin-right: 10px;
+}
