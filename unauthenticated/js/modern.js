@@ -11,6 +11,7 @@ $( document ).ready(function() {
             "sSearch": " "
         },
         "columnDefs": [ { "orderable": false, "targets": [0, 1, 4] }, ],
+        "iDisplayLength": 50,
     });
 });
 
@@ -40,11 +41,12 @@ function invertSelection() {
 }
 
 function compressDialog() {
-    $("#compressDialog").modal({
-      "backdrop"  : "static",
-      "keyboard"  : true,
-      "show"      : true
-    });    
+    if(checkSelected())
+        $("#compressDialog").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });    
 }
 
 function compressSelected() {
@@ -56,17 +58,19 @@ function compressSelected() {
 }
 
 function removeDialog() {
-     $('#items-to-remove').html('');
+    if(checkSelected()) {
+        $('#items-to-remove').html('');
 
-     $(".ui_checked_checkbox input[type='checkbox']:checked").each(function() {
+        $(".ui_checked_checkbox input[type='checkbox']:checked").each(function() {
         $('#items-to-remove').append($(this).val() + '<br>');
-     });
-     
-    $("#removeDialog").modal({
-      "backdrop"  : "static",
-      "keyboard"  : true,
-      "show"      : true
-    });
+        });
+
+        $("#removeDialog").modal({
+        "backdrop"  : "static",
+        "keyboard"  : true,
+        "show"      : true
+        });
+    }
 }
 
 function removeSelected() {
@@ -75,11 +79,12 @@ function removeSelected() {
 }
 
 function chmodDialog() {
-    $("#chmodDialog").modal({
-      "backdrop"  : "static",
-      "keyboard"  : true,
-      "show"      : true
-    });    
+    if(checkSelected())
+        $("#chmodDialog").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });    
 }
 
 function chmodSelected() {
@@ -91,11 +96,12 @@ function chmodSelected() {
 }
 
 function chownDialog() {
-    $("#chownDialog").modal({
-      "backdrop"  : "static",
-      "keyboard"  : true,
-      "show"      : true
-    });    
+    if(checkSelected())
+        $("#chownDialog").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });    
 }
 
 function chownSelected() {
@@ -125,13 +131,17 @@ function renameSelected() {
 }
 
 function copySelected() {
-    document.forms['list_form'].action = "copy.cgi";
-    document.forms['list_form'].submit();
+    if(checkSelected()) {
+        document.forms['list_form'].action = "copy.cgi";
+        document.forms['list_form'].submit();
+    }
 }
 
 function cutSelected() {
-    document.forms['list_form'].action = "cut.cgi";
-    document.forms['list_form'].submit();
+    if(checkSelected()) {
+        document.forms['list_form'].action = "cut.cgi";
+        document.forms['list_form'].submit();
+    }
 }
 
 function browseForUpload() {
@@ -235,4 +245,17 @@ function viewReadyForUpload() {
       "keyboard"  : true,
       "show"      : true
     });    
+}
+
+function checkSelected() {
+    var checkboxes = $(".ui_checked_checkbox input[type='checkbox']:checked");
+    if(checkboxes.length == 0) {
+        $("#nothingSelected").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });
+        return false
+    }
+    return true;
 }

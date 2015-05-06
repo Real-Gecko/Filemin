@@ -7,7 +7,13 @@ use CGI ':standard';
 #separate parsing of params for multiupload feature
 
 local @uinfo = getpwnam($remote_user);
-$base = $uinfo[7] ? $uinfo[7] : "/";
+#$base = $uinfo[7] ? $uinfo[7] : "/";
+if($uinfo[0] eq 'root') {
+    $base = "/";
+} else {
+    $base = $uinfo[7] ? $uinfo[7] : "/home";
+}
+
 $path = param('path') ? param('path') : '';
 $cwd = abs_path($base.$path);
 if (index($cwd, $base) == -1) {
@@ -19,7 +25,6 @@ my @upfiles = param('upfiles');
 if (defined @upfiles) {
     foreach my $upfile(@upfiles)
     {
-#        print "$upfile<br />";
         my $nBytes = 0;
         my $totBytes = 0;
         my $buffer = "";
@@ -31,7 +36,6 @@ if (defined @upfiles) {
             $totBytes += $nBytes;
         }
         close(OUTFILE);
-#        print "uploaded $totBytes bytes<br />";
     }
 }
 &redirect("index.cgi?path=$path");

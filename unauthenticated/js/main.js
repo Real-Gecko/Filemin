@@ -42,33 +42,41 @@ function invertSelection() {
 }
 
 function compressSelected() {
-    var filename = prompt("Name of archive","");
-    if (filename != null && filename != "") {
-        document.forms['list_form'].action = "compress.cgi?arch=" + filename;
-        document.forms['list_form'].submit();
+    if(checkSelected()) {
+        var filename = prompt("Name of archive","");
+        if (filename != null && filename != "") {
+            document.forms['list_form'].action = "compress.cgi?arch=" + filename;
+            document.forms['list_form'].submit();
+        }
     }
 }
 
 function removeSelected() {
-    if (confirm("Do you really want to delete selected items?")) {
-        document.forms['list_form'].action = "delete.cgi";
-        document.forms['list_form'].submit();
+    if(checkSelected()) {
+        if (confirm("Do you really want to delete selected items?")) {
+            document.forms['list_form'].action = "delete.cgi";
+            document.forms['list_form'].submit();
+        }
     }
 }
 
 function chmodSelected() {
-    var perms = prompt("New permissions","");
-    if (perms != null && perms != "") {
-        document.forms['list_form'].action = "chmod.cgi?perms=" + perms;
-        document.forms['list_form'].submit();
+    if(checkSelected()) {
+        var perms = prompt("New permissions","");
+        if (perms != null && perms != "") {
+            document.forms['list_form'].action = "chmod.cgi?perms=" + perms;
+            document.forms['list_form'].submit();
+        }
     }
 }
 
 function chownSelected() {
-    var owner = prompt("New owner","");
-    if (owner != null && owner != "") {
-        document.forms['list_form'].action = "chown.cgi?owner=" + owner;
-        document.forms['list_form'].submit();
+    if(checkSelected()) {
+        var owner = prompt("New owner","");
+        if (owner != null && owner != "") {
+            document.forms['list_form'].action = "chown.cgi?owner=" + owner;
+            document.forms['list_form'].submit();
+        }
     }
 }
 
@@ -80,13 +88,17 @@ function renameSelected(file, path) {
 }
 
 function copySelected() {
-    document.forms['list_form'].action = "copy.cgi";
-    document.forms['list_form'].submit();
+    if(checkSelected()) {
+        document.forms['list_form'].action = "copy.cgi";
+        document.forms['list_form'].submit();
+    }
 }
 
 function cutSelected() {
-    document.forms['list_form'].action = "cut.cgi";
-    document.forms['list_form'].submit();
+    if(checkSelected()) {
+        document.forms['list_form'].action = "cut.cgi";
+        document.forms['list_form'].submit();
+    }
 }
 
 function browseForUpload() {
@@ -164,4 +176,13 @@ function unselectRow(row) {
         input.checked = false;
         row.className = row.className.replace(' checked', '');
     }
+}
+
+function checkSelected() {
+    var checkboxes = document.getElementsByClassName('ui_checkbox');
+    for(var i = 0; i < checkboxes.length; i++) {
+        if(checkboxes[i].checked) return true;
+    }
+    alert('Nothing selected');
+    return false;
 }

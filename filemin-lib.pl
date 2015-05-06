@@ -11,8 +11,9 @@ sub get_paths {
     if($uinfo[0] eq 'root') {
         $base = "/";
     } else {
-        $base = $uinfo[7] ? $uinfo[7] : "/";
+        $base = $uinfo[7] ? $uinfo[7] : "/home";
     }
+    $home = $uinfo[7] ? $uinfo[7] : "/home";
     $path = $in{'path'} ? $in{'path'} : '';
     $cwd = abs_path($base.$path);
     if (index($cwd, $base) == -1)
