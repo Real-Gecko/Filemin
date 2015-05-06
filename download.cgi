@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use lib './lib';
 
 use CGI ':standard';
 use File::Basename;

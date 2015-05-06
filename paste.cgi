@@ -7,7 +7,7 @@ require './filemin-lib.pl';
 
 get_paths();
 
-$tmpdir = $base.'/tmp/.filemin';
+$tmpdir = $base.'/.filemin';
 
 open(my $fh, "< $tmpdir/.buffer") or die "Error: $!";
 my @arr = <$fh>;

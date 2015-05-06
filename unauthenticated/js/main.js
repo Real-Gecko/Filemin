@@ -1,7 +1,22 @@
-window.onload = function() {
+/*window.onload = function() {
     var rows = document.getElementsByClassName('ui_checked_columns');
     for(var i = 0; i < rows.length; i++) {
         rows[i].onclick = function() { rowClick(this) };
+    }
+}*/
+
+window.onload = function() {
+    var checkboxes = document.getElementsByClassName('ui_checkbox');
+    for(var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].onclick = function() {
+            var row = this.parentNode.parentNode;
+            if (this.checked) {
+                row.className = row.className + ' checked';
+            }
+            else {
+                row.className = row.className.replace(' checked', '');
+            }
+        };
     }
 }
 
@@ -81,8 +96,11 @@ function browseForUpload() {
 }
 
 function uploadFiles() {
-    document.forms['upload-form'].submit();
-    return true;
+    var files = document.getElementById('upfiles');
+    if (files.files.length > 0)
+        document.forms['upload-form'].submit();
+    else
+        alert('No files selected for upload ');
 }
 
 function createFolder(path) {

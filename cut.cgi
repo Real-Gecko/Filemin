@@ -7,7 +7,7 @@ require './filemin-lib.pl';
 
 get_paths();
 
-$tmpdir = $base.'/tmp/.filemin';
+$tmpdir = $base.'/.filemin';
 unless (-e $tmpdir) { mkdir $tmpdir or die "unable to create tmpdir $!"; }
 open(my $fh, ">", "$tmpdir/.buffer") or die "Error: $!";
 print $fh "cut\n";

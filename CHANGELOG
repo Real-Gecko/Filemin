@@ -1,0 +1,8 @@
+-- Version 0.8.2 --
+Various bug fixes
+Added Authentic Theme support
+"root" is not locked in his "~" dir anymore
+Check for overwrites during http download, and only there for now...
+
+-- Version 0.8.1 --
+Initial release
