@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use Cwd 'abs_path';
 &switch_to_remote_user();
 
 &ReadParse();
@@ -16,20 +17,31 @@ my $act = $arr[0];
 my $dir = $arr[1];
 chomp($act);
 chomp($dir);
-#&ui_print_header(undef, $text{'edit_file'}, "");
-#if ("$base/$dir" eq $path) { print "Copying to same directory is stupid lol"; exit; }
-#print $base.$path;
-for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
-    chomp($arr[$i]);
-    if ($act eq "copy"){
-        system("cp -r ".$base.$dir."/$arr[$i] ".$base.$path);# or die "Copying failed: $!";
-#        $info = "Copied ".(scalar(@arr) - 2)." files from $dir";
+$from = abs_path($base.$dir);
+if ($cwd eq $from) {
+    print_errors($text{'error_pasting_nonsence'});
+} else {    
+    my @errors;
+    for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
+        chomp($arr[$i]);
+        if ($act eq "copy") {
+            if (-e "$cwd/$arr[$i]") {
+                push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
+            } else {
+                &copy_source_dest("$from/$arr[$i]", $cwd) or push @errors, "$cwd/$arr[$i] $text{'error_copy'} $!";
+            }
+        }
+        elsif ($act eq "cut") {
+            if (-e "$cwd/$arr[$i]") {
+                push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
+            } else {
+                &rename_file("$from/$arr[$i]", $cwd) or push @errors, "$cwd/$arr[$i] $text{'error_cut'} $!";
+            }
+        }
     }
-    elsif ($act eq "cut") {
-        system("mv ".$base.$dir."/$arr[$i] ".$base.$path);# or die "Copying failed: $!";
-    #        rename("$base/$dir/$arr[$i]", "$path");
-#        $info = "Moved ".(scalar(@arr) - 2)." files from $dir";
+    if (scalar(@errors) > 0) {
+        print_errors(@errors);
+    } else {
+        &redirect("index.cgi?path=$path");
     }
 }
-
-&redirect("index.cgi?path=$path");

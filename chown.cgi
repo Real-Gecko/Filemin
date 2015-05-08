@@ -7,10 +7,20 @@ require './filemin-lib.pl';
 
 get_paths();
 
-(my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'}) or die "$in{'owner'} not in passwd file";
+(my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'});
 
-foreach $name (split(/\0/, $in{'name'})) {
-    chown $uid, $gid, $cwd.'/'.$name or die "error chowning $name: $!";
+if(! defined $login) {
+    print_errors("<b>$in{'owner'}</b> $text{'error_user_not_found'}");
+} else {
+    my @errors;
+    foreach $name (split(/\0/, $in{'name'})) {
+        if(!chown $uid, $gid, $cwd.'/'.$name) {
+            push @errors, "$name - $text{'error_chown'}: $!";
+        }
+    }
+    if (scalar(@errors) > 0) {
+        print_errors(@errors);
+    } else {
+        &redirect("index.cgi?path=$path");
+    }
 }
-
-&redirect("index.cgi?path=$path");

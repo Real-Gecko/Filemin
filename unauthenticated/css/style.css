@@ -88,3 +88,11 @@ table.dataTable thead .sorting_desc::after {
     box-shadow: none;
     border: none;
 }
+
+.breadcrumb {
+    border: solid 1px #ddd;
+    background: #fbfbfb;
+}
+.breadcrumb i {
+    font-size: 16px;
+}

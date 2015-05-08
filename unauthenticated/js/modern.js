@@ -54,6 +54,9 @@ function compressSelected() {
     if (filename != null && filename != "") {
         $('#list_form').attr('action', "compress.cgi?arch=" + filename);
         $('#list_form').submit();
+    } else {
+        $('#compressSelectedForm input[name=filename]').popover('show');
+        $('#compressSelectedForm input[name=filename]').focus();
     }
 }
 
@@ -109,6 +112,9 @@ function chownSelected() {
     if (owner != null && owner != "") {
         $('#list_form').attr('action', "chown.cgi?owner=" + owner);
         $('#list_form').submit();
+    } else {
+        $('#chownForm input[name=owner]').popover('show');
+        $('#chownForm input[name=owner]').focus();
     }
 }
 
@@ -127,6 +133,9 @@ function renameSelected() {
     var file = $('#renameForm input[name=file]').val();
     if (name != null && name != "" && name != file) {
         $('#renameForm').submit();
+    } else {
+        $('#renameForm input[name=name]').popover('show');
+        $('#renameForm input[name=name]').focus();
     }
 }
 
@@ -153,6 +162,8 @@ function uploadFiles() {
     var files = document.getElementById('upfiles');
     if (files.files.length > 0)
         $('#upload-form').submit();
+    else
+        files.click();
 }
 
 function createFolderDialog() {
@@ -168,6 +179,10 @@ function createFolder() {
     var name = $('#createFolderForm input[name=name]').val();
     if (name != null && name != "")
         $("#createFolderForm").submit();
+    else {
+        $('#createFolderForm input[name=name]').popover('show');
+        $('#createFolderForm input[name=name]').focus();
+    }
 }
 
 function createFileDialog(path) {
@@ -178,10 +193,14 @@ function createFileDialog(path) {
     });
 }
 
-function createFile(path) {
+function createFile() {
     var name = $('#createFileForm input[name=name]').val();
     if (name != null && name != "")
         $("#createFileForm").submit();
+    else {
+        $('#createFileForm input[name=name]').popover('show');
+        $('#createFileForm input[name=name]').focus();
+    }
 }
 
 function downFromUrlDialog() {
@@ -196,6 +215,10 @@ function downFromUrl(path) {
     var link = $('#downFromUrlForm input[name=link]').val();
     if (link != null && link != "")
         $('#downFromUrlForm').submit();
+    else {
+        $('#downFromUrlForm input[name=link]').popover('show');
+        $('#downFromUrlForm input[name=link]').focus();
+    }
 }
 
 function selectUnselect(cb) {

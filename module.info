@@ -2,4 +2,4 @@ desc=Filemin
 os_support=*-linux
 name=Filemin
 longdesc=Fast and light file manager written in perldesc_ru.UTF-8=
-version=0.8.3
+version=0.9

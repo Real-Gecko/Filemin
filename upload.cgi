@@ -21,6 +21,7 @@ if (index($cwd, $base) == -1) {
 }
 
 my @upfiles = param('upfiles');
+my @errors;
 
 if (defined @upfiles) {
     foreach my $upfile(@upfiles)
@@ -28,14 +29,22 @@ if (defined @upfiles) {
         my $nBytes = 0;
         my $totBytes = 0;
         my $buffer = "";
-        open(OUTFILE, ">$cwd/$upfile") or die "Can't open $cwd/$upfile for writing - $!";
-        binmode($upfile);
-        while ( $nBytes = read($upfile, $buffer, 1024) )
-        {
-            print OUTFILE $buffer;
-            $totBytes += $nBytes;
+        if (-e "$cwd/$upfile") {
+            push @errors, "$cwd/$upfile $text{'error_exists'}";
+        } else {
+            open(OUTFILE, ">$cwd/$upfile") or die "Can't open $cwd/$upfile for writing - $!";
+            binmode($upfile);
+            while ( $nBytes = read($upfile, $buffer, 1024) )
+            {
+                print OUTFILE $buffer;
+                $totBytes += $nBytes;
+            }
+            close(OUTFILE);
         }
-        close(OUTFILE);
     }
 }
-&redirect("index.cgi?path=$path");
+if (scalar(@errors) > 0) {
+    print_errors(@errors);
+} else {
+    &redirect("index.cgi?path=$path");
+}

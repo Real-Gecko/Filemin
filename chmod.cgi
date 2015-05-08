@@ -7,8 +7,14 @@ require './filemin-lib.pl';
 
 get_paths();
 
+my @errors;
 foreach $name (split(/\0/, $in{'name'})) {
-    chmod oct($in{'perms'}), $cwd.'/'.$name;
+    if(!chmod(oct($in{'perms'}), $cwd.'/'.$name)) {
+        push @errors, "$name - $text{'error_chmod'}: $!";
+    }
 }
-
-&redirect("index.cgi?path=$path");
+if (scalar(@errors) > 0) {
+    print_errors(@errors);
+} else {
+    &redirect("index.cgi?path=$path");
+}

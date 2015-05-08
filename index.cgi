@@ -14,24 +14,26 @@ use File::Basename;
 
 get_paths();
 
-&ui_print_header(undef, "Filemin", "");
-
 unless (opendir ( DIR, $cwd )) {
-  print "$text{'error_opendir'} $cwd $!";
-}
-
-@list = readdir(DIR);
-closedir(DIR);
-@list = sort(@list);
-
-#remove '.' and '..' from file list
-shift(@list);
-shift(@list);
-
-if ($current_theme eq 'authentic-theme') {
-    print_modern_interface();
+    $path="";
+    print_errors("$text{'error_opendir'} $cwd $!");
 } else {
-    print_legacy_interface();
-}
 
-&ui_print_footer("/", $text{'index'});
+    &ui_print_header(undef, "Filemin", "");
+
+    @list = readdir(DIR);
+    closedir(DIR);
+    @list = sort(@list);
+
+    #remove '.' and '..' from file list
+    shift(@list);
+    shift(@list);
+
+    if ($current_theme eq 'authentic-theme') {
+        print_modern_interface();
+    } else {
+        print_legacy_interface();
+    }
+
+    &ui_print_footer("/", $text{'index'});
+}

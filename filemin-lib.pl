@@ -3,6 +3,7 @@
 BEGIN { push(@INC, ".."); };
 use WebminCore;
 use Cwd 'abs_path';
+use Encode qw(decode encode);
 
 &init_config();
 
@@ -153,7 +154,15 @@ HTML
 
 sub print_modern_interface {    
     #breadcrumbs
-    print "<ol class='breadcrumb pull-left'><li><a href='?path='>~</a></li>";
+#    local @uinfo = getpwnam($remote_user);
+    if($base eq '/') {
+        $root_icon = "<i class='fa fa-hdd-o'></i>";
+    } else {
+        $root_icon = "~";
+    }
+    
+#    my $root_icon = ($cwd eq '/') : "<i class='fa fa-hdd-o'>" ? "~";
+    print "<ol class='breadcrumb pull-left'><li><a href='?path='>$root_icon</a></li>";
     my @breadcr = split('/', $path);
     my $cp = '';
     for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
@@ -179,7 +188,6 @@ sub print_modern_interface {
             $text{'last_mod_time'}
         ]
     );
-     use Encode qw(decode encode);
     foreach $link (@list) {
         my $file = $cwd.'/'.$link;
         $link = html_escape($link);
@@ -200,7 +208,7 @@ sub print_modern_interface {
         $permissions = sprintf("%03o", (stat($file))[2] & 00777);
         $mod_time = POSIX::strftime('%a, %d %b %Y %T', localtime((stat($file))[9]));
 
-        $actions = "<a href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}'><img src='unauthenticated/icons/quick/rename.png' alt='$text{'rename'}'/></a>";
+        $actions = "<div class='btn-group btn-group-xs'><a class='btn btn-inverse' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'><i class='fa fa-bold' title='$text{'rename'}'></i></a>";
 
         stat($file);
         if (-d _) {
@@ -218,12 +226,13 @@ sub print_modern_interface {
                 $type eq "application-x-shellscript" or
                 $type eq "application-x-perl"
             ) {
-                $actions = "$actions<a href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}'><img src='unauthenticated/icons/quick/edit.png' alt='$text{'edit'}' /></a>";
+                $actions = "$actions<a class='btn btn-inverse' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'><i class='fa fa-edit' alt='$text{'edit'}'></i></a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}'><img src='unauthenticated/icons/quick/extract.png' alt='$text{'extract_archive'}' /></a> ";
+                $actions = "$actions <a class='btn btn-inverse' href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'><i class='fa fa-external-link' alt='$text{'extract_archive'}'></i></a> ";
             }
         }
+        $actions = "$actions</div>";
 
         print &ui_checked_columns_row([
             "<a href='$href'><img src=\"$img\"></a>",
@@ -261,6 +270,18 @@ sub print_template {
     } else {
       print "$text{'error_load_template'} '$template_name' $!";
     }
+}
+
+sub print_errors {
+    my @errors = @_;
+    &ui_print_header(undef, "Filemin", "");
+    print $text{'errors_occured'};
+    print "<ul>";
+    foreach $error(@errors) {
+        print("<li>$error</li>");
+    }
+    print "<ul>";
+    &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
 }
 
 1;

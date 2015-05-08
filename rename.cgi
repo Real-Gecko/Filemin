@@ -6,7 +6,12 @@ require './filemin-lib.pl';
 &ReadParse();
 
 get_paths();
-
-&rename_file($cwd.'/'.$in{'file'}, $cwd.'/'.$in{'name'}) or die "Unable to rename $in{'file'} $!";
-
-&redirect("index.cgi?path=$path");
+if (-e "$cwd/$in{'name'}") {
+    print_errors("$in{'name'} $text{'error_exists'}");
+} else {
+    if(&rename_file($cwd.'/'.$in{'file'}, $cwd.'/'.$in{'name'})) {
+        &redirect("index.cgi?path=$path");
+    } else {
+        print_errors("$text{'error_rename'} $in{'file'}: $!");
+    }
+}

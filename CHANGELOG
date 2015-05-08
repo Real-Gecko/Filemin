@@ -1,3 +1,26 @@
+-- Version 0.9
+Mielstone reached:
+ - Checks for overwrites while using paste, new folder, new file, upload, http download ... at last :D
+ - If file exists it will not be overwritten.
+ - BEWARE: uncompressing archive still iverwrites existing files!
+
+#1 fixed:
+ - After long discussion upper-left toolbar finally looks good in modern interface
+ - Thanks to https://github.com/Goeny for his brilliant solution and https://github.com/qooob for debugging
+
+#3 fixed:
+ - Some misspellings fixed
+
+#5 fix suggestion:
+ - Replaced '~' for '/' directory with FontAwesome's HDD icon, still open for discussion...
+
+Minor tweaks for modern interface
+More verbose output on errors
+
+-- Version 0.8.3 --
+Added tooltips for icons on toolbar
+Message appears if nothing selected and user tries copy/cut/compress/chmod/chown/delete
+
 -- Version 0.8.2 --
 Various bug fixes
 Added Authentic Theme support
