@@ -7,29 +7,36 @@ This notice must stay intact
 function octalchange() 
 {
 	var val = document.chmod.t_total.value;
-	var ownerbin = parseInt(val.charAt(0)).toString(2);
-	while (ownerbin.length<3) { ownerbin="0"+ownerbin; };
-	var groupbin = parseInt(val.charAt(1)).toString(2);
-	while (groupbin.length<3) { groupbin="0"+groupbin; };
-	var otherbin = parseInt(val.charAt(2)).toString(2);
-	while (otherbin.length<3) { otherbin="0"+otherbin; };
-	document.chmod.owner4.checked = parseInt(ownerbin.charAt(0)); 
-	document.chmod.owner2.checked = parseInt(ownerbin.charAt(1));
-	document.chmod.owner1.checked = parseInt(ownerbin.charAt(2));
-	document.chmod.group4.checked = parseInt(groupbin.charAt(0)); 
-	document.chmod.group2.checked = parseInt(groupbin.charAt(1));
-	document.chmod.group1.checked = parseInt(groupbin.charAt(2));
-	document.chmod.other4.checked = parseInt(otherbin.charAt(0)); 
-	document.chmod.other2.checked = parseInt(otherbin.charAt(1));
-	document.chmod.other1.checked = parseInt(otherbin.charAt(2));
+	var extrabin = parseInt(val.charAt(0)).toString(2);
+	while (extrabin.length<2) { extrabin="0"+extrabin; };
+	var ownerbin = parseInt(val.charAt(1)).toString(2);
+	while (ownerbin.length<4) { ownerbin="0"+ownerbin; };
+	var groupbin = parseInt(val.charAt(2)).toString(2);
+	while (groupbin.length<4) { groupbin="0"+groupbin; };
+	var otherbin = parseInt(val.charAt(3)).toString(2);
+	while (otherbin.length<4) { otherbin="0"+otherbin; };
+	document.chmod.sticky.checked = parseInt(extrabin.charAt(1)); 
+	document.chmod.setgid.checked = parseInt(extrabin.charAt(0)); 
+	document.chmod.owner4.checked = parseInt(ownerbin.charAt(1)); 
+	document.chmod.owner2.checked = parseInt(ownerbin.charAt(2));
+	document.chmod.owner1.checked = parseInt(ownerbin.charAt(3));
+	document.chmod.group4.checked = parseInt(groupbin.charAt(1)); 
+	document.chmod.group2.checked = parseInt(groupbin.charAt(2));
+	document.chmod.group1.checked = parseInt(groupbin.charAt(3));
+	document.chmod.other4.checked = parseInt(otherbin.charAt(1)); 
+	document.chmod.other2.checked = parseInt(otherbin.charAt(2));
+	document.chmod.other1.checked = parseInt(otherbin.charAt(3));
 	calc_chmod(1);
 };
 
 function calc_chmod(nototals)
 {
   var users = new Array("owner", "group", "other");
-  var totals = new Array("","","");
+  var totals = new Array("","","","");
   var syms = new Array("","","");
+
+	if (document.chmod['sticky'].checked == true) { totals[0] = 1; } else { totals[0] = 0; }
+	if (document.chmod['setgid'].checked == true) { totals[0] = totals[0] + 2; }
 
 	for (var i=0; i<users.length; i++)
 	{
@@ -62,11 +69,12 @@ function calc_chmod(nototals)
 			sym_string += "-";
 		}
 	
-		totals[i] = totals[i]+number;
+		totals[i + 1] = totals[i + 1]+number;
 		syms[i] =  syms[i]+sym_string;
 	
   };
-	if (!nototals) document.chmod.t_total.value = totals[0] + totals[1] + totals[2];
+
+	if (!nototals) document.chmod.t_total.value = totals[0] + totals[1] + totals[2] + totals[3];
 	document.chmod.sym_total.value = "-" + syms[0] + syms[1] + syms[2];
 }
 window.onload=octalchange

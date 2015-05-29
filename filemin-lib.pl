@@ -9,12 +9,18 @@ use Encode qw(decode encode);
 
 sub get_paths {
     local @uinfo = getpwnam($remote_user);
+    #not sure if it is really necessary, could not reproduce "User with no $HOME" scenario.
+    if(!defined $uinfo[7]) {
+        print_errors('You`re not supposed to be here!');
+        exit();
+    }
     if($uinfo[0] eq 'root') {
         $base = "/";
     } else {
-        $base = $uinfo[7] ? $uinfo[7] : "/home";
+#        $base = $uinfo[7] ? $uinfo[7] : "/home";
+        $base = $uinfo[7];
     }
-    $home = $uinfo[7] ? $uinfo[7] : "/home";
+#    $home = $uinfo[7] ? $uinfo[7] : "/home";
     $path = $in{'path'} ? $in{'path'} : '';
     $cwd = abs_path($base.$path);
     if (index($cwd, $base) == -1)
@@ -25,12 +31,24 @@ sub get_paths {
 
 sub print_legacy_interface {
     $head = "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
-    $head .= "<script type=\"text/javascript\" src=\"unauthenticated/js/main.js\"></script>";
+    $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery/jquery.min.js\"></script>";
+    $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery/jquery-ui.min.js\"></script>";
+    $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/legacy.js\"></script>";
+    $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery/jquery-ui.min.css\" />";
+    $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
+
+#    $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery/jquery-ui.theme.min.css\" />";
 
     print $head;
 
+    if($base eq '/') {
+        $root_icon = "<img src=\"images/icons/quick/drive-harddisk.png\" class=\"hdd-icon\" />";
+    } else {
+        $root_icon = "~";
+    }
+    
     #breadcrumbs
-    print "<div id='bread' style='float: left; padding-bottom: 2px;'><a href='?path='>~</a> / ";
+    print "<div id='bread' style='float: left; padding-bottom: 2px;'><a href='?path='>$root_icon</a> / ";
     my @breadcr = split('/', $path);
     my $cp = '';
     for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
@@ -56,16 +74,6 @@ sub print_legacy_interface {
     }
     print "</div>";
 
-    #upload form and ui links
-print <<"HTML";
-<div style="float: left; visibility: hidden; width: 0; height: 0;">
-<form id='upload-form' method='post' action='upload.cgi' enctype='multipart/form-data'>
-<input type='file' id='upfiles' name='upfiles' multiple onchange='countUploads(this)'>
-<input type='hidden' name='path' value='$path'>
-<input type='submit' name="button" value="Upload Files">
-</form>
-</div>
-HTML
     print_template("unauthenticated/templates/legacy_quicks.html");
     print &ui_form_start("", "post", undef, "id='list_form'");
     print &ui_columns_start(
@@ -77,7 +85,7 @@ HTML
             $text{'actions'},
             $text{'size'},
             $text{'owner_user'},
-            $text{'owner_group'},
+#            $text{'owner_group'},
             $text{'permissions'},
             $text{'last_mod_time'}
         ]
@@ -98,16 +106,17 @@ HTML
 
         my $type = mimetype($file);
         $type =~ s/\//\-/g;
-        my $img = "unauthenticated/icons/mime/$type.png";
-        unless (-e $img) { $img = "unauthenticated/icons/mime/unknown.png"; }
+        my $img = "images/icons/mime/$type.png";
+        unless (-e $img) { $img = "images/icons/mime/unknown.png"; }
         my $size = (stat($file))[7];
         $size = &nice_size($size);
         $user = getpwuid((stat($file))[4]);
         $group = getgrgid((stat($file))[5]);
-        $permissions = sprintf("%03o", (stat($file))[2] & 00777);
-        $mod_time = POSIX::strftime('%a, %d %b %Y %T', localtime((stat($file))[9]));
+        $permissions = sprintf("%04o", (stat($file))[2] & 07777);
+#        $mod_time = POSIX::strftime('%a, %d %b %Y %T', localtime((stat($file))[9]));
+        $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime((stat($file))[9]));
 
-        $actions = "<a href='javascript:void(0)' onclick='renameSelected(\"$link\", \"$path\")' title='$text{'rename'}'><img src='unauthenticated/icons/quick/rename.png' alt='$text{'rename'}'/></a>";
+        $actions = "<a href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}'><img src='images/icons/quick/rename.png' alt='$text{'rename'}'/></a>";
 
         stat($file);
         if (-d _) {
@@ -125,10 +134,10 @@ HTML
                 $type eq "application-x-shellscript" or
                 $type eq "application-x-perl"
             ) {
-                $actions = "$actions<a href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}'><img src='unauthenticated/icons/quick/edit.png' alt='$text{'edit'}' /></a>";
+                $actions = "$actions<a href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}'><img src='images/icons/quick/edit.png' alt='$text{'edit'}' /></a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}'><img src='unauthenticated/icons/quick/extract.png' alt='$text{'extract_archive'}' /></a> ";
+                $actions = "$actions <a href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}'><img src='images/icons/quick/extract.png' alt='$text{'extract_archive'}' /></a> ";
             }
         }
 
@@ -138,8 +147,8 @@ HTML
             $type,
             $actions,
             $size,
-            $user,
-            $group,
+            $user.':'.$group,
+ #           $group,
             $permissions,
             $mod_time
             ], "", "name", $link);
@@ -150,18 +159,16 @@ HTML
     print &ui_form_end();
 
     print &ui_form_end();
+    print_template("unauthenticated/templates/legacy_dialogs.html");
 }
 
-sub print_modern_interface {    
-    #breadcrumbs
-#    local @uinfo = getpwnam($remote_user);
+sub print_interface {    
     if($base eq '/') {
         $root_icon = "<i class='fa fa-hdd-o'></i>";
     } else {
         $root_icon = "~";
     }
     
-#    my $root_icon = ($cwd eq '/') : "<i class='fa fa-hdd-o'>" ? "~";
     print "<ol class='breadcrumb pull-left'><li><a href='?path='>$root_icon</a></li>";
     my @breadcr = split('/', $path);
     my $cp = '';
@@ -172,7 +179,7 @@ sub print_modern_interface {
     }
     print "</ol>";    
 
-    print_template("unauthenticated/templates/modern_quicks.html");
+    print_template("unauthenticated/templates/quicks.html");
     print &ui_form_start("", "post", undef, "id='list_form'");
     print &ui_columns_start(
         [
@@ -183,7 +190,7 @@ sub print_modern_interface {
             $text{'actions'},
             $text{'size'},
             $text{'owner_user'},
-            $text{'owner_group'},
+#            $text{'owner_group'},
             $text{'permissions'},
             $text{'last_mod_time'}
         ]
@@ -199,16 +206,17 @@ sub print_modern_interface {
 
         my $type = mimetype($file);
         $type =~ s/\//\-/g;
-        my $img = "unauthenticated/icons/mime/$type.png";
-        unless (-e $img) { $img = "unauthenticated/icons/mime/unknown.png"; }
+        my $img = "images/icons/mime/$type.png";
+        unless (-e $img) { $img = "images/icons/mime/unknown.png"; }
         my $size = (stat($file))[7];
         $size = &nice_size($size);
         $user = getpwuid((stat($file))[4]);
         $group = getgrgid((stat($file))[5]);
-        $permissions = sprintf("%03o", (stat($file))[2] & 00777);
-        $mod_time = POSIX::strftime('%a, %d %b %Y %T', localtime((stat($file))[9]));
+        $permissions = sprintf("%04o", (stat($file))[2] & 07777);
+#        $mod_time = POSIX::strftime('%a, %d %b %Y %T', localtime((stat($file))[9]));
+        $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime((stat($file))[9]));
 
-        $actions = "<div class='btn-group btn-group-xs'><a class='btn btn-inverse' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'><i class='fa fa-bold' title='$text{'rename'}'></i></a>";
+        $actions = "<div class='btn-group btn-group-lg'><a href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'><i class='fa fa-font' title='$text{'rename'}'></i></a>";
 
         stat($file);
         if (-d _) {
@@ -226,10 +234,10 @@ sub print_modern_interface {
                 $type eq "application-x-shellscript" or
                 $type eq "application-x-perl"
             ) {
-                $actions = "$actions<a class='btn btn-inverse' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'><i class='fa fa-edit' alt='$text{'edit'}'></i></a>";
+                $actions = "$actions <a href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'><i class='fa fa-edit' alt='$text{'edit'}'></i></a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='btn btn-inverse' href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'><i class='fa fa-external-link' alt='$text{'extract_archive'}'></i></a> ";
+                $actions = "$actions <a href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'><i class='fa fa-external-link' alt='$text{'extract_archive'}'></i></a> ";
             }
         }
         $actions = "$actions</div>";
@@ -240,8 +248,8 @@ sub print_modern_interface {
             $type,
             $actions,
             $size,
-            $user,
-            $group,
+            $user.':'.$group,
+#            $group,
             $permissions,
             $mod_time
             ], "", "name", $link);
@@ -252,9 +260,9 @@ sub print_modern_interface {
     print &ui_form_end();
 
     print &ui_form_end();
-    print_template("unauthenticated/templates/modern_dialogs.html");
+    print_template("unauthenticated/templates/dialogs.html");
 
-    print "<script type=\"text/javascript\" src=\"unauthenticated/js/modern.js\"></script>";
+    print "<script type=\"text/javascript\" src=\"unauthenticated/js/main.js\"></script>";
     print "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
     print "<script type=\"text/javascript\" src=\"unauthenticated/js/dataTables.bootstrap.js\"></script>";
     print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";

@@ -10,6 +10,9 @@ get_paths();
 $data = &read_file_contents($cwd.'/'.$in{file});
 
 &ui_print_header(undef, $text{'edit_file'}, "");
+$head = "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
+print $head;
+
 print $path.'/'.$in{'file'};
 
 print &ui_form_start("save_file.cgi", "form-data");

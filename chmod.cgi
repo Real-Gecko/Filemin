@@ -8,9 +8,13 @@ require './filemin-lib.pl';
 get_paths();
 
 my @errors;
+my $recursive;
+if($in{'recursive'} eq 'true') { $recursive = '-R'; } else { $recursive = ''; }
+
 foreach $name (split(/\0/, $in{'name'})) {
-    if(!chmod(oct($in{'perms'}), $cwd.'/'.$name)) {
-        push @errors, "$name - $text{'error_chmod'}: $!";
+    my $perms = $in{'perms'};
+    if(system("chmod $perms $cwd/$name $recursive") != 0) {
+        push @errors, "$name - $text{'error_chmod'}: $?";
     }
 }
 if (scalar(@errors) > 0) {

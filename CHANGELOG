@@ -1,8 +1,39 @@
+-- Version 0.9.1
+#8 fixed:
+  - Not sure if it was an issue, cause I was unable to reproduce "User without $HOME" scenario. However added some code to handle this, just in case.
+  
+#7 fixed:
+  - Removed Archive::* dependencies, all archive extraction procedures now go through system calls. *.tar.gz, *.tar.xz, *.tar.bz2, *.zip archive types tested.
+
+#6 fixed:
+  - Switched to Regexp::Common for URI validation in "HTTP Download" operation to avoid additional dependencies.
+
+#5 fixed:
+  - Added HDD icon for "/" while under root for legacy themes.
+
+  - Added BWTheme support.
+  - Changed license to BSD style.
+  - Chown now asks for group too.
+  - Slight interface improvements for modern dialogs.
+  - Major interface imprevements for legacy dialogs, jQuery and jQueryUI shipped with the module for this purpose.
+  - Added $in{'...'} parameters check in some operations to prevent errors if user submits emtpy form by hitting "Enter".
+  - Changed textarea font to monospace.
+  - Added sticky bit and setgid to chmod.
+  - Chmod and chown can be done recursively.
+  - Made list table more compact for Bootstrap enabled themes.
+  - Removed group column, group is displayed now within "Owner User" column: "root:root", "realgecko:users" etc.
+  - Modified date/time display format for better sorting under Authentic theme.
+  - Added "Refresh" quick button for modern themes, just for fun :D
+  - Added a work around to fix JS hell provided by Framed Theme family with "onmouseover" and "onmouseout" events, that led to unselectable rows by "Select All" and "Inverse Selection" operations.
+  - Using the same class to highlight rows as Authentic.
+  - Moved icons to images folder, as Authentic Theme author improved third party modules' files handling.
+  - Added .deb package for distribution flexibility.
+
 -- Version 0.9
 Mielstone reached:
  - Checks for overwrites while using paste, new folder, new file, upload, http download ... at last :D
  - If file exists it will not be overwritten.
- - BEWARE: uncompressing archive still iverwrites existing files!
+ - BEWARE: uncompressing archive still overwrites existing files!
 
 #1 fixed:
  - After long discussion upper-left toolbar finally looks good in modern interface

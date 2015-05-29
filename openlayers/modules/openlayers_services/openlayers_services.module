@@ -1,0 +1,107 @@
+<?php
+/**
+ * @file
+ * Openlayers Services module.
+ */
+include 'openlayers_services.helpers.inc';
+
+/**
+ * Implements hook_ctools_plugin_api().
+ */
+function openlayers_services_ctools_plugin_api($owner, $api) {
+  if ($owner == 'services' && $api == 'services') {
+    return array('version' => 3);
+  }
+}
+
+/**
+ * Implements hook_services_resources().
+ */
+function openlayers_services_services_resources() {
+  return array(
+    'openlayers_map' => array(
+      'retrieve' => array(
+        'help' => 'Retrieves an OpenLayers map',
+        'file' => array(
+          'type' => 'inc',
+          'module' => 'openlayers_services',
+          'name' => 'openlayers_services.services',
+        ),
+        'callback' => '_openlayers_services_retrieve',
+        'access callback' => '_openlayers_services_access',
+        'access arguments' => array('view'),
+        'access arguments append' => TRUE,
+        'args' => array(
+          array(
+            'name' => 'name',
+            'type' => 'string',
+            'description' => 'The name of the map to get',
+            'source' => array('path' => '0'),
+            'optional' => FALSE,
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/**
+ * Implements hook_theme().
+ */
+function openlayers_services_theme($existing, $type, $theme, $path) {
+  return array(
+    'openlayers_map_iframe' => array(
+      'arguments' => array(
+        'page' => '',
+        'scripts' => '',
+        'styles' => '',
+      ),
+      'template' => 'openlayers-map--iframe',
+      'path' => drupal_get_path('module', 'openlayers_services') . '/themes',
+    ),
+  );
+}
+
+function openlayers_services_form_openlayers_map_form_settings_alter(&$form, &$form_state) {
+  $map = openlayers_object_load('map', $form_state['item']);
+
+  $form['options']['ui']['provideIframe'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Provide iframe of this map ?',
+    '#description' => t('Enable this to provide this map as an iframe through the service module.'),
+    '#default_value' => $map->getOption('provideIframe', FALSE),
+    '#parents' => array('options', 'provideIframe'),
+  );
+}
+
+function openlayers_services_form_openlayers_map_form_preview_alter(&$form, &$form_state) {
+  $map = openlayers_object_load('map', $form_state['item']);
+
+  if ((bool) $map->getOption('provideIframe', FALSE) == FALSE) {
+    return;
+  }
+
+  $form['openlayers_services'] = array(
+    '#type' => 'fieldset',
+    '#collapsible' => FALSE,
+    '#collapsed' => FALSE,
+    '#title' => 'Embed this map in an iframe',
+  );
+
+  foreach (services_endpoint_load_all() as $service) {
+    if (isset($service->resources['openlayers_map']['operations']['retrieve']['enabled']) && $service->resources['openlayers_map']['operations']['retrieve']['enabled'] == 1) {
+
+      $width = ($map->getOption('width', 'auto') == 'auto') ? '100%' : $map->getOption('width', 'auto');
+      $height = $map->getOption('height', 'auto');
+      $iframe = "<iframe src='" . url('map/openlayers/' . $map->machine_name, array('absolute' => TRUE)) . "' width='" . $width . "' height='" . $height . "'/>";
+
+      $form['openlayers_services'][$map->machine_name] = array(
+        '#type' => 'textarea',
+        '#description' => t('Copy paste this html code to embed this map in your content.'),
+        '#rows' => 3,
+        '#value' => $iframe,
+        '#disabled' => FALSE,
+      );
+    }
+  }
+}

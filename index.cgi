@@ -29,8 +29,8 @@ unless (opendir ( DIR, $cwd )) {
     shift(@list);
     shift(@list);
 
-    if ($current_theme eq 'authentic-theme') {
-        print_modern_interface();
+    if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
+        print_interface();
     } else {
         print_legacy_interface();
     }

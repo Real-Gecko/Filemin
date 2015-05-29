@@ -1,0 +1,86 @@
+<?php
+/**
+ * @file
+ * Openlayers Contextual Links module.
+ */
+
+function openlayers_contextual_links_openlayers_object_postprocess_alter(&$build, $context) {
+  if (!user_access('administer openlayers')) {
+    return FALSE;
+  }
+
+  if (!($context instanceof Drupal\openlayers\Types\MapInterface)) {
+    return FALSE;
+  }
+
+  if ($context->getOption('contextualLinks', FALSE) == FALSE) {
+    unset($build['contextual_links']);
+    return FALSE;
+  }
+
+  $current_path = current_path();
+  if ('system/ajax' == $current_path && isset($_SESSION['current_path'])) {
+    $current_path = $_SESSION['current_path'];
+  }
+
+  $links = array(
+    'openlayers' => array(
+      'title' => 'Edit this map',
+      'href' => 'admin/structure/openlayers/maps/list/' . $context->machine_name . '/edit',
+      'query' => array(
+        'destination' => $current_path,
+      ),
+    ),
+  );
+
+  foreach ($context->getCollection()->getFlatList() as $object) {
+    $object_links = array();
+
+    // Build contextual link for this object.
+    $name = $object->name;
+    if (empty($name)) {
+      $name = $object->machine_name;
+    }
+
+    $object_links[$object->getType() . ':' . $object->machine_name] = array(
+      'title' => t('Edit @object_name', array('@object_name' => $name)),
+      'href' => 'admin/structure/openlayers/' . $object->getType() . 's/list/' . $object->machine_name . '/edit',
+      'query' => array(
+        'destination' => $current_path,
+      ),
+    );
+
+    if (!empty($object_links)) {
+      // Build contextual link title for this type.
+      $links[$object->getType()] = array(
+        'title' => '<strong>' . ucwords($object->getType() . 's') . '</strong>',
+        'html' => TRUE,
+      );
+      $links += $object_links;
+    }
+  }
+
+  $build['contextual_links'] = array(
+    '#prefix' => '<div class="contextual-links-wrapper">',
+    '#suffix' => '</div>',
+    '#theme' => 'links__contextual',
+    '#links' => $links,
+    '#attributes' => array('class' => array('contextual-links')),
+    '#attached' => array(
+      'library' => array(array('contextual', 'contextual-links')),
+    ),
+  );
+  $build['#attributes']['class'][] = 'contextual-links-region';
+}
+
+function openlayers_contextual_links_form_openlayers_map_form_settings_alter(&$form, &$form_state) {
+  $map = openlayers_object_load('Map', $form_state['item']);
+
+  $form['options']['ui']['contextualLinks'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Contextual links',
+    '#description' => t('Enable contextual links on the map.'),
+    '#default_value' => $map->getOption('contextualLinks', FALSE),
+    '#parents' => array('options', 'contextualLinks'),
+  );
+}

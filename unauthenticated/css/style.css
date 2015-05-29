@@ -57,6 +57,7 @@ td.right {
 
 .ui_columns {
     clear: both;
+    width: 100%;
 }
 
 #info {
@@ -95,4 +96,21 @@ table.dataTable thead .sorting_desc::after {
 }
 .breadcrumb i {
     font-size: 16px;
+}
+
+.hdd-icon {
+    position: relative;
+    top: 6px;
+}
+
+#chownForm input {
+    width: 200px;
+}
+
+.modal {
+    display:none;
+}
+
+textarea {
+    font-family: consolas, monospace !important;
 }

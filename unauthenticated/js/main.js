@@ -1,36 +1,46 @@
-/*window.onload = function() {
-    var rows = document.getElementsByClassName('ui_checked_columns');
-    for(var i = 0; i < rows.length; i++) {
-        rows[i].onclick = function() { rowClick(this) };
-    }
-}*/
-
-window.onload = function() {
-    var checkboxes = document.getElementsByClassName('ui_checkbox');
-    for(var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].onclick = function() {
-            var row = this.parentNode.parentNode;
-            if (this.checked) {
-                row.className = row.className + ' checked';
-            }
-            else {
-                row.className = row.className.replace(' checked', '');
-            }
-        };
-    }
-}
+$( document ).ready(function() {
+    $.fn.dataTableExt.sErrMode = 'throw';
+    $('#list_form > table').dataTable({
+        "order": [],
+        "aaSorting": [],
+        "bDestroy": true,
+        "bPaginate": true,
+        "bInfo": false,
+        "destroy": true,
+        "oLanguage": {
+            "sSearch": " "
+        },
+        "columnDefs": [ { "orderable": false, "targets": [0, 1, 4] }, ],
+        "iDisplayLength": 50,
+    });
+    $("form").on('click', 'div.popover', function() {
+        $(this).prev('input').popover('hide');
+    });
+});
 
 function countUploads(files) {
-    document.getElementById('info').innerHTML = files.files.length + ' file(s) selected for upload ';
-    return true;
+    if(files.files.length = 0) return;
+    var info = '';
+    for (i = 0; i < files.files.length; i++) {
+        info += files.files[i].name + '<br>';
+    }
+    $('#readyForUploadList').html(info);
+}
+
+function invertSelection() {
+    var rows = document.getElementsByClassName('ui_checked_columns');
+
+    for (i = 0; i < rows.length; i++)
+        rowClick(rows[i]);
 }
 
 function selectAll() {
     var rows = document.getElementsByClassName('ui_checked_columns');
+
     for (i = 0; i < rows.length; i++) {
         var input = rows[i].getElementsByTagName('input')[0];
         if (!input.checked) {
-            selectRow(rows[i]);
+            rowClick(rows[i]);
         }
     }
 }
@@ -41,49 +51,111 @@ function invertSelection() {
         rowClick(rows[i]);
 }
 
+function compressDialog() {
+    if(checkSelected())
+        $("#compressDialog").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });    
+}
+
 function compressSelected() {
+    var filename = $('#compressSelectedForm input[name=filename]').val();
+    if (filename != null && filename != "") {
+        $('#list_form').attr('action', "compress.cgi?arch=" + filename);
+        $('#list_form').submit();
+    } else {
+        $('#compressSelectedForm input[name=filename]').popover('show');
+        $('#compressSelectedForm input[name=filename]').focus();
+    }
+}
+
+function removeDialog() {
     if(checkSelected()) {
-        var filename = prompt("Name of archive","");
-        if (filename != null && filename != "") {
-            document.forms['list_form'].action = "compress.cgi?arch=" + filename;
-            document.forms['list_form'].submit();
-        }
+        $('#items-to-remove').html('');
+
+        $(".ui_checked_checkbox input[type='checkbox']:checked").each(function() {
+        $('#items-to-remove').append($(this).val() + '<br>');
+        });
+
+        $("#removeDialog").modal({
+        "backdrop"  : "static",
+        "keyboard"  : true,
+        "show"      : true
+        });
     }
 }
 
 function removeSelected() {
-    if(checkSelected()) {
-        if (confirm("Do you really want to delete selected items?")) {
-            document.forms['list_form'].action = "delete.cgi";
-            document.forms['list_form'].submit();
-        }
-    }
+    $('#list_form').attr('action', "delete.cgi");
+    $('#list_form').submit();
+}
+
+function chmodDialog() {
+    if(checkSelected())
+        $("#chmodDialog").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });    
 }
 
 function chmodSelected() {
-    if(checkSelected()) {
-        var perms = prompt("New permissions","");
-        if (perms != null && perms != "") {
-            document.forms['list_form'].action = "chmod.cgi?perms=" + perms;
-            document.forms['list_form'].submit();
-        }
+    var perms = $('#perms').val();
+    var recursive = $('#recursive').prop('checked');
+    if (perms != null && perms != "") {
+        $('#list_form').attr('action', "chmod.cgi?perms=" + perms + "&recursive=" + recursive);
+        $('#list_form').submit();
     }
+}
+
+function chownDialog() {
+    if(checkSelected())
+        $("#chownDialog").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });    
 }
 
 function chownSelected() {
-    if(checkSelected()) {
-        var owner = prompt("New owner","");
-        if (owner != null && owner != "") {
-            document.forms['list_form'].action = "chown.cgi?owner=" + owner;
-            document.forms['list_form'].submit();
-        }
+    var owner = $('#chownForm input[name=owner]').val();
+    var group = $('#chownForm input[name=group]').val();
+    var recursive = $('#chown-recursive').prop('checked');
+    if (owner == null || owner == "") {
+        $('#chownForm input[name=owner]').popover('show');
+        $('#chownForm input[name=owner]').focus();
+    }
+    if (group == null || group == "") {
+        $('#chownForm input[name=group]').popover('show');
+        $('#chownForm input[name=group]').focus();
+    }
+
+    if (owner != null && owner != "" && group != null && group != "") {
+        $('#list_form').attr('action', "chown.cgi?owner=" + owner + "&group=" + group + "&recursive=" + recursive);
+        $('#list_form').submit();
     }
 }
 
-function renameSelected(file, path) {
-    var name = prompt("New name ", "");
-    if (name != null && name != "") {
-        this.document.location.href="rename.cgi?name=" + name + "&file=" + file + "&path=" + path;
+function renameDialog(file) {
+    $("#renameForm input[name=name]").val(file);
+    $("#renameForm input[name=file]").val(file);
+    $("#renameDialog").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });
+}
+
+function renameSelected() {
+    var name = $('#renameForm input[name=name]').val();
+    var file = $('#renameForm input[name=file]').val();
+    if (name != null && name != "" && name != file) {
+        $('#renameForm').submit();
+    } else {
+        $('#renameForm input[name=name]').popover('show');
+        $('#renameForm input[name=name]').focus();
     }
 }
 
@@ -102,38 +174,70 @@ function cutSelected() {
 }
 
 function browseForUpload() {
-    var files = document.getElementById('upfiles');
-    files.click();
+    $('#upfiles').click();
     return true;
 }
 
 function uploadFiles() {
     var files = document.getElementById('upfiles');
     if (files.files.length > 0)
-        document.forms['upload-form'].submit();
+        $('#upload-form').submit();
     else
-        alert('No files selected for upload ');
+        files.click();
 }
 
-function createFolder(path) {
-    var name = prompt("Name of the new directory","");
-    if (name != null && name != "") {
-        this.document.location.href="create_folder.cgi?path=" + path + "&name=" + name;
+function createFolderDialog() {
+    $("#createFolderDialog").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });
+
+}
+
+function createFolder() {
+    var name = $('#createFolderForm input[name=name]').val();
+    if (name != null && name != "")
+        $("#createFolderForm").submit();
+    else {
+        $('#createFolderForm input[name=name]').popover('show');
+        $('#createFolderForm input[name=name]').focus();
     }
 }
 
-function createFile(path) {
-    var name = prompt("Name of the new file","");
-    if (name != null && name != "") {
-        this.document.location.href="create_file.cgi?path=" + path + "&action=newfile&name=" + name;
+function createFileDialog(path) {
+    $("#createFileDialog").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });
+}
+
+function createFile() {
+    var name = $('#createFileForm input[name=name]').val();
+    if (name != null && name != "")
+        $("#createFileForm").submit();
+    else {
+        $('#createFileForm input[name=name]').popover('show');
+        $('#createFileForm input[name=name]').focus();
     }
+}
+
+function downFromUrlDialog() {
+    $("#downFromUrlDialog").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });
 }
 
 function downFromUrl(path) {
-    var link = prompt("URL of remote file","");
+    var link = $('#downFromUrlForm input[name=link]').val();
     if (link != null && link != "")
-    {
-        this.document.location.href="http_download.cgi?path=" + path + "&link=" + link;
+        $('#downFromUrlForm').submit();
+    else {
+        $('#downFromUrlForm input[name=link]').popover('show');
+        $('#downFromUrlForm input[name=link]').focus();
     }
 }
 
@@ -155,10 +259,10 @@ function rowClick(row) {
     var input = row.getElementsByTagName('input')[0];
     input.checked = !input.checked;
     if (input.checked) {
-        row.className = row.className + ' checked';
+        row.className = row.className + ' hl-aw';
     }
     else {
-        row.className = row.className.replace(' checked', '');
+        row.className = row.className.replace(' hl-aw', '');
     }
 }
 
@@ -166,7 +270,7 @@ function selectRow(row) {
     var input = row.getElementsByTagName('input')[0];
     if(!input.checked) {
         input.checked = true;
-        row.className = row.className + ' checked';
+        row.className = row.className + ' hl-aw';
     }
 }
 
@@ -174,15 +278,27 @@ function unselectRow(row) {
     var input = row.getElementsByTagName('input')[0];
     if(input.checked) {
         input.checked = false;
-        row.className = row.className.replace(' checked', '');
+        row.className = row.className.replace(' hl-aw', '');
     }
 }
 
+function viewReadyForUpload() {
+    $("#readyForUploadDialog").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });    
+}
+
 function checkSelected() {
-    var checkboxes = document.getElementsByClassName('ui_checkbox');
-    for(var i = 0; i < checkboxes.length; i++) {
-        if(checkboxes[i].checked) return true;
+    var checkboxes = $(".ui_checked_checkbox input[type='checkbox']:checked");
+    if(checkboxes.length == 0) {
+        $("#nothingSelected").modal({
+          "backdrop"  : "static",
+          "keyboard"  : true,
+          "show"      : true
+        });
+        return false
     }
-    alert('Nothing selected');
-    return false;
+    return true;
 }

@@ -1,0 +1,7 @@
+api = 2
+core = 7.x
+
+libraries[openlayers][download][type] = "file"
+libraries[openlayers][download][url] = https://github.com/openlayers/ol3/releases/download/v3.2.1/v3.2.1.zip
+libraries[openlayers][directory_name] = openlayers3
+libraries[openlayers][destination] = "libraries"

@@ -7,15 +7,32 @@ require './filemin-lib.pl';
 
 get_paths();
 
+if(!$in{'owner'} or !$in{'group'}) {
+    &redirect("index.cgi?path=$path");
+}
+
 (my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'});
+my $grid = getgrnam($in{'group'});
+my $recursive;
+if($in{'recursive'} eq 'true') { $recursive = '-R'; } else { $recursive = ''; }
+
+my @errors;
 
 if(! defined $login) {
-    print_errors("<b>$in{'owner'}</b> $text{'error_user_not_found'}");
+    push @errors, "<b>$in{'owner'}</b> $text{'error_user_not_found'}";
+}
+
+if(! defined $grid) {
+    push @errors, "<b>$in{'group'}</b> $text{'error_group_not_found'}";
+}
+
+if (scalar(@errors) > 0) {
+        print_errors(@errors);
 } else {
-    my @errors;
     foreach $name (split(/\0/, $in{'name'})) {
-        if(!chown $uid, $gid, $cwd.'/'.$name) {
-            push @errors, "$name - $text{'error_chown'}: $!";
+#        if(!chown $uid, $grid, $cwd.'/'.$name) {
+        if(system("chown $uid:$grid $cwd/$name $recursive") != 0) {
+            push @errors, "$name - $text{'error_chown'}: $?";
         }
     }
     if (scalar(@errors) > 0) {

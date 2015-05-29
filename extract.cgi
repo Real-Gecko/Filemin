@@ -2,13 +2,23 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use Archive::Extract;
+use File::MimeInfo;
 
 &switch_to_remote_user();
 &ReadParse();
 
 get_paths();
 
-$ae = new Archive::Extract( archive => $cwd.'/'.$in{'file'});
-$ae->extract(to => $cwd) or die "Unable to extract $in{'file'} ".$ae->error;
-&redirect("index.cgi?path=$path");
+$archive_type = mimetype($cwd.'/'.$in{'file'});
+
+if ($archive_type eq 'application/zip') {
+    &backquote_command("unzip $cwd/$in{'file'} -d $cwd");
+    &redirect("index.cgi?path=$path");
+} elsif (index($archive_type, "tar") != -1) {
+    &backquote_command("tar xf $cwd/$in{'file'} -C $cwd");
+    &redirect("index.cgi?path=$path");
+} else {
+    &ui_print_header(undef, "Filemin", "");
+    print "$archive_type $text{'error_archive_type_not_supported'}";
+    &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+}

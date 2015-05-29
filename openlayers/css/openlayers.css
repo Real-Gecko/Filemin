@@ -1,0 +1,41 @@
+.openlayers-map {
+  height: 100%;
+  width: 100%;
+}
+
+.openlayers-map .ol-mouse-position {
+  top: auto;
+  right: auto;
+  bottom: 0px;
+  left: 8px;
+  position: absolute;
+}
+
+.openlayers-map .ol-attribution ul {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+}
+
+.openlayers-map:-webkit-full-screen {
+  height:100%;
+  width:100%;
+}
+.openlayers-map:-moz-full-screen {
+  height:100%;
+  width:100%;
+}
+.openlayers-map:-ms-fullscreen {
+  height:100%;
+  width:100%;
+}
+.openlayers-map:full-screen {
+  height:100%;
+  width:100%;
+}
+
+.popover {
+  z-index: auto;
+}
+.popover-content {
+  min-width: 180px;
+}

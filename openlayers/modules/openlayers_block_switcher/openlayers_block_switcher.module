@@ -1,0 +1,146 @@
+<?php
+/**
+ * @file
+ * OpenLayers Block Switcher.
+ */
+
+/**
+ * Implements hook_block_info().
+ */
+function openlayers_block_switcher_block_info() {
+  $maps = (array) _olebs_get_maps_with_blockswitcher();
+  $blocks = array();
+
+  foreach ($maps as $map) {
+    $blockid = _olebs_get_block_id($map->machine_name);
+    $blocks[$blockid]['info'] = t('OpenLayers layer switcher for @name', array('@name' => $map->name));
+  }
+
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function openlayers_block_switcher_block_view($delta = '') {
+  $block = array();
+  /** @var \Drupal\openlayers\Map\OLMap $map */
+  $map = openlayers_object_load('Map', _olebs_get_map_name($delta));
+
+  $block['subject'] = $map->name;
+  $form = drupal_get_form('olebs_blockswitcher_form', $map);
+  $block['content'] = drupal_render($form);
+
+  return $block;
+}
+
+/**
+ * Helper function that returns maps with the blockswitcher behavior enabled.
+ *
+ * Uses static caching.
+ *
+ * @return array
+ *   Array with maps.
+ */
+function _olebs_get_maps_with_blockswitcher() {
+  $maps = &drupal_static(__FUNCTION__, array());
+
+  if (!isset($maps)) {
+    ctools_include('export');
+    $candidates = ctools_export_crud_load_all('openlayers_maps');
+    foreach($candidates as $map) {
+      $map = openlayers_object_load('Map', $map);
+      if ($map->getOption('provideBlockLayerSwitcher', FALSE) == TRUE) {
+        $maps[] = $map;
+      }
+    }
+  }
+
+  return $maps;
+}
+
+/**
+ * Helper function that return the blocks delta according to the map_name.
+ *
+ * @param string $map_name
+ *   The map name.
+ *
+ * @return string
+ *   The block id.
+ */
+function _olebs_get_block_id($map_name) {
+  return substr(sha1($map_name), 0, -32) . '_blockswitcher';
+}
+
+/**
+ * Helper function that return the map name according to the block delta.
+ *
+ * @param string $delta
+ *   The block delta.
+ *
+ * @return string
+ *   The map name.
+ */
+function _olebs_get_map_name($delta) {
+  foreach (_olebs_get_maps_with_blockswitcher() as $map) {
+    if (_olebs_get_block_id($map->machine_name) == $delta) {
+      return $map->machine_name;
+    }
+  }
+  return FALSE;
+}
+
+/**
+ * Form for the layer switcher.
+ */
+function olebs_blockswitcher_form($form, &$form_state, $map) {
+  $default_value = array();
+  $options_overlays = array();
+
+  if (!($map instanceof \Drupal\openlayers\Types\MapInterface)) {
+    return FALSE;
+  }
+
+  foreach ($map->getLayers() as $layer) {
+    $options_overlays[$layer->machine_name] = $layer->name;
+    if ('1' == $layer->getOption('visible', 1)) {
+      $default_value[] = $layer->machine_name;
+    }
+  }
+
+  if (!empty($options_overlays)) {
+    $form['overlays'] = array(
+      '#title'   => t('Overlays'),
+      '#type'    => 'checkboxes',
+      '#options' => $options_overlays,
+      '#default_value' => $default_value,
+    );
+  }
+
+  // By default we can only rely on the machine name which is a css class.
+  $form['map'] = array(
+    '#type'    => 'hidden',
+    '#value' => $map->machine_name,
+  );
+
+  $form['#attached']['css'] = array();
+  $form['#attached']['library'] = array();
+  $form['#attached']['js'][] = array(
+    'data' => drupal_get_path('module', 'openlayers_block_switcher') . '/olbs.js',
+    'type' => 'file',
+  );
+
+  return $form;
+}
+
+function openlayers_block_switcher_form_openlayers_map_form_settings_alter(&$form, &$form_state) {
+  $map = openlayers_object_load('Map', $form_state['item']);
+
+  $form['options']['ui']['provideBlockLayerSwitcher'] = array(
+    '#type' => 'checkbox',
+    '#title' => 'Provide Drupal block layer switcher',
+    '#description' => t('Enable this to enable a Drupal block to display a layer switcher.'),
+    '#default_value' => $map->getOption('provideBlockLayerSwitcher', FALSE),
+    '#parents' => array('options', 'provideBlockLayerSwitcher'),
+  );
+}

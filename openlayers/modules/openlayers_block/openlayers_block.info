@@ -1,0 +1,14 @@
+name = OpenLayers Block
+description = Allows you to provide a Drupal block for an OpenLayers map.
+core = 7.x
+package = "OpenLayers"
+
+dependencies[] = block
+dependencies[] = openlayers
+
+; Information added by Drupal.org packaging script on 2015-02-28
+version = "7.x-3.0-beta1"
+core = "7.x"
+project = "openlayers"
+datestamp = "1425112684"
+

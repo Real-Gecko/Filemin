@@ -5,6 +5,10 @@ require './filemin-lib.pl';
 
 &ReadParse();
 
+if(!$in{'name'}) {
+    &redirect("index.cgi?path=$path");
+}
+
 get_paths();
 if (-e "$cwd/$in{'name'}") {
     print_errors("$in{'name'} $text{'error_exists'}");

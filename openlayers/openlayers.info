@@ -1,0 +1,20 @@
+name = "OpenLayers"
+description = "OpenLayers base API module"
+core = 7.x
+package = "OpenLayers"
+dependencies[] = libraries (>=2.1)
+dependencies[] = ctools
+dependencies[] = file
+dependencies[] = image
+dependencies[] = registry_autoload
+dependencies[] = service_container
+dependencies[] = jquery_update
+
+registry_autoload[] = PSR-4
+
+; Information added by Drupal.org packaging script on 2015-02-28
+version = "7.x-3.0-beta1"
+core = "7.x"
+project = "openlayers"
+datestamp = "1425112684"
+

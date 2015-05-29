@@ -1,0 +1,30 @@
+.openlayers-map .layerswitcher {
+  position: absolute;
+  top: 65px;
+  left: 8px;
+  background: rgba(0,60,136,.5);
+  border-radius: 4px;
+  padding: 0px;
+  margin: 0px;
+  color: #ffffff;
+}
+.openlayers-map .layerswitcher h3 {
+  padding: 0px;
+  margin: 0px;
+}
+.openlayers-map .layerswitcher ul {
+  font-size: 16px;
+  margin: 1px;
+  list-style: none;
+  padding: 0px;
+}
+.openlayers-map .layerswitcher li {
+  list-style: none;
+}
+.openlayers-map .layerswitcher li:hover {
+  background: rgba(0,60,136,0.7);
+}
+.openlayers-map .layerswitcher ul {
+  margin: 0px;
+  padding-left: 5px;
+}
