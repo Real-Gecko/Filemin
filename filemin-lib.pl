@@ -41,6 +41,11 @@ sub print_legacy_interface {
 
     print $head;
 
+    # Some vars for "upload" functionality    
+  	local $upid = time().$$;
+    local @uinfo = getpwnam($remote_user);
+    local $uid = @uinfo[2];
+   
     if($base eq '/') {
         $root_icon = "<img src=\"images/icons/quick/drive-harddisk.png\" class=\"hdd-icon\" />";
     } else {
@@ -168,7 +173,11 @@ sub print_interface {
     } else {
         $root_icon = "~";
     }
-    
+    # Some vars for "upload" functionality
+  	local $upid = time().$$;
+    local @uinfo = getpwnam($remote_user);
+    local $uid = @uinfo[2];
+
     print "<ol class='breadcrumb pull-left'><li><a href='?path='>$root_icon</a></li>";
     my @breadcr = split('/', $path);
     my $cp = '';
@@ -292,4 +301,93 @@ sub print_errors {
     &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
 }
 
+sub ReadParseMime2
+{
+my ($max, $cbfunc, $cbargs) = @_;
+my ($boundary, $line, $foo, $name, $got, $file, $count_lines, $max_lines);
+my $err = &text('readparse_max', $max);
+$ENV{'CONTENT_TYPE'} =~ /boundary=(.*)$/ || &error($text{'readparse_enc'});
+if ($ENV{'CONTENT_LENGTH'} && $max && $ENV{'CONTENT_LENGTH'} > $max) {
+	&error($err);
+	}
+&$cbfunc(0, $ENV{'CONTENT_LENGTH'}, $file, @$cbargs) if ($cbfunc);
+$boundary = $1;
+$count_lines = 0;
+$max_lines = 1000;
+<STDIN>;	# skip first boundary
+while(1) {
+	$name = "";
+	# Read section headers
+	my $lastheader;
+	while(1) {
+		$line = <STDIN>;
+		$got += length($line);
+		&$cbfunc($got, $ENV{'CONTENT_LENGTH'}, @$cbargs) if ($cbfunc);
+		if ($max && $got > $max) {
+			&error($err)
+			}
+		$line =~ tr/\r\n//d;
+		last if (!$line);
+		if ($line =~ /^(\S+):\s*(.*)$/) {
+			$header{$lastheader = lc($1)} = $2;
+			}
+		elsif ($line =~ /^\s+(.*)$/) {
+			$header{$lastheader} .= $line;
+			}
+		}
+
+	# Parse out filename and type
+	if ($header{'content-disposition'} =~ /^form-data(.*)/) {
+		$rest = $1;
+		while ($rest =~ /([a-zA-Z]*)=\"([^\"]*)\"(.*)/) {
+			if ($1 eq 'name') {
+				$name = $2;
+				}
+			else {
+				$foo = $name . "_$1";
+				$in{$foo} = $2;
+				}
+			$rest = $3;
+			}
+		}
+	else {
+		&error($text{'readparse_cdheader'});
+		}
+	if ($header{'content-type'} =~ /^([^\s;]+)/) {
+		$foo = $name . "_content_type";
+		$in{$foo} = $1;
+		}
+	$file = $in{$name."_filename"};
+
+	# Read data
+	$in{$name} .= "\0" if (defined($in{$name}));
+	while(1) {
+		$line = <STDIN>;
+		$got += length($line);
+		$count_lines++;
+		if ($count_lines == $max_lines) {
+			&$cbfunc($got, $ENV{'CONTENT_LENGTH'}, $file, @$cbargs)
+				if ($cbfunc);
+			$count_lines = 0;
+			}
+		if ($max && $got > $max) {
+			#print STDERR "over limit of $max\n";
+			#&error($err);
+			}
+		if (!$line) {
+			# Unexpected EOF?
+			&$cbfunc(-1, $ENV{'CONTENT_LENGTH'}, $file, @$cbargs)
+				if ($cbfunc);
+			return;
+			}
+		if (index($line, $boundary) != -1) { last; }
+		$in{$name} .= $line;
+		}
+	chop($in{$name}); chop($in{$name});
+	if (index($line,"$boundary--") != -1) { last; }
+	}
+&$cbfunc(-1, $ENV{'CONTENT_LENGTH'}, $file, @$cbargs) if ($cbfunc);
+}
+
 1;
+

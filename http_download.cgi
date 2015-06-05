@@ -3,7 +3,6 @@
 require './filemin-lib.pl';
 use lib './lib';
 use Regexp::Common qw /URI/;
-use File::Fetch;
 use URI;
 
 &switch_to_remote_user();
@@ -14,15 +13,31 @@ if(!$in{'link'}) {
     &redirect("index.cgi?path=$path");
 }
 
-if ($in{'link'} !~ qr($RE{URI}{HTTP}{-scheme=>qr/https?/}{-keep})) {
-    print_errors($text{'error_invalid_uri'});
+my $mode;
+my @errors;
+
+if($in{'link'} !~ qr($RE{URI}{HTTP}{-scheme=>qr/https?/}{-keep}) && $in{'link'} !~ qr($RE{URI}{FTP})) {
+    push @errors, $text{'error_invalid_uri'};
 } else {
-    my $file = (URI->new($in{'link'})->path_segments)[-1];
+    my $uri = (URI->new($in{'link'}));
+    my $file = ($uri->path_segments)[-1];
+    $ssl_mode = $uri->scheme eq 'https' ? 1 : 0;
+
     if(-e "$cwd/$file") {
-        print_errors("<i>$file</i> $text{'file_already_exists'} <i>$path</i>");
+        push @errors, "<i>$file</i> $text{'file_already_exists'} <i>$path</i>";
     } else {
-        my $ff = File::Fetch->new(uri=>$in{'link'});
-        my $file = $ff->fetch(to=>$cwd);
-        &redirect("index.cgi?path=$path");
+        if($uri->scheme eq 'http' || $uri->scheme eq 'https') {
+            &ui_print_header(undef, "$text{'http_downloading'} $file", "");
+            &http_download($uri->host, $uri->port, $uri->path, "$cwd/$file", undef, \&progress_callback, $ssl_mode, $in{'username'}, $in{'password'});
+            &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+        } elsif($uri->scheme eq 'ftp') {
+            &ui_print_header(undef, "$text{'http_downloading'} $file", "");
+            &ftp_download($uri->host, $uri->path, "$cwd/$file", undef, \&progress_callback, $in{'username'}, $in{'password'});
+            &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+        }
     }
+}
+
+if (scalar(@errors) > 0) {
+    print_errors(@errors);
 }

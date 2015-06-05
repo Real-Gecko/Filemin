@@ -16,6 +16,7 @@ $( document ).ready(function() {
     $('tr').removeAttr('onmouseover');
     $('tr').removeAttr('onmouseout');
     $('input').removeAttr('onclick');
+    $('#select-unselect').change(function() { selectUnselect($(this)); });
 });
 
 window.onload = function() {
@@ -297,9 +298,10 @@ function downFromUrl() {
 }
 
 function selectUnselect(cb) {
-    var rows = document.getElementsByClassName('ui_checked_columns');
+    var rows = $('.ui_checked_columns');
+    console.log(cb);
     for (i = 0; i < rows.length; i++) {
-        switch(cb.checked) {
+        switch(cb.is(":checked")) {
             case true:
                 selectRow(rows[i]);
                 break;

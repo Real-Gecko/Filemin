@@ -114,3 +114,7 @@ table.dataTable thead .sorting_desc::after {
 textarea {
     font-family: consolas, monospace !important;
 }
+
+label + select, label + input[type="text"] {
+    max-width: 100%;
+}

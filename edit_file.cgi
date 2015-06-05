@@ -15,7 +15,7 @@ print $head;
 
 print $path.'/'.$in{'file'};
 
-print &ui_form_start("save_file.cgi", "form-data");
+print &ui_form_start("save_file.cgi", "post");
 print &ui_hidden("file", $in{'file'}),"\n";
 print &ui_textarea("data", $data, 20, 80, undef, undef, "style='width: 100%'");
 print &ui_hidden("path", $path);
