@@ -5,7 +5,6 @@ use lib './lib';
 use Regexp::Common qw /URI/;
 use URI;
 
-&switch_to_remote_user();
 &ReadParse();
 get_paths();
 

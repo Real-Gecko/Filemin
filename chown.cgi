@@ -1,7 +1,6 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
-&switch_to_remote_user();
 
 &ReadParse();
 

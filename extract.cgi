@@ -4,7 +4,6 @@ require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
 
-&switch_to_remote_user();
 &ReadParse();
 
 get_paths();

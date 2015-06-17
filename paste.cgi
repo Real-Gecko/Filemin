@@ -2,8 +2,6 @@
 
 require './filemin-lib.pl';
 use Cwd 'abs_path';
-&switch_to_remote_user();
-
 &ReadParse();
 
 get_paths();

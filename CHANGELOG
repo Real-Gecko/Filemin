@@ -1,12 +1,26 @@
 -- Version 0.9.2 --
  - Switched to Webmin functions for HTTP/FTP Download, so download progress is shown now. Got rid of File::Fetch dependecy in module code.
- - HTTP/FTP Downloads now prompts for username and password on remote server, if any required user can provide it.
+ - HTTP/FTP Download now prompts for username and password on remote server, if any required user can provide it.
  - Removed "openlayers" folder. How did it get in here???? :D
- - Completely rewrote upload.cgi. Now upload progress is shown with Webmin`s upload tracker. Memory usage is low due to direct HD write, even with REALLY big uploads(tested with 3 files totalling 1.61 GB). BEWARE: if user reaches his/her disk quota then Webmin simply resets connection with no errors, can do nothing with it right now.
+ - Completely rewrote upload.cgi. Now upload progress is shown with Webmin`s upload tracker.
+   Memory usage is low due to direct HD write, even with REALLY big uploads(tested with 3 files totalling 1.61 GB).
+   BEWARE: if user reaches his/her disk quota then Webmin simply resets connection with no errors, can do nothing with it right now.
  - Fixed "select-unselect" checkbox behavior for old themes.
+ - Updated russian translation.
+ - THE LONG WAITED! THE MOST WANTED! THE ONE AND ONLY - ACL!!!
+   Default ACL behavior sets only one ACL entry '$HOME' for each user. This locks user in $HOME directory.
+   To grant full FS access to user replace '$HOME' with '$ROOT' in user`s ACL.
+   If there`s only one entry in ACL then it counts as "home" or "chroot", otherwise user will see accessible dirs relative to "/", just like it is in old FM.
+   Avoid trailing slash in ACL entries: "/usr/share/webmin" - gooooood, "/home/test/" - baaaaad.
+   Root bypasses ACL completely.
+ - Folders go first.
+   Rewrote directory listing procedure, now folders appear before files in list as in any other adequate file manager.
+   As a result first and second entry in '/' are now visible :)
+   Note that sorting table with javascript under Authentic or Framed themes will mix everything again until page reload ;-)
+ - Major code cleanup of rendering procedure.
+
   #11 fixed:
  - CRLF is replaced with UNIX style LF while saving a file.
- - Updated russian translation.
 
 -- Version 0.9.1 --
 #8 fixed:

@@ -7,8 +7,6 @@ use CGI ':standard';
 use File::Basename;
 use Cwd 'abs_path';
 
-&switch_to_remote_user();
-
 &ReadParse();
 
 get_paths();
