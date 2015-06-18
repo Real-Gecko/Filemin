@@ -1,6 +1,4 @@
 #!/bin/sh
-OLD="bin\/perl"
-NEW="local\/bin\/perl"
 FILES="*.cgi"
 TGDIR="./distrib/filemin"
 DISTR="./distrib"
@@ -22,13 +20,14 @@ cp README.md $TGDIR
 for f in $FILES
 do
   if [ -f $f -a -r $f ]; then
-   sed "s/$OLD/$NEW/g" "$f" > "$TGDIR/$f"
+   cp $f "$TGDIR/$f"
   else
    echo "Error: Cannot read $f"
   fi
 done
 
 cd distrib
-tar -zcf filemin-0.9.2.freebsd.wbm.gz filemin
+tar -zcf filemin-0.9.2.linux.wbm.gz filemin
 cd ../
+perl makemoduledeb.pl --target-dir distrib distrib/filemin
 rm -rf $TGDIR

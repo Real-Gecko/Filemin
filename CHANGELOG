@@ -13,12 +13,19 @@
    If there`s only one entry in ACL then it counts as "home" or "chroot", otherwise user will see accessible dirs relative to "/", just like it is in old FM.
    Avoid trailing slash in ACL entries: "/usr/share/webmin" - gooooood, "/home/test/" - baaaaad.
    Root bypasses ACL completely.
+   Note that even though user can be granted full FS access, he still works with his own privileges.
+   So anything that requires "root" permissions or "sudo" won't work.
  - Folders go first.
    Rewrote directory listing procedure, now folders appear before files in list as in any other adequate file manager.
    As a result first and second entry in '/' are now visible :)
    Note that sorting table with javascript under Authentic or Framed themes will mix everything again until page reload ;-)
  - Major code cleanup of rendering procedure.
  - Fixed copy/cut/paste functionality.
+ - FreeBSD support added.
+   Module uses Regexp::Common and URI packages to validate URIs in HTTP/FTP download functionality.
+   Be sure to install theese to make functionality work.
+   Admin user created during Webmin installation is not UNIX user, so module won't work for him.
+   If you want to provide some "system" file operations then convert "root" to Webmin user.
 
   #11 fixed:
  - CRLF is replaced with UNIX style LF while saving a file.

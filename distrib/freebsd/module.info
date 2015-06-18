@@ -1,6 +1,0 @@
-desc=Filemin
-os_support=*-linux freebsd
-name=Filemin
-longdesc=Fast and light file manager written in perl
-desc_ru.UTF-8=
-version=0.9.2
