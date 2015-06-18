@@ -6,7 +6,7 @@ require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
 use POSIX;
-use File::Basename;
+#use File::Basename;
 
 &ReadParse();
 
@@ -23,7 +23,7 @@ unless (opendir ( DIR, $cwd )) {
 ##########################################
 #---------LET DA BRAINF###ING BEGIN----------
     # Push file names with full paths to array, filtering out "." and ".."
-    @list = map { abs_path("$cwd/$_") } grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
+    @list = map { &simplify_path("$cwd/$_") } grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
     closedir(DIR);
 
     # Filter out not allowed entries

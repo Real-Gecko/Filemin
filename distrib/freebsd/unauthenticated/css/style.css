@@ -1,0 +1,120 @@
+body
+{
+  font-size: 12px;
+}
+#list_form {
+  clear: both;
+}
+#listing {
+  //border: solid 1px;
+  border-collapse: collapse;
+  width: 100%;
+}
+#listing td {
+  padding: 1px;
+}
+#listing tr.header {
+  font-weight: bold;
+  background: #ddd;
+}
+#list_form tr:hover {
+  background: #bbb;
+}
+#list_form tr.checked {
+  background: #bfb;
+}
+#list_form tr.checked.even {
+  background: #cfc;
+}
+#list_form tr.checked:hover {
+  background: #bdb;
+}
+a {
+  color: #000;
+}
+a.active {
+    font-weight: bold;
+}
+input.hidden {
+  visibility: hidden;
+  margin: 0;
+}
+tr.even {
+  background: #eee;
+}
+td.right {
+  text-align: right;
+}
+#quicks {
+    float: right;
+}
+#quicks a {
+    display: inline-block;
+}
+#quicks a:hover {
+    background: #ccc;
+}
+
+.ui_columns {
+    clear: both;
+    width: 100%;
+}
+
+#info {
+    float: right;
+    color: #d22;
+    margin-right: 10px;
+}
+
+.dataTables_filter input {
+    margin-top: 10px !important;
+}
+
+table.dataTable thead .sorting::after,
+table.dataTable thead .sorting_asc::after,
+table.dataTable thead .sorting_desc::after {
+    content: "" !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+    border: none;
+    min-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button:active,
+.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: none;
+    box-shadow: none;
+    border: none;
+}
+
+.breadcrumb {
+    border: solid 1px #ddd;
+    background: #fbfbfb;
+}
+.breadcrumb i {
+    font-size: 16px;
+}
+
+.hdd-icon {
+    position: relative;
+    top: 6px;
+}
+
+#chownForm input {
+    width: 200px;
+}
+
+.modal {
+    display:none;
+}
+
+textarea {
+    font-family: consolas, monospace !important;
+}
+
+label + select, label + input[type="text"] {
+    max-width: 100%;
+}

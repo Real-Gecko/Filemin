@@ -12,7 +12,7 @@ if($in{'recursive'} eq 'true') { $recursive = '-R'; } else { $recursive = ''; }
 
 foreach $name (split(/\0/, $in{'name'})) {
     my $perms = $in{'perms'};
-    if(system("chmod $perms $cwd/$name $recursive") != 0) {
+    if(system("chmod $recursive $perms $cwd/$name") != 0) {
         push @errors, "$name - $text{'error_chmod'}: $?";
     }
 }
