@@ -1,5 +1,5 @@
 index=Index
-error_opendir=Error openind directory
+error_opendir=Error opening directory
 select_all=Select All
 invert_selection=Invert Selection
 copy_selected=Copy Selected
