@@ -2,13 +2,18 @@
 
 BEGIN { push(@INC, ".."); };
 use WebminCore;
+&init_config();
 use Encode qw(decode encode);
 
 sub get_paths {
-    &init_config();
     %access = &get_module_acl();
 
-    &switch_to_remote_user();
+    if (!$access{'work_as_root'}) {
+        &switch_to_remote_user();
+    }
+    else {
+        @remote_user_info = getpwnam($remote_user);
+    }
     # Not sure if it is really necessary, could not reproduce "User with no $HOME" scenario.
     if(!defined $remote_user_info[7]) {
         &error('You`re not supposed to be here!');
@@ -67,10 +72,11 @@ sub print_errors {
 
 sub print_interface {
     # Some vars for "upload" functionality
-      local $upid = time().$$;
+    local $upid = time().$$;
     local @remote_user_info = getpwnam($remote_user);
     local $uid = @remote_user_info[2];
 
+    # Set things up according to currently used theme
     if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
         # Interface for Bootstrap 3 powered themes
         # Set icons variables
@@ -153,6 +159,7 @@ sub print_interface {
         print_template("unauthenticated/templates/legacy_dialogs.html");
     }
 
+    # Render current directory entries
     print &ui_form_start("", "post", undef, "id='list_form'");
     print &ui_columns_start(
         [
@@ -193,7 +200,7 @@ sub print_interface {
 
         $actions = "<a href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
 
-        if ($list[$count - 1][14] eq 'inode/directory') {
+        if ($list[$count - 1][15] == 1) {
             $href="?path=".$path.'/'.$link;
         } else {
             $href="download.cgi?file=$link&path=$path";
@@ -204,7 +211,8 @@ sub print_interface {
                 $type eq "application-xml" or
                 $type eq "application-javascript" or
                 $type eq "application-x-shellscript" or
-                $type eq "application-x-perl"
+                $type eq "application-x-perl" or
+                $type eq "application-x-yaml"
             ) {
                 $actions = "$actions<a href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
             }

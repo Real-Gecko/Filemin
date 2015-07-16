@@ -3,7 +3,6 @@
 require './filemin-lib.pl';
 use lib './lib';
 
-use CGI ':standard';
 use File::Basename;
 use Cwd 'abs_path';
 
@@ -19,7 +18,7 @@ print "Content-Disposition: attachment; filename=\"$name$ext\"\n";
 print "Content-Length: $size\n\n";
 open (FILE, "< $file") or die "can't open $file: $!";
 binmode FILE;
-local $/ = \10240;
+local $/ = \102400;
 while (<FILE>) {
     print $_;
 }

@@ -1,3 +1,18 @@
+-- Versioin 0.9.3 --
+ - Removed unused CGI dependency.
+ - "Increased" download speed by increasing buffer length in download.cgi.
+ - Some syntax errors fixed in english translation, thanks to https://github.com/Zen4All
+ - Specially for Fireserver developers http://www.fireserver.com.br/index_en.html
+   Added "Work as root" option to ACL, if enabled for any particular user he/she will work as 'root',
+   but directory access will still be limited to those listed in ACL.
+   BEWARE!!! DO NOT ENABLE THIS OPTION FOR ANYONE UNLESS YOU'RE REALLY SURE WHAT ARE YOU DOING!!!
+
+  #17 fixed:
+ - YAML files are now editable.
+
+  #20 fixed:
+ - Using Perl's `-d` to determine if entry is file or folder.
+
 -- Version 0.9.2 --
  - Switched to Webmin functions for HTTP/FTP Download, so download progress is shown now. Got rid of File::Fetch dependecy in module code.
  - HTTP/FTP Download now prompts for username and password on remote server, if any required user can provide it.

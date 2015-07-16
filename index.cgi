@@ -37,17 +37,19 @@ unless (opendir ( DIR, $cwd )) {
         @list = keys %hash;
     }
     # Get info about directory entries
-    @info = map { [ $_, stat($_), mimetype($_) ] } @list;
+    @info = map { [ $_, stat($_), mimetype($_), -d $_ ] } @list;
 
-    #filter out folders
-    @folders = map {$_} grep {$_->[14] eq 'inode/directory' } @info;
+    # Filter out folders
+    @folders = map {$_} grep {$_->[15] == 1 } @info;
 
-    #filter out files
-    @files = map {$_} grep {$_->[14] ne 'inode/directory' } @info;
+    # Filter out files
+    @files = map {$_} grep {$_->[15] != 1 } @info;
 
-    #sort stuff by name
+    # Sort stuff by name
     @folders = sort { $a->[0] cmp $b->[0] } @folders;
     @files = sort { $a->[0] cmp $b->[0] } @files;
+    
+    # Recreate list
     undef(@list);
     push @list, @folders, @files;
 

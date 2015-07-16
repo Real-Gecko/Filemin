@@ -101,3 +101,4 @@ refresh=Refresh
 http_downloading=Downloading
 uploading=Uploading, please wait...
 acl_allowed_paths=Allowed paths
+acl_work_as_root=Allow user to work as 'root'. DANGEROUS!!! GRANT WITH CARE!!!

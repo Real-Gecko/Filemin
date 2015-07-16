@@ -29,6 +29,6 @@ do
 done
 
 cd distrib
-tar -zcf filemin-0.9.2.freebsd.wbm.gz filemin
+tar -zcf filemin-0.9.3.freebsd.wbm.gz filemin
 cd ../
 rm -rf $TGDIR
