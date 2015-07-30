@@ -17,8 +17,9 @@ body
   font-weight: bold;
   background: #ddd;
 }
+#list_form tr.checked:hover,
 #list_form tr:hover {
-  background: #bbb;
+    background: #d3e4f4 !important;
 }
 #list_form tr.checked {
   background: #bfb;
