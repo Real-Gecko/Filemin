@@ -17,6 +17,18 @@ $( document ).ready(function() {
     $('tr').removeAttr('onmouseout');
     $('input').removeAttr('onclick');
     $('#select-unselect').change(function() { selectUnselect($(this)); });
+
+    // BUTTONS
+    $('.fg-button').hover(
+      function(){ $(this).removeClass('ui-state-default').addClass('ui-state-focus'); },
+      function(){ $(this).removeClass('ui-state-focus').addClass('ui-state-default'); }
+    );
+
+    // MENUS
+    $('#flat').menu({ 
+    content: $('#flat').next().html(), // grab content from this page
+    showSpeed: 100
+    });
 });
 
 window.onload = function() {
@@ -80,7 +92,8 @@ function compressDialog() {
 function compressSelected() {
     var filename = $('#compressSelectedForm input[name=filename]').val();
     if (filename != null && filename != "") {
-        $('#list_form').attr('action', "compress.cgi?arch=" + filename);
+        var method = $('#compressSelectedForm select[name=method] option:selected').val();
+        $('#list_form').attr('action', "compress.cgi?arch=" + filename + "&method=" + method);
         $('#list_form').submit();
     }
 }
@@ -112,6 +125,7 @@ function chmodDialog() {
     if(checkSelected()) {
       $( "#chmodDialog" ).dialog({
           modal: true,
+          minWidth: 550,
           buttons: {
               "Change": function() {
                   chmodSelected();
@@ -126,9 +140,9 @@ function chmodDialog() {
 
 function chmodSelected() {
     var perms = $('#perms').val();
-    var recursive = $('#chmod-recursive').prop('checked');
     if (perms != null && perms != "") {
-        $('#list_form').attr('action', "chmod.cgi?perms=" + perms + "&recursive=" + recursive);
+        var applyto = $('#chmodForm select[name=applyto] option:selected').val();
+        $('#list_form').attr('action', "chmod.cgi?perms=" + perms + "&applyto=" + applyto);
         $('#list_form').submit();
     }
 }
@@ -299,7 +313,6 @@ function downFromUrl() {
 
 function selectUnselect(cb) {
     var rows = $('.ui_checked_columns');
-    console.log(cb);
     for (i = 0; i < rows.length; i++) {
         switch(cb.is(":checked")) {
             case true:
@@ -352,6 +365,26 @@ function checkSelected() {
         }
     });
     return false;
+}
+
+function searchDialog() {
+    $( "#searchDialog" ).dialog({
+        modal: true,
+        buttons: {
+            "Search": function() {
+                search();
+            },
+            "Cancel": function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+}
+
+function search() {
+    var query = $('#searchForm input[name=query]').val();
+    if (query != null && query != "")
+        $("#searchForm").submit();
 }
 
 /*

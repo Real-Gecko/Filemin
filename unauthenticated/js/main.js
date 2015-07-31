@@ -1,10 +1,11 @@
-$( document ).ready(function() {
-    $.fn.dataTableExt.sErrMode = 'throw';
+/*$( document ).ready(function() {
+/*    $.fn.dataTableExt.sErrMode = 'throw';
     $('#list_form > table').dataTable({
         "order": [],
         "aaSorting": [],
         "bDestroy": true,
-        "bPaginate": true,
+        "bPaginate": false,
+        "sScrollY": "600px",
         "bInfo": false,
         "destroy": true,
         "oLanguage": {
@@ -17,7 +18,7 @@ $( document ).ready(function() {
         $(this).prev('input').popover('hide');
     });
 });
-
+*/
 function countUploads(files) {
     if(files.files.length = 0) return;
     var info = '';
@@ -63,7 +64,8 @@ function compressDialog() {
 function compressSelected() {
     var filename = $('#compressSelectedForm input[name=filename]').val();
     if (filename != null && filename != "") {
-        $('#list_form').attr('action', "compress.cgi?arch=" + filename);
+        var method = $('#compressSelectedForm select[name=method] option:selected').val();
+        $('#list_form').attr('action', "compress.cgi?arch=" + filename + "&method=" + method);
         $('#list_form').submit();
     } else {
         $('#compressSelectedForm input[name=filename]').popover('show');
@@ -105,7 +107,8 @@ function chmodSelected() {
     var perms = $('#perms').val();
     var recursive = $('#recursive').prop('checked');
     if (perms != null && perms != "") {
-        $('#list_form').attr('action', "chmod.cgi?perms=" + perms + "&recursive=" + recursive);
+        var applyto = $('#chmodForm select[name=applyto] option:selected').val();
+        $('#list_form').attr('action', "chmod.cgi?perms=" + perms + "&applyto=" + applyto);
         $('#list_form').submit();
     }
 }
@@ -301,4 +304,22 @@ function checkSelected() {
         return false
     }
     return true;
+}
+
+function searchDialog() {
+    $("#searchDialog").modal({
+        "backdrop"  : "static",
+        "keyboard"  : true,
+        "show"      : true
+    });
+}
+
+function search() {
+    var query = $('#searchForm input[name=query]').val();
+    if (query != null && query != "")
+        $("#searchForm").submit();
+    else {
+        $('#searchForm input[name=query]').popover('show');
+        $('#searchForm input[name=query]').focus();
+    }
 }

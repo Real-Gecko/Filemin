@@ -12,4 +12,8 @@ open(SAVE, ">", $cwd.'/'.$file) or $info = $!;
 print SAVE $data;
 close SAVE;
 
-&redirect("index.cgi?path=$path");
+if ($in{'save_close'}) {
+    &redirect("index.cgi?path=$path");
+} else {
+    &redirect("edit_file.cgi?path=$path&file=$in{'file'}");
+}

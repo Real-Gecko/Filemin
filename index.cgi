@@ -10,15 +10,14 @@ use POSIX;
 
 &ReadParse();
 
-use Data::Dumper;
-
 get_paths();
 
 unless (opendir ( DIR, $cwd )) {
     $path="";
     print_errors("$text{'error_opendir'} $cwd $!");
 } else {
-    &ui_print_header(undef, "Filemin", "");
+#    &ui_print_header(undef, "Filemin", "");
+    &ui_print_header(undef, "Filemin", "", "",0 , 0, 0, "<a href='config.cgi?path=$path'>$text{'module_config'}</a>");
 
 ##########################################
 #---------LET DA BRAINF###ING BEGIN----------
