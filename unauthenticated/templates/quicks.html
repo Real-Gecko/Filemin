@@ -1,4 +1,18 @@
 <div class="btn-group pull-right" role="group">
+<button class="btn btn-inverse" onclick='searchDialog()' title="$text{'search'}" data-toggle="tooltip" data-placement="bottom" data-container="body">
+	<i class="fa fa-search" aria-hidden="true"></i>
+</button>
+<button class="btn btn-inverse" onclick="location.href='bookmark.cgi?path=$path'" title="$text{'bookmark_folder'}" data-toggle="tooltip" data-placement="bottom" data-container="body">
+	<i class="fa fa-bookmark-o" aria-hidden="true"></i>
+</button>
+<div class="btn-group">
+  <button type="button" class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" title="$text{'config_bookmarks'}">
+    <i class="fa fa-book" aria-hidden="true"></i>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+    $bookmarks
+  </ul>
+</div>
 <button class="btn btn-inverse" onclick='window.location.href="index.cgi?path=$path"' title="$text{'refresh'}" data-toggle="tooltip" data-placement="bottom" data-container="body">
 	<i class="fa fa-refresh" aria-hidden="true"></i>
 </button>

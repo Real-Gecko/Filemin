@@ -1,1 +1,2 @@
 allowed_paths=$HOME
+work_as_root=

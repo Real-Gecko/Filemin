@@ -118,3 +118,19 @@ textarea {
 label + select, label + input[type="text"] {
     max-width: 100%;
 }
+
+select, input[type="button"][onclick], button.btn-default.file_chooser_button, button.btn-default.file_chooser_button_emulate, input.form-control.ui_textbox, td > select + input, input + input, input + select, select + input, select + select, input[type="submit"] + select, input[type="submit"] + input[type="submit"], div.table-responsive + input, div.table-responsive > select + input, div.table-responsive > input + select, div.table-responsive > input {
+    margin: 0 !important;
+}
+
+.action-link {
+  padding-right: 3px;
+}
+
+.btn:not(.btn-xs):not(.btn-tiny):not(.ui_link_replaced), .csf button.input, .csf input[type=submit], input[type=button], input[type=reset], input[type=submit], button.btn {
+    padding: 6px 8px;
+}
+
+a:hover {
+ cursor:pointer;
+}
