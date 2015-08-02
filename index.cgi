@@ -5,7 +5,6 @@
 require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
-use POSIX;
 #use File::Basename;
 
 &ReadParse();
