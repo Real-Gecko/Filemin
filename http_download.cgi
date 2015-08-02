@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use Regexp::Common qw /URI/;
 use URI;
 
 &ReadParse();
@@ -15,7 +14,7 @@ if(!$in{'link'}) {
 my $mode;
 my @errors;
 
-if($in{'link'} !~ qr($RE{URI}{HTTP}{-scheme=>qr/https?/}{-keep}) && $in{'link'} !~ qr($RE{URI}{FTP})) {
+if ($in{'link'} !~ /^(http|https|ftp):\/\//) {
     push @errors, $text{'error_invalid_uri'};
 } else {
     my $uri = (URI->new($in{'link'}));
