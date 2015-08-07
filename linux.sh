@@ -13,7 +13,6 @@ cp CHANGELOG $TGDIR
 cp defaultacl $TGDIR
 cp defaultuconf $TGDIR
 cp filemin-lib.pl $TGDIR
-cp install_check.pl $TGDIR
 cp LICENCE $TGDIR
 cp module.info $TGDIR
 cp README.md $TGDIR
@@ -28,7 +27,7 @@ do
 done
 
 cd distrib
-tar -zcf filemin-0.9.4.linux.wbm.gz filemin
+tar -zcf filemin-0.9.5.linux.wbm.gz filemin
 cd ../
 perl makemoduledeb.pl --target-dir distrib distrib/filemin
 rm -rf $TGDIR

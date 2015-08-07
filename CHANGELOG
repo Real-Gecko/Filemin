@@ -1,3 +1,18 @@
+-- Version 0.9.5 --
+ - Made top level menu items translatable.
+ - Added https://github.com/Real-Gecko/filemin/pull/29
+   Selected rows also highlight on hover + color tweaks, by https://github.com/qooob
+ - Some code cleanup, got rid of Regexp::Common and URI dependencies.
+   Thanks to Jamie Cameron.
+ - Added error message if file saving fails.
+ - Removed not working "Help" link for now.
+
+  #35 fixed:
+ - Permissions column configurable and displayable.
+
+  #36 fixed:
+ - README instructions for Debian/Ubuntu fixed.
+
 -- Version 0.9.4 --
  - Implemented "Search".
    Users may search files and folders by name, wildcards supported.

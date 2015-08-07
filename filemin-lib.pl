@@ -189,7 +189,7 @@ sub print_interface {
     push @ui_columns, $text{'actions'};
     push @ui_columns, $text{'size'} if($userconfig{'columns'} =~ /size/);
     push @ui_columns, $text{'owner_user'} if($userconfig{'columns'} =~ /owner_user/);
-    push @ui_columns, $text{'permissons'} if($userconfig{'columns'} =~ /permissons/);
+    push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
     push @ui_columns, $text{'last_mod_time'} if($userconfig{'columns'} =~ /last_mod_time/);
 
     print &ui_columns_start(\@ui_columns);
@@ -254,7 +254,7 @@ sub print_interface {
         push @row_data, $actions;
         push @row_data, $size if($userconfig{'columns'} =~ /size/);
         push @row_data, $user.':'.$group if($userconfig{'columns'} =~ /owner_user/);
-        push @row_data, $permissions if($userconfig{'columns'} =~ /permissons/);
+        push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
         push @row_data, $mod_time if($userconfig{'columns'} =~ /last_mod_time/);
 
         print &ui_checked_columns_row(\@row_data, "", "name", $link);
