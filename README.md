@@ -12,7 +12,7 @@ Packages for installation through Webmin interface `filemin-x.x.x.linux.wbm.gz` 
 Note that _dpkg_ way simply updates module without creating concurrent versions like installation from Webmin interface do.
 
 ##Notes for FreeBSD users.
-FreeBSD users are recommended to install _shared-mime-inifo_ package.
+FreeBSD users are recommended to install _shared-mime-info_ package.
 
 `pkg install shared-mime-info`
 

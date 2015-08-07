@@ -5,6 +5,7 @@ use WebminCore;
 &init_config();
 use Encode qw(decode encode);
 use File::Basename;
+use POSIX;
 
 sub get_paths {
     %access = &get_module_acl();
