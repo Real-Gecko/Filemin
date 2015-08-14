@@ -178,7 +178,7 @@ sub print_interface {
         print_template("unauthenticated/templates/legacy_quicks.html");
         print_template("unauthenticated/templates/legacy_dialogs.html");
     }
-    
+
     # Render current directory entries
     print &ui_form_start("", "post", undef, "id='list_form'");
     @ui_columns = (
@@ -249,7 +249,7 @@ sub print_interface {
         }
         @row_data = (
             "<a href='$href'><img src=\"$img\"></a>",
-            "<a href=\"$href\">$link</a>"
+            "<a href=\"$href\" data-filemin-path=\"$href\">$link</a>"
         );
         push @row_data, $type if($userconfig{'columns'} =~ /type/);
         push @row_data, $actions;
@@ -266,12 +266,22 @@ sub print_interface {
 }
 
 sub init_datatables {
+    my ($a, $b, $c);
+    $a = '0, 1, 3';
+    $b = '4';
+    $c = '';
+    if ($userconfig{'columns'} =~ /type/) {
+        $a = '0, 1, 4';
+        $b = '5';
+    }
+    if ($userconfig{'columns'} =~ /size/) {
+        $c = '{ "type": "file-size", "targets": [' . $b . '] },';
+    }
+
     if($userconfig{'disable_pagination'}) {
         $bPaginate = 'false';
-#        $sScrollY = '"sScrollY": "600px",';
     } else {
         $bPaginate = 'true';
-#        $sScrollY = '';
     }
 print "<script>";
 print "\$( document ).ready(function() {";
@@ -281,13 +291,35 @@ print "\"order\": [],";
 print "\"aaSorting\": [],";
 print "\"bDestroy\": true,";
 print "\"bPaginate\": $bPaginate,";
-#print "$sScrollY";
+print " \"fnDrawCallback\": function(oSettings) {
+        if (oSettings.fnRecordsTotal() <= oSettings._iDisplayLength) {
+            \$('.dataTables_paginate').hide();
+        } else {
+            \$('.dataTables_paginate').show();
+        }
+    },";
+print " \"initComplete\": function() {
+        \$('div.dataTables_filter input').val('').trigger('keyup');
+        \$('div.dataTables_filter input').focus();
+        \$(document).on('keydown', function (event) {
+            var keycode = event.keyCode ? event.keyCode : event.which;
+            if (!\$('input').is(':focus') && !\$('select').is(':focus') && !\$('textarea').is(':focus')) {
+                if (keycode === 39) {
+                    \$('.paginate_button.next').trigger('click');
+                }
+                if (keycode === 37) {
+                    \$('.paginate_button.previous').trigger('click');
+                }
+            }
+        });
+    },";
 print "\"bInfo\": false,";
 print "\"destroy\": true,";
 print "\"oLanguage\": {";
 print "\"sSearch\": \" \"";
 print "},";
-print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [0, 1, 4] }, ],";
+print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [$a] }, $c ],";
+print "\"bStateSave\": true,";
 print "\"iDisplayLength\": 50,";
 print "});";
 print "\$(\"form\").on('click', 'div.popover', function() {";
