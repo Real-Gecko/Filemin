@@ -2,8 +2,12 @@ require 'filemin-lib.pl';
 
 sub acl_security_form {
     my ($access) = @_;
-    print &ui_table_row($text{'acl_allowed_paths'}, ui_textarea("allowed_paths", join("\n", split(/\s+/, $access->{'allowed_paths'})), 10, 80, undef, undef, "style='width: 100%'"), 2);
-    print &ui_table_row($text{'acl_work_as_root'}, ui_checkbox("work_as_root", 1, "", $access->{'work_as_root'}));
+    print &ui_table_row($text{'acl_allowed_paths'},
+	ui_textarea("allowed_paths",
+		    join("\n", split(/\s+/, $access->{'allowed_paths'})),
+		    10, 80, undef, undef, "style='width: 100%'"), 2);
+    print &ui_table_row($text{'acl_work_as_root'},
+	ui_checkbox("work_as_root", 1, "", $access->{'work_as_root'}));
 }
 
 sub acl_security_save {
