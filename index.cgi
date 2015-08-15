@@ -27,11 +27,14 @@ unless (opendir ( DIR, $cwd )) {
     # Filter out not allowed entries
     if($remote_user_info[0] ne 'root' && $allowed_paths[0] ne '$ROOT') {
         # Leave only allowed
-        for $path(@allowed_paths) {
-            push @tmp_list, grep {"$path/" =~ /^$_\// || $_ =~ /$path\//} @list;
+        for $path (@allowed_paths) {
+	    my $slashed = $path;
+	    $slashed .= "/" if ($slashed !~ /\/$/);
+            push @tmp_list, grep { $slashed =~ /^$_\// ||
+				   $_ =~ /$slashed/ } @list;
         }
         # Remove duplicates
-        my %hash   = map { $_, 1 } @tmp_list;
+        my %hash = map { $_, 1 } @tmp_list;
         @list = keys %hash;
     }
     # Get info about directory entries

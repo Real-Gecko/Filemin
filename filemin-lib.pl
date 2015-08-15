@@ -10,17 +10,24 @@ use POSIX;
 sub get_paths {
     %access = &get_module_acl();
 
-    if (!$access{'work_as_root'}) {
-        &switch_to_remote_user();
+    # Switch to the correct user
+    if ($access{'work_as_root'}) {
+	# Root user, so no switching
+        @remote_user_info = getpwnam('root');
+    }
+    elsif ($access{'work_as_user'}) {
+	# A specific user
+	@remote_user_info = getpwnam($access{'work_as_user'});
+	@remote_user_info ||
+		&error("Unix user $access{'work_as_user'} does not exist!");
+	&switch_to_unix_user(\@remote_user_info);
     }
     else {
-        @remote_user_info = getpwnam($remote_user);
-    }
-    # Not sure if it is really necessary, could not reproduce "User with no $HOME" scenario.
-    if(!defined $remote_user_info[7]) {
-        &error('You`re not supposed to be here!');
+	# The Webmin user we are connected as
+        &switch_to_remote_user();
     }
 
+    # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
         $base = "/";
@@ -47,6 +54,7 @@ sub get_paths {
     {
         $cwd = $base;
     }
+
     # Initiate per user config
     $confdir = "$remote_user_info[7]/.filemin";
     if(!-e "$confdir/.config") {
