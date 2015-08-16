@@ -11,17 +11,19 @@ if(!$in{'arch'}) {
 my $command;
 
 if($in{'method'} eq 'tar') {
-    $command = "tar czf $cwd/$in{'arch'}.tar.gz -C $cwd";
+    $command = "tar czf ".quotemeta("$cwd/$in{'arch'}.tar.gz").
+	       " -C ".quotemeta($cwd);
 } elsif($in{'method'} eq 'zip') {
-    $command = "cd $cwd && zip -r $cwd/$in{'arch'}.zip";
+    $command = "cd ".quotemeta($cwd)." && zip -r ".
+	       quotemeta("$cwd/$in{'arch'}.zip");
 }
 
 foreach my $name(split(/\0/, $in{'name'}))
 {
     $name =~ s/$in{'cwd'}\///ig;
-    $command = "$command \"$name\"";
+    $command .= " ".quotemeta($name);
 }
 
-system($command);
+system_logged($command);
 
 &redirect("index.cgi?path=$path");
