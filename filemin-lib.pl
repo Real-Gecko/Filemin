@@ -30,26 +30,33 @@ sub get_paths {
     # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
+	# Assume any directory can be accessed
         $base = "/";
+	@allowed_paths = ( $base );
     } else {
-        @allowed_paths = map {$_ eq '$HOME' ? @remote_user_info[7] : $_} @allowed_paths;
+        @allowed_paths = map { $_ eq '$HOME' ? @remote_user_info[7] : $_ }
+			     @allowed_paths;
         if (scalar(@allowed_paths == 1)) {
             $base = $allowed_paths[0];
         } else {
             $base = '/';
         }
-        for $allowed_path (@allowed_paths) {
-            if ($allowed_path =~ /^$cwd/ || $cwd =~ /^$allowed_path/) {
-                $error = 0;
-            }
-        }
-        if ($error) {
-            &error('You`re not supposed to be here!');
-        }
     }
     $path = $in{'path'} ? $in{'path'} : '';
     $cwd = &simplify_path($base.$path);
+
+    # Check that current directory is one of those that is allowed
     my $error = 1;
+    for $allowed_path (@allowed_paths) {
+	if (&is_under_directory($allowed_path, $cwd) ||
+	    $allowed_path =~ /^$cwd/) {
+            $error = 0;
+        }
+    }
+    if ($error) {
+        &error(&text('notallowed', $cwd, join(" , ", @allowed_paths)));
+    }
+
     if (index($cwd, $base) == -1)
     {
         $cwd = $base;

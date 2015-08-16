@@ -135,3 +135,4 @@ menu_file=File
 menu_edit=Edit
 menu_tools=Tools
 menu_bookmarks=Bookmarks
+notallowed=You are not allowed to access $1. The allowed directories are : $2
