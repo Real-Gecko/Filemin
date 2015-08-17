@@ -54,7 +54,8 @@ sub get_paths {
         }
     }
     if ($error) {
-        &error(&text('notallowed', $cwd, join(" , ", @allowed_paths)));
+        &error(&text('notallowed', &html_escape($cwd),
+				   &html_escape(join(" , ", @allowed_paths))));
     }
 
     if (index($cwd, $base) == -1)
@@ -91,7 +92,7 @@ sub print_errors {
         print("<li>$error</li>");
     }
     print "<ul>";
-    &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+    &ui_print_footer("index.cgi?path=".&urlize($path), $text{'previous_page'});
 }
 
 sub print_interface {
@@ -130,7 +131,8 @@ sub print_interface {
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
             chomp($breadcr[$i]);
             $cp = $cp.'/'.$breadcr[$i];
-            print "<li><a href='index.cgi?path=$cp'>$breadcr[$i]</a></li>";
+            print "<li><a href='index.cgi?path=".&urlize($cp)."'>".
+		  &html_escape($breadcr[$i])."</a></li>";
         }
         print "</ol>";
         # And toolbar
@@ -172,7 +174,8 @@ sub print_interface {
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
             chomp($breadcr[$i]);
             $cp = $cp.'/'.$breadcr[$i];
-            print "<a href='index.cgi?path=$cp'>$breadcr[$i]</a> / ";
+            print "<a href='index.cgi?path=".&urlize($cp)."'>".
+		  &html_escape($breadcr[$i])."</a> / ";
         }
         print "<br />";
         # And pagination
@@ -183,9 +186,15 @@ sub print_interface {
         print "Pages: ";
         for(my $i = 1;$i <= $pages;$i++) {
             if($page eq $i) {
-                print "<a class='active' href='?path=$path&page=$i&query=$query'>$i</a>";
+                print "<a class='active' ".
+		      "href='?path=".&urlize($path).
+		      "&page=".&urlize($i).
+		      "&query=".&urlize($query).
+		      "'>".&html_escape($i)."</a>";
             } else {
-                print "<a href='?path=$path&page=$i&query=$query'>$i</a>";
+                print "<a href='?path=".&urlize($path).
+		      "&page=".&urlize($i)."
+		      "&query=".&urlize($query).'>".&html_escape($i)."</a>";
             }
         }
         print "</div>";
@@ -236,15 +245,17 @@ sub print_interface {
         $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
 
         if ($list[$count - 1][15] == 1) {
-            $href="index.cgi?path=$path/$link";
+            $href = "index.cgi?path=".&urlize("$path/$link");
         } else {
-            $href="download.cgi?file=$link&path=$path";
+            $href = "download.cgi?file=".&urlize($link)."&path=".&urlize($path);
             if($0 =~ /search.cgi/) {
                 ($fname,$fpath,$fsuffix) = fileparse($list[$count - 1][0]);
                 if($base ne '/') {
                     $fpath =~ s/^$base//g;
                 }
-                $actions = "$actions<a class='action-link' href='index.cgi?path=$fpath' title='$text{'goto_folder'}'>$goto_icon</a>";
+                $actions = "$actions<a class='action-link' ".
+			   "href='index.cgi?path=".&urlize($fpath)."' ".
+			   "title='$text{'goto_folder'}'>$goto_icon</a>";
             }
             if (
                 index($type, "text-") != -1 or
@@ -256,10 +267,10 @@ sub print_interface {
                 $type eq "application-x-perl" or
                 $type eq "application-x-yaml"
             ) {
-                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
+                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='action-link' href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
+                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
             }
         }
         @row_data = (
@@ -320,7 +331,8 @@ sub get_bookmarks {
     my $bookmarks = &read_file_lines($confdir.'/.bookmarks', 1);
     $result = '';
     foreach $bookmark(@$bookmarks) {
-        $result.= "<li><a href='index.cgi?path=$bookmark'>$bookmark</a><li>";
+        $result.= "<li><a href='index.cgi?path=".&urlize($bookmark)."'>".
+		  &html_escape($bookmark)."</a><li>";
     }
     return $result;
 }
