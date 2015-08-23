@@ -11,7 +11,11 @@ sub get_paths {
     %access = &get_module_acl();
 
     # Switch to the correct user
-    if ($access{'work_as_root'}) {
+    if (&get_product_name() eq 'usermin') {
+	# In Usermin, the module only ever runs as the connected user
+        &switch_to_remote_user();
+    }
+    elsif ($access{'work_as_root'}) {
 	# Root user, so no switching
         @remote_user_info = getpwnam('root');
     }
