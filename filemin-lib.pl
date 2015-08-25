@@ -197,7 +197,7 @@ sub print_interface {
 		      "'>".&html_escape($i)."</a>";
             } else {
                 print "<a href='?path=".&urlize($path).
-		      "&page=".&urlize($i)."
+		      "&page=".&urlize($i).
 		      "&query=".&urlize($query).'>".&html_escape($i)."</a>";
             }
         }
