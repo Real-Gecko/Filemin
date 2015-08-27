@@ -18,7 +18,7 @@ chomp($dir);
 $from = abs_path($base.$dir);
 if ($cwd eq $from) {
     print_errors($text{'error_pasting_nonsence'});
-} else {    
+} else {
     my @errors;
     for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
         chomp($arr[$i]);
@@ -26,14 +26,14 @@ if ($cwd eq $from) {
             if (-e "$cwd/$arr[$i]") {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
-                &copy_source_dest("$from/$arr[$i]", $cwd) or push @errors, "$cwd/$arr[$i] $text{'error_copy'} $!";
+                system("cp -r $from/$arr[$i] $cwd") == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
             }
         }
         elsif ($act eq "cut") {
             if (-e "$cwd/$arr[$i]") {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
-                &rename_file("$from/$arr[$i]", $cwd) or push @errors, "$cwd/$arr[$i] $text{'error_cut'} $!";
+                system("mv $from/$arr[$i] $cwd") == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
             }
         }
     }

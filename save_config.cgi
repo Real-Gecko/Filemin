@@ -5,8 +5,6 @@ require './filemin-lib.pl';
 
 get_paths();
 
-#&ui_print_header(undef, $text{'module_config'}, "");
-#@columns = split(/\0/, $in{'columns'});
 $columns = $in{'columns'};
 $columns =~ s/\0/,/g;
 &error("$text{'config_per_page'} $text{'error_numeric'}") unless($in{'per_page'} eq int($in{'per_page'}));
@@ -26,5 +24,4 @@ open(BOOK, ">", "$confdir/.bookmarks") or $info = $!;
 print BOOK $bookmarks;
 close BOOK;
 
-#&redirect("config.cgi?path=$path");
 &redirect("index.cgi?path=$path");

@@ -12,34 +12,34 @@ sub get_paths {
 
     # Switch to the correct user
     if (&get_product_name() eq 'usermin') {
-	# In Usermin, the module only ever runs as the connected user
+        # In Usermin, the module only ever runs as the connected user
         &switch_to_remote_user();
     }
     elsif ($access{'work_as_root'}) {
-	# Root user, so no switching
+        # Root user, so no switching
         @remote_user_info = getpwnam('root');
     }
     elsif ($access{'work_as_user'}) {
-	# A specific user
-	@remote_user_info = getpwnam($access{'work_as_user'});
-	@remote_user_info ||
-		&error("Unix user $access{'work_as_user'} does not exist!");
-	&switch_to_unix_user(\@remote_user_info);
+        # A specific user
+        @remote_user_info = getpwnam($access{'work_as_user'});
+        @remote_user_info ||
+            &error("Unix user $access{'work_as_user'} does not exist!");
+        &switch_to_unix_user(\@remote_user_info);
     }
     else {
-	# The Webmin user we are connected as
+        # The Webmin user we are connected as
         &switch_to_remote_user();
     }
 
     # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
-	# Assume any directory can be accessed
+        # Assume any directory can be accessed
         $base = "/";
-	@allowed_paths = ( $base );
+        @allowed_paths = ( $base );
     } else {
         @allowed_paths = map { $_ eq '$HOME' ? @remote_user_info[7] : $_ }
-			     @allowed_paths;
+                             @allowed_paths;
         if (scalar(@allowed_paths == 1)) {
             $base = $allowed_paths[0];
         } else {
@@ -52,14 +52,14 @@ sub get_paths {
     # Check that current directory is one of those that is allowed
     my $error = 1;
     for $allowed_path (@allowed_paths) {
-	if (&is_under_directory($allowed_path, $cwd) ||
-	    $allowed_path =~ /^$cwd/) {
+        if (&is_under_directory($allowed_path, $cwd) ||
+            $allowed_path =~ /^$cwd/) {
             $error = 0;
         }
     }
     if ($error) {
         &error(&text('notallowed', &html_escape($cwd),
-				   &html_escape(join(" , ", @allowed_paths))));
+                                   &html_escape(join(" , ", @allowed_paths))));
     }
 
     if (index($cwd, $base) == -1)
@@ -191,14 +191,14 @@ sub print_interface {
         for(my $i = 1;$i <= $pages;$i++) {
             if($page eq $i) {
                 print "<a class='active' ".
-		      "href='?path=".&urlize($path).
-		      "&page=".&urlize($i).
-		      "&query=".&urlize($query).
-		      "'>".&html_escape($i)."</a>";
+                      "href='?path=".&urlize($path).
+                      "&page=".&urlize($i).
+                      "&query=".&urlize($query).
+                      "'>".&html_escape($i)."</a>";
             } else {
                 print "<a href='?path=".&urlize($path).
-		      "&page=".&urlize($i).
-		      "&query=".&urlize($query).">".&html_escape($i)."</a>";
+                      "&page=".&urlize($i).
+                      "&query=".&urlize($query).">".&html_escape($i)."</a>";
             }
         }
         print "</div>";

@@ -15,7 +15,6 @@ unless (opendir ( DIR, $cwd )) {
     $path="";
     print_errors("$text{'error_opendir'} $cwd $!");
 } else {
-#    &ui_print_header(undef, "Filemin", "");
     &ui_print_header(undef, "Filemin", "", undef, 0 , 0, 0, "<a href='config.cgi?path=$path' data-config-pagination='$userconfig{'per_page'}'>$text{'module_config'}</a>");
 
 ##########################################
@@ -28,10 +27,10 @@ unless (opendir ( DIR, $cwd )) {
     if($remote_user_info[0] ne 'root' && $allowed_paths[0] ne '$ROOT') {
         # Leave only allowed
         for $path (@allowed_paths) {
-	    my $slashed = $path;
-	    $slashed .= "/" if ($slashed !~ /\/$/);
+            my $slashed = $path;
+            $slashed .= "/" if ($slashed !~ /\/$/);
             push @tmp_list, grep { $slashed =~ /^$_\// ||
-				   $_ =~ /$slashed/ } @list;
+                                   $_ =~ /$slashed/ } @list;
         }
         # Remove duplicates
         my %hash = map { $_, 1 } @tmp_list;
@@ -49,7 +48,7 @@ unless (opendir ( DIR, $cwd )) {
     # Sort stuff by name
     @folders = sort { $a->[0] cmp $b->[0] } @folders;
     @files = sort { $a->[0] cmp $b->[0] } @files;
-    
+
     # Recreate list
     undef(@list);
     push @list, @folders, @files;
@@ -60,5 +59,3 @@ unless (opendir ( DIR, $cwd )) {
 
     &ui_print_footer("/", $text{'index'});
 }
-
-
