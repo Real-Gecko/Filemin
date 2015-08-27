@@ -7,12 +7,14 @@
     2. Store user chose on columns sorting upon page refresh
     3. Hide paginations when there is nothing to paginate.
     4. Let user navigate with arrows (left/right) when trying to do pagination
- - Fixing conflict with Authentic Theme codeMirror
-   By Ilia.
  - Code cleanup and security tightening by Jamie Cameron
  - Add ACL options to allowing running as a specific user, thanks Jamie :)
  - WARNING: work as root is now DEFAULT behavior.
    IF YOU GRANTED FILEMIN ACCESS TO ANY USERS NOT SUPPOSED TO WORK AS ROOT - GO AND CHECK ACL!!!
+
+  #42 fixed:
+ - Fixing conflict with Authentic Theme codeMirror
+   By Ilia.
 
   #46 fixed:
  - Module is now installable from Usermin.
