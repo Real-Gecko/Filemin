@@ -190,15 +190,16 @@ sub print_interface {
         print "Pages: ";
         for(my $i = 1;$i <= $pages;$i++) {
             if($page eq $i) {
-                print "<a class='active' ".
+                print "<a class='pages active' ".
                       "href='?path=".&urlize($path).
                       "&page=".&urlize($i).
                       "&query=".&urlize($query).
                       "'>".&html_escape($i)."</a>";
             } else {
-                print "<a href='?path=".&urlize($path).
+                print "<a class='pages' ".
+                      "href='?path=".&urlize($path).
                       "&page=".&urlize($i).
-                      "&query=".&urlize($query).">".&html_escape($i)."</a>";
+                      "&query=".&urlize($query)."'>".&html_escape($i)."</a>";
             }
         }
         print "</div>";
