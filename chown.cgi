@@ -30,7 +30,7 @@ if (scalar(@errors) > 0) {
 } else {
     foreach $name (split(/\0/, $in{'name'})) {
 #        if(!chown $uid, $grid, $cwd.'/'.$name) {
-        if(system("chown $recursive $uid:$grid $cwd/$name") != 0) {
+        if(system_logged("chown $recursive $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chown'}: $?";
         }
     }
