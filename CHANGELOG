@@ -1,3 +1,46 @@
+-- Version 0.9.6 --
+ - Fixed `Undefined subroutine &filemin::ceil
+   Caused on some systems by not including POSIX package in filemin-lib.pl.
+ - Major Authentic interface improvement by Ilia Rostovtsev
+    1. Working sorting files by size (with next Authentic Theme - perfectly, now just alright).
+       This fix will also prevent fatal code breaks despite of user settings
+    2. Store user chose on columns sorting upon page refresh
+    3. Hide paginations when there is nothing to paginate.
+    4. Let user navigate with arrows (left/right) when trying to do pagination
+ - Code cleanup and security tightening by Jamie Cameron
+ - Add ACL options to allowing running as a specific user, thanks Jamie :)
+ - WARNING: work as root is now DEFAULT behavior.
+   IF YOU GRANTED FILEMIN ACCESS TO ANY USERS NOT SUPPOSED TO WORK AS ROOT - GO AND CHECK ACL!!!
+
+  #42 fixed:
+ - Fixing conflict with Authentic Theme codeMirror
+   By Ilia.
+
+  #46 fixed:
+ - Module is now installable from Usermin.
+   When running in Usermin, access is always as the connected user.
+
+  #52 fixed:
+ - Working as non UNIX user is now possible. By Jamie Cameron.
+
+  #54 fixed:
+ - Pasting a directory either by copy or cut pasted not the directory, but it's content.
+
+-- Version 0.9.5 --
+ - Made top level menu items translatable.
+ - Added https://github.com/Real-Gecko/filemin/pull/29
+   Selected rows also highlight on hover + color tweaks, by https://github.com/qooob
+ - Some code cleanup, got rid of Regexp::Common and URI dependencies.
+   Thanks to Jamie Cameron.
+ - Added error message if file saving fails.
+ - Removed not working "Help" link for now.
+
+  #35 fixed:
+ - Permissions column configurable and displayable.
+
+  #36 fixed:
+ - README instructions for Debian/Ubuntu fixed.
+
 -- Version 0.9.4 --
  - Implemented "Search".
    Users may search files and folders by name, wildcards supported.

@@ -18,7 +18,7 @@ body
   background: #ddd;
 }
 #list_form tr:hover {
-  background: #bbb;
+//  background: #bbb;
 }
 #list_form tr.checked {
   background: #bfb;
@@ -133,4 +133,13 @@ select, input[type="button"][onclick], button.btn-default.file_chooser_button, b
 
 a:hover {
  cursor:pointer;
+}
+/* by https://github.com/qooob */
+#list_form tbody tr.checked:hover,
+#list_form tbody tr:hover {
+    background: #d3e4f4 !important;
+}
+
+a.pages {
+    padding: 0 3px;
 }

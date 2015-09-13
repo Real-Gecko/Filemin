@@ -5,47 +5,68 @@ use WebminCore;
 &init_config();
 use Encode qw(decode encode);
 use File::Basename;
+use POSIX;
 
 sub get_paths {
     %access = &get_module_acl();
 
-    if (!$access{'work_as_root'}) {
+    # Switch to the correct user
+    if (&get_product_name() eq 'usermin') {
+        # In Usermin, the module only ever runs as the connected user
         &switch_to_remote_user();
     }
-    else {
-        @remote_user_info = getpwnam($remote_user);
+    elsif ($access{'work_as_root'}) {
+        # Root user, so no switching
+        @remote_user_info = getpwnam('root');
     }
-    # Not sure if it is really necessary, could not reproduce "User with no $HOME" scenario.
-    if(!defined $remote_user_info[7]) {
-        &error('You`re not supposed to be here!');
+    elsif ($access{'work_as_user'}) {
+        # A specific user
+        @remote_user_info = getpwnam($access{'work_as_user'});
+        @remote_user_info ||
+            &error("Unix user $access{'work_as_user'} does not exist!");
+        &switch_to_unix_user(\@remote_user_info);
+    }
+    else {
+        # The Webmin user we are connected as
+        &switch_to_remote_user();
     }
 
+    # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
+        # Assume any directory can be accessed
         $base = "/";
+        @allowed_paths = ( $base );
     } else {
-        @allowed_paths = map {$_ eq '$HOME' ? @remote_user_info[7] : $_} @allowed_paths;
+        @allowed_paths = map { $_ eq '$HOME' ? @remote_user_info[7] : $_ }
+                             @allowed_paths;
         if (scalar(@allowed_paths == 1)) {
             $base = $allowed_paths[0];
         } else {
             $base = '/';
         }
-        for $allowed_path (@allowed_paths) {
-            if ($allowed_path =~ /^$cwd/ || $cwd =~ /^$allowed_path/) {
-                $error = 0;
-            }
-        }
-        if ($error) {
-            &error('You`re not supposed to be here!');
-        }
     }
     $path = $in{'path'} ? $in{'path'} : '';
     $cwd = &simplify_path($base.$path);
+
+    # Check that current directory is one of those that is allowed
     my $error = 1;
+    for $allowed_path (@allowed_paths) {
+        if (&is_under_directory($allowed_path, $cwd) ||
+            $allowed_path =~ /^$cwd/) {
+            $error = 0;
+        }
+    }
+    if ($error) {
+        &error(&text('notallowed', &html_escape($cwd),
+                                   &html_escape(join(" , ", @allowed_paths))));
+    }
+
     if (index($cwd, $base) == -1)
     {
         $cwd = $base;
     }
+
     # Initiate per user config
     $confdir = "$remote_user_info[7]/.filemin";
     if(!-e "$confdir/.config") {
@@ -75,7 +96,7 @@ sub print_errors {
         print("<li>$error</li>");
     }
     print "<ul>";
-    &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+    &ui_print_footer("index.cgi?path=".&urlize($path), $text{'previous_page'});
 }
 
 sub print_interface {
@@ -114,7 +135,8 @@ sub print_interface {
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
             chomp($breadcr[$i]);
             $cp = $cp.'/'.$breadcr[$i];
-            print "<li><a href='index.cgi?path=$cp'>$breadcr[$i]</a></li>";
+            print "<li><a href='index.cgi?path=".&urlize($cp)."'>".
+		  &html_escape($breadcr[$i])."</a></li>";
         }
         print "</ol>";
         # And toolbar
@@ -156,7 +178,8 @@ sub print_interface {
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
             chomp($breadcr[$i]);
             $cp = $cp.'/'.$breadcr[$i];
-            print "<a href='index.cgi?path=$cp'>$breadcr[$i]</a> / ";
+            print "<a href='index.cgi?path=".&urlize($cp)."'>".
+		  &html_escape($breadcr[$i])."</a> / ";
         }
         print "<br />";
         # And pagination
@@ -167,9 +190,16 @@ sub print_interface {
         print "Pages: ";
         for(my $i = 1;$i <= $pages;$i++) {
             if($page eq $i) {
-                print "<a class='active' href='?path=$path&page=$i&query=$query'>$i</a>";
+                print "<a class='pages active' ".
+                      "href='?path=".&urlize($path).
+                      "&page=".&urlize($i).
+                      "&query=".&urlize($query).
+                      "'>".&html_escape($i)."</a>";
             } else {
-                print "<a href='?path=$path&page=$i&query=$query'>$i</a>";
+                print "<a class='pages' ".
+                      "href='?path=".&urlize($path).
+                      "&page=".&urlize($i).
+                      "&query=".&urlize($query)."'>".&html_escape($i)."</a>";
             }
         }
         print "</div>";
@@ -177,7 +207,7 @@ sub print_interface {
         print_template("unauthenticated/templates/legacy_quicks.html");
         print_template("unauthenticated/templates/legacy_dialogs.html");
     }
-    
+
     # Render current directory entries
     print &ui_form_start("", "post", undef, "id='list_form'");
     @ui_columns = (
@@ -189,7 +219,7 @@ sub print_interface {
     push @ui_columns, $text{'actions'};
     push @ui_columns, $text{'size'} if($userconfig{'columns'} =~ /size/);
     push @ui_columns, $text{'owner_user'} if($userconfig{'columns'} =~ /owner_user/);
-    push @ui_columns, $text{'permissons'} if($userconfig{'columns'} =~ /permissons/);
+    push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
     push @ui_columns, $text{'last_mod_time'} if($userconfig{'columns'} =~ /last_mod_time/);
 
     print &ui_columns_start(\@ui_columns);
@@ -220,15 +250,17 @@ sub print_interface {
         $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
 
         if ($list[$count - 1][15] == 1) {
-            $href="index.cgi?path=$path/$link";
+            $href = "index.cgi?path=".&urlize("$path/$link");
         } else {
-            $href="download.cgi?file=$link&path=$path";
+            $href = "download.cgi?file=".&urlize($link)."&path=".&urlize($path);
             if($0 =~ /search.cgi/) {
                 ($fname,$fpath,$fsuffix) = fileparse($list[$count - 1][0]);
                 if($base ne '/') {
                     $fpath =~ s/^$base//g;
                 }
-                $actions = "$actions<a class='action-link' href='index.cgi?path=$fpath' title='$text{'goto_folder'}'>$goto_icon</a>";
+                $actions = "$actions<a class='action-link' ".
+			   "href='index.cgi?path=".&urlize($fpath)."' ".
+			   "title='$text{'goto_folder'}'>$goto_icon</a>";
             }
             if (
                 index($type, "text-") != -1 or
@@ -240,21 +272,21 @@ sub print_interface {
                 $type eq "application-x-perl" or
                 $type eq "application-x-yaml"
             ) {
-                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
+                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='action-link' href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
+                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
             }
         }
         @row_data = (
             "<a href='$href'><img src=\"$img\"></a>",
-            "<a href=\"$href\">$link</a>"
+            "<a href=\"$href\" data-filemin-path=\"$href\">$link</a>"
         );
         push @row_data, $type if($userconfig{'columns'} =~ /type/);
         push @row_data, $actions;
         push @row_data, $size if($userconfig{'columns'} =~ /size/);
         push @row_data, $user.':'.$group if($userconfig{'columns'} =~ /owner_user/);
-        push @row_data, $permissions if($userconfig{'columns'} =~ /permissons/);
+        push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
         push @row_data, $mod_time if($userconfig{'columns'} =~ /last_mod_time/);
 
         print &ui_checked_columns_row(\@row_data, "", "name", $link);
@@ -265,12 +297,22 @@ sub print_interface {
 }
 
 sub init_datatables {
+    my ($a, $b, $c);
+    $a = '0, 1, 3';
+    $b = '4';
+    $c = '';
+    if ($userconfig{'columns'} =~ /type/) {
+        $a = '0, 1, 4';
+        $b = '5';
+    }
+    if ($userconfig{'columns'} =~ /size/) {
+        $c = '{ "type": "file-size", "targets": [' . $b . '] },';
+    }
+
     if($userconfig{'disable_pagination'}) {
         $bPaginate = 'false';
-#        $sScrollY = '"sScrollY": "600px",';
     } else {
         $bPaginate = 'true';
-#        $sScrollY = '';
     }
 print "<script>";
 print "\$( document ).ready(function() {";
@@ -280,13 +322,35 @@ print "\"order\": [],";
 print "\"aaSorting\": [],";
 print "\"bDestroy\": true,";
 print "\"bPaginate\": $bPaginate,";
-#print "$sScrollY";
+print " \"fnDrawCallback\": function(oSettings) {
+        if (oSettings.fnRecordsTotal() <= oSettings._iDisplayLength) {
+            \$('.dataTables_paginate').hide();
+        } else {
+            \$('.dataTables_paginate').show();
+        }
+    },";
+print " \"initComplete\": function() {
+        \$('div.dataTables_filter input').val('').trigger('keyup');
+        \$('div.dataTables_filter input').focus();
+        \$(document).on('keydown', function (event) {
+            var keycode = event.keyCode ? event.keyCode : event.which;
+            if (!\$('input').is(':focus') && !\$('select').is(':focus') && !\$('textarea').is(':focus')) {
+                if (keycode === 39) {
+                    \$('.paginate_button.next').trigger('click');
+                }
+                if (keycode === 37) {
+                    \$('.paginate_button.previous').trigger('click');
+                }
+            }
+        });
+    },";
 print "\"bInfo\": false,";
 print "\"destroy\": true,";
 print "\"oLanguage\": {";
 print "\"sSearch\": \" \"";
 print "},";
-print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [0, 1, 4] }, ],";
+print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [$a] }, $c ],";
+print "\"bStateSave\": true,";
 print "\"iDisplayLength\": 50,";
 print "});";
 print "\$(\"form\").on('click', 'div.popover', function() {";
@@ -304,7 +368,8 @@ sub get_bookmarks {
     my $bookmarks = &read_file_lines($confdir.'/.bookmarks', 1);
     $result = '';
     foreach $bookmark(@$bookmarks) {
-        $result.= "<li><a href='index.cgi?path=$bookmark'>$bookmark</a><li>";
+        $result.= "<li><a href='index.cgi?path=".&urlize($bookmark)."'>".
+		  &html_escape($bookmark)."</a><li>";
     }
     return $result;
 }
