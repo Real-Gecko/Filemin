@@ -26,14 +26,16 @@ if ($cwd eq $from) {
             if (-e "$cwd/$arr[$i]") {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
-                system("cp -r $from/$arr[$i] $cwd") == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
+                system("cp -r ".quotemeta("$from/$arr[$i]").
+		       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
             }
         }
         elsif ($act eq "cut") {
             if (-e "$cwd/$arr[$i]") {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
-                system("mv $from/$arr[$i] $cwd") == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
+                system("mv ".quotemeta("$from/$arr[$i]").
+		       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
             }
         }
     }
