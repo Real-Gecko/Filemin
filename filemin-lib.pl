@@ -33,6 +33,10 @@ sub get_paths {
 
     # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
+    if (&get_product_name() eq 'usermin') {
+	# Add paths from Usermin config
+	push(@allowed_paths, split(/\t+/, $config{'allowed_paths'}));
+    }
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
         # Assume any directory can be accessed
         $base = "/";
