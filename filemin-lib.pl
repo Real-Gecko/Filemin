@@ -14,6 +14,7 @@ sub get_paths {
     if (&get_product_name() eq 'usermin') {
         # In Usermin, the module only ever runs as the connected user
         &switch_to_remote_user();
+	&create_user_config_dirs();
     }
     elsif ($access{'work_as_root'}) {
         # Root user, so no switching
@@ -377,6 +378,20 @@ sub get_bookmarks {
 		  &html_escape($bookmark)."</a><li>";
     }
     return $result;
+}
+
+# get_paste_buffer_file()
+# Returns the location of the file for temporary copy/paste state
+sub get_paste_buffer_file
+{
+if (&get_product_name() eq 'usermin') {
+	return $user_module_config_directory."/.buffer";
+	}
+else {
+	my $tmpdir = "$remote_user_info[7]/.filemin";
+	&make_dir($tmpdir, 0700) if (!-d $tmpdir);
+	return $tmpdir."/.buffer";
+	}
 }
 
 1;

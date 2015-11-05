@@ -5,9 +5,7 @@ require './filemin-lib.pl';
 
 get_paths();
 
-$tmpdir = "$remote_user_info[7]/.filemin";
-unless (-e $tmpdir) { mkdir $tmpdir or die "unable to create temporary directory $!"; }
-open(my $fh, ">", "$tmpdir/.buffer") or die "Error: $!";
+open(my $fh, ">", &get_paste_buffer_file()) or die "Error: $!";
 print $fh "copy\n";
 print $fh "$path\n";
 #$info = "Copied ".scalar(@list)." files to buffer";

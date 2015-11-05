@@ -6,9 +6,7 @@ use Cwd 'abs_path';
 
 get_paths();
 
-$tmpdir = "$remote_user_info[7]/.filemin";
-
-open(my $fh, "< $tmpdir/.buffer") or die "Error: $!";
+open(my $fh, "<".&get_paste_buffer_file()) or die "Error: $!";
 my @arr = <$fh>;
 close($fh);
 my $act = $arr[0];
