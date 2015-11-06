@@ -248,8 +248,8 @@ sub print_interface {
         my $img = "images/icons/mime/$type.png";
         unless (-e $img) { $img = "images/icons/mime/unknown.png"; }
         $size = &nice_size($list[$count - 1][8]);
-        $user = getpwuid($list[$count - 1][5]);
-        $group = getgrgid($list[$count - 1][6]);
+        $user = getpwuid($list[$count - 1][5]) ? getpwuid($list[$count - 1][5]) : $list[$count - 1][5];
+        $group = getgrgid($list[$count - 1][6]) ? getgrgid($list[$count - 1][6]) : $list[$count - 1][6];
         $permissions = sprintf("%04o", $list[$count - 1][3] & 07777);
         $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime($list[$count - 1][10]));
 
