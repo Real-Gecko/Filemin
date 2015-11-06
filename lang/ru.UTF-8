@@ -1,5 +1,6 @@
 about_to_delete=Вы выбрали следующие элементы для удаления
 acl_allowed_paths=Разрешенные пути
+acl_allowed_for_edit=Типы файлов резрешённе для редактирования
 acl_work_as_root=Позволить пользователю работать как 'root'. ОПАСНО!!!
 actions=Действия
 archive_name=Название архива

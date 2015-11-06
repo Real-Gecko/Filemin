@@ -111,6 +111,8 @@ sub print_interface {
     local @remote_user_info = getpwnam($remote_user);
     local $uid = @remote_user_info[2];
     $bookmarks = get_bookmarks();
+    @allowed_for_edit = split(/\s+/, $access{'allowed_for_edit'});
+    %allowed_for_edit = map { $_ => 1} @allowed_for_edit;
 
     # Set things up according to currently used theme
     if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
@@ -214,6 +216,9 @@ sub print_interface {
         print_template("unauthenticated/templates/legacy_dialogs.html");
     }
     print "<div class='total'>" . &text('info_total', scalar @files, scalar @folders) . "</div>";
+#    use Data::Dumper;
+#    print Dumper(\%allowed_for_edit);
+
     # Render current directory entries
     print &ui_form_start("", "post", undef, "id='list_form'");
     @ui_columns = (
@@ -270,13 +275,7 @@ sub print_interface {
             }
             if (
                 index($type, "text-") != -1 or
-                $type eq "application-x-php" or
-                $type eq "application-x-ruby" or
-                $type eq "application-xml" or
-                $type eq "application-javascript" or
-                $type eq "application-x-shellscript" or
-                $type eq "application-x-perl" or
-                $type eq "application-x-yaml"
+                exists($allowed_for_edit{$type})
             ) {
                 $actions = "$actions<a class='action-link' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
             }
