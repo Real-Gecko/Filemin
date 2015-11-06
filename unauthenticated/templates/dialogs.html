@@ -305,7 +305,8 @@
                 <form id="searchForm" action="search.cgi" method="post">
                     <div class="form-group">
                         <label>$text{'search_label'}</label>
-                        <input id="query" name="query" type="text" class="form-control" data-placement="right" data-content="$text{'provide_search_query'}" data-trigger="manual">
+                        <input id="query" name="query" type="text" class="form-control" data-placement="right" data-content="$text{'provide_search_query'}" data-trigger="manual"><br>
+                        <input id="caseins" name="caseins" type="checkbox" checked="checked"> $text{'search_insensitive'}
                         <input type='hidden' name='path' value='$path'>
                     </div>
                 </form>

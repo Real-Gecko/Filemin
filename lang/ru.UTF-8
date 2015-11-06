@@ -123,6 +123,7 @@ search=Поиск
 search_go=Поехали!
 search_label=Поисковый запрос
 search_results=Результаты поиска по запросу
+search_insensitive=Регистронезависимый поиск
 select_all=Выделить все
 size=Размер
 type=Тип

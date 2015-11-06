@@ -126,6 +126,7 @@ search=Search
 search_label=Search query
 search_go=Find
 search_results=Search results for
+search_insensitive=Case insensitive search
 goto_folder=Go to containing folder
 module_config=Module configuration
 config_columns_to_display=Columns to display
