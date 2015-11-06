@@ -141,3 +141,4 @@ menu_tools=Tools
 menu_bookmarks=Bookmarks
 notallowed=You are not allowed to access $1. The allowed directories are : $2
 error_upload_emax=Uploaded file is larger than the limit of $1
+info_total=Total: $1 files and $2 folders

@@ -213,7 +213,7 @@ sub print_interface {
         print_template("unauthenticated/templates/legacy_quicks.html");
         print_template("unauthenticated/templates/legacy_dialogs.html");
     }
-
+    print "<div class='total'>" . &text('info_total', scalar @files, scalar @folders) . "</div>";
     # Render current directory entries
     print &ui_form_start("", "post", undef, "id='list_form'");
     @ui_columns = (
