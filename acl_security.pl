@@ -16,7 +16,13 @@ sub acl_security_form {
 	       [ [ 0, $text{'acl_root'} ],
 		 [ 1, $text{'acl_same'} ],
 		 [ 2, $text{'acl_user'},
-		   ui_user_textbox("acl_user", $access->{'work_as_user'}) ] ]));
+		   ui_user_textbox("acl_user", $access->{'work_as_user'}) ] ]),
+	3);
+
+    # Upload max
+    print &ui_table_row($text{'acl_max'},
+	&ui_opt_textbox("max", $access->{'max'}, 10, $text{'acl_unlimited'}).
+	" ".$text{'acl_bytes'}, 3);
 }
 
 sub acl_security_save {
@@ -40,4 +46,5 @@ sub acl_security_save {
         $access->{'work_as_root'} = 0;
         $access->{'work_as_user'} = $in->{'acl_user'};
     }
+    $access->{'max'} = $in->{'max_def'} ? undef : $in{'max'};
 }

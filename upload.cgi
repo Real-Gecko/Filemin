@@ -34,6 +34,9 @@ while(index($line,"$boundary--") == -1) {
     $header = undef;
     $line = <STDIN>;
     $got += length($line);
+    if ($upload_max && $got > $upload_max) {
+	&error(&text('error_upload_emax', &nice_size($upload_max)));
+    }
   	&$cbfunc($got, $ENV{'CONTENT_LENGTH'}, undef, $in{'id'});
     if ($line =~ /(\S+):\s*form-data(.*)$/) {
     		$rest = $2; # We found form data definition, let`s check it
