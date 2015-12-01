@@ -143,3 +143,12 @@ a:hover {
 a.pages {
     padding: 0 3px;
 }
+
+.breadcrumb {
+    margin-bottom: 10px;
+}
+
+.total {
+    clear: both;
+    margin-bottom: 10px;
+}

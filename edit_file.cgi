@@ -27,13 +27,15 @@ if ($current_theme ne 'authentic-theme') {
 
 print $head;
 
-print $path.'/'.$in{'file'};
+print ui_table_start("$path/$in{'file'}", undef, 1);
 
 print &ui_form_start("save_file.cgi", "post");
 print &ui_hidden("file", $in{'file'}),"\n";
 print &ui_textarea("data", $data, 20, 80, undef, undef, "style='width: 100%' id='data'");
 print &ui_hidden("path", $path);
 print &ui_form_end([ [ save, $text{'save'} ], [ save_close, $text{'save_close'} ] ]);
+
+print ui_table_end();
 
 print "<script type='text/javascript' src='unauthenticated/js/cmauto.js'></script>";
 print "<script type='text/javascript'>\$(document).ready( function() { change('".$in{'file'}."'); });</script>";

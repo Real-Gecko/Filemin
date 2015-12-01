@@ -14,7 +14,7 @@ sub get_paths {
     if (&get_product_name() eq 'usermin') {
         # In Usermin, the module only ever runs as the connected user
         &switch_to_remote_user();
-	&create_user_config_dirs();
+        &create_user_config_dirs();
     }
     elsif ($access{'work_as_root'}) {
         # Root user, so no switching
@@ -35,8 +35,8 @@ sub get_paths {
     # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
     if (&get_product_name() eq 'usermin') {
-	# Add paths from Usermin config
-	push(@allowed_paths, split(/\t+/, $config{'allowed_paths'}));
+        # Add paths from Usermin config
+        push(@allowed_paths, split(/\t+/, $config{'allowed_paths'}));
     }
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
         # Assume any directory can be accessed
@@ -45,7 +45,7 @@ sub get_paths {
     } else {
         @allowed_paths = map { $_ eq '$HOME' ? @remote_user_info[7] : $_ }
                              @allowed_paths;
-	@allowed_paths = map { s/\$USER/$remote_user/g; $_ } @allowed_paths;
+        @allowed_paths = map { s/\$USER/$remote_user/g; $_ } @allowed_paths;
         if (scalar(@allowed_paths == 1)) {
             $base = $allowed_paths[0];
         } else {
@@ -109,7 +109,7 @@ sub print_errors {
         print("<li>$error</li>");
     }
     print "<ul>";
-    &ui_print_footer("index.cgi?path=".&urlize($path), $text{'previous_page'});
+    &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
 }
 
 sub print_interface {
@@ -118,6 +118,8 @@ sub print_interface {
     local @remote_user_info = getpwnam($remote_user);
     local $uid = @remote_user_info[2];
     $bookmarks = get_bookmarks();
+    @allowed_for_edit = split(/\s+/, $access{'allowed_for_edit'});
+    %allowed_for_edit = map { $_ => 1} @allowed_for_edit;
 
     # Set things up according to currently used theme
     if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
@@ -148,8 +150,8 @@ sub print_interface {
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
             chomp($breadcr[$i]);
             $cp = $cp.'/'.$breadcr[$i];
-            print "<li><a href='index.cgi?path=".&urlize($cp)."'>".
-		  &html_escape($breadcr[$i])."</a></li>";
+            print "<li><a href='index.cgi?path=$cp'>".
+                  &html_escape($breadcr[$i])."</a></li>";
         }
         print "</ol>";
         # And toolbar
@@ -191,8 +193,8 @@ sub print_interface {
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
             chomp($breadcr[$i]);
             $cp = $cp.'/'.$breadcr[$i];
-            print "<a href='index.cgi?path=".&urlize($cp)."'>".
-		  &html_escape($breadcr[$i])."</a> / ";
+            print "<a href='index.cgi?path=$cp'>".
+                  &html_escape($breadcr[$i])."</a> / ";
         }
         print "<br />";
         # And pagination
@@ -204,15 +206,15 @@ sub print_interface {
         for(my $i = 1;$i <= $pages;$i++) {
             if($page eq $i) {
                 print "<a class='pages active' ".
-                      "href='?path=".&urlize($path).
-                      "&page=".&urlize($i).
-                      "&query=".&urlize($query).
+                      "href='?path=$path".
+                      "&page=$i".
+                      "&query=$query".
                       "'>".&html_escape($i)."</a>";
             } else {
                 print "<a class='pages' ".
-                      "href='?path=".&urlize($path).
-                      "&page=".&urlize($i).
-                      "&query=".&urlize($query)."'>".&html_escape($i)."</a>";
+                      "href='?path=$path".
+                      "&page=$i".
+                      "&query=$query'>".&html_escape($i)."</a>";
             }
         }
         print "</div>";
@@ -220,6 +222,9 @@ sub print_interface {
         print_template("unauthenticated/templates/legacy_quicks.html");
         print_template("unauthenticated/templates/legacy_dialogs.html");
     }
+    print "<div class='total'>" . &text('info_total', scalar @files, scalar @folders) . "</div>";
+#    use Data::Dumper;
+#    print Dumper(\%allowed_for_edit);
 
     # Render current directory entries
     print &ui_form_start("", "post", undef, "id='list_form'");
@@ -255,40 +260,34 @@ sub print_interface {
         my $img = "images/icons/mime/$type.png";
         unless (-e $img) { $img = "images/icons/mime/unknown.png"; }
         $size = &nice_size($list[$count - 1][8]);
-        $user = getpwuid($list[$count - 1][5]);
-        $group = getgrgid($list[$count - 1][6]);
+        $user = getpwuid($list[$count - 1][5]) ? getpwuid($list[$count - 1][5]) : $list[$count - 1][5];
+        $group = getgrgid($list[$count - 1][6]) ? getgrgid($list[$count - 1][6]) : $list[$count - 1][6];
         $permissions = sprintf("%04o", $list[$count - 1][3] & 07777);
         $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime($list[$count - 1][10]));
 
         $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
 
         if ($list[$count - 1][15] == 1) {
-            $href = "index.cgi?path=".&urlize("$path/$link");
+            $href = "index.cgi?path=$path/$link";
         } else {
-            $href = "download.cgi?file=".&urlize($link)."&path=".&urlize($path);
+            $href = "download.cgi?file=$link&path=$path";
             if($0 =~ /search.cgi/) {
                 ($fname,$fpath,$fsuffix) = fileparse($list[$count - 1][0]);
                 if($base ne '/') {
                     $fpath =~ s/^$base//g;
                 }
                 $actions = "$actions<a class='action-link' ".
-			   "href='index.cgi?path=".&urlize($fpath)."' ".
-			   "title='$text{'goto_folder'}'>$goto_icon</a>";
+                           "href='index.cgi?path=$fpath' ".
+                           "title='$text{'goto_folder'}'>$goto_icon</a>";
             }
             if (
                 index($type, "text-") != -1 or
-                $type eq "application-x-php" or
-                $type eq "application-x-ruby" or
-                $type eq "application-xml" or
-                $type eq "application-javascript" or
-                $type eq "application-x-shellscript" or
-                $type eq "application-x-perl" or
-                $type eq "application-x-yaml"
+                exists($allowed_for_edit{$type})
             ) {
-                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
+                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
+                $actions = "$actions <a class='action-link' href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
             }
         }
         @row_data = (
@@ -381,8 +380,8 @@ sub get_bookmarks {
     my $bookmarks = &read_file_lines($confdir.'/.bookmarks', 1);
     $result = '';
     foreach $bookmark(@$bookmarks) {
-        $result.= "<li><a href='index.cgi?path=".&urlize($bookmark)."'>".
-		  &html_escape($bookmark)."</a><li>";
+        $result.= "<li><a href='index.cgi?path=$bookmark'>".
+                  &html_escape($bookmark)."</a><li>";
     }
     return $result;
 }
@@ -391,14 +390,14 @@ sub get_bookmarks {
 # Returns the location of the file for temporary copy/paste state
 sub get_paste_buffer_file
 {
-if (&get_product_name() eq 'usermin') {
-	return $user_module_config_directory."/.buffer";
-	}
-else {
-	my $tmpdir = "$remote_user_info[7]/.filemin";
-	&make_dir($tmpdir, 0700) if (!-d $tmpdir);
-	return $tmpdir."/.buffer";
-	}
+    if (&get_product_name() eq 'usermin') {
+        return $user_module_config_directory."/.buffer";
+    }
+    else {
+        my $tmpdir = "$remote_user_info[7]/.filemin";
+        &make_dir($tmpdir, 0700) if (!-d $tmpdir);
+        return $tmpdir."/.buffer";
+    }
 }
 
 1;

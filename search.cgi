@@ -14,9 +14,13 @@ $query = $in{'query'};
 			&html_escape($query)."'", "");
 
 print $head;
-
+if($in{'caseins'}) {
+    $criteria = '-iname';
+} else {
+    $criteria = '-name'
+}
 @list = split('\n', &backquote_logged(
-		"find ".quotemeta($cwd)." -name ".quotemeta("*$in{'query'}*")));
+                "find ".quotemeta($cwd)." $criteria ".quotemeta("*$in{'query'}*")));
 @list = map { [ $_, stat($_), mimetype($_), -d $_ ] } @list;
 
 print_interface();
