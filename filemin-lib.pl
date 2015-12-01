@@ -55,6 +55,13 @@ sub get_paths {
     $path = $in{'path'} ? $in{'path'} : '';
     $cwd = &simplify_path($base.$path);
 
+    # Work out max upload size
+    if (&get_product_name() eq 'usermin') {
+	$upload_max = $config{'max'};
+    } else {
+	$upload_max = $access{'max'};
+    }
+
     # Check that current directory is one of those that is allowed
     my $error = 1;
     for $allowed_path (@allowed_paths) {
