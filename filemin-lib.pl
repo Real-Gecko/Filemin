@@ -55,6 +55,13 @@ sub get_paths {
     $path = $in{'path'} ? $in{'path'} : '';
     $cwd = &simplify_path($base.$path);
 
+    # Work out max upload size
+    if (&get_product_name() eq 'usermin') {
+	$upload_max = $config{'max'};
+    } else {
+	$upload_max = $access{'max'};
+    }
+
     # Check that current directory is one of those that is allowed
     my $error = 1;
     for $allowed_path (@allowed_paths) {
@@ -237,14 +244,14 @@ sub print_interface {
         if ($count > scalar(@list)) { last; }
         my $class = $count & 1 ? "odd" : "even";
         my $link = $list[$count - 1][0];
-        $link =~ s/$cwd\///;
+        $link =~ s/\Q$cwd\E\///;
         $link =~ s/^\///g;
-        $link = html_escape($link);
-        $link = quote_escape($link);
-        $link = decode('UTF-8', $link, Encode::FB_CROAK);
+        $vlink = html_escape($link);
+        $vlink = quote_escape($vlink);
+        $vlink = decode('UTF-8', $vlink, Encode::FB_CROAK);
         $path = html_escape($path);
-        $path = quote_escape($path);
-        $path = decode('UTF-8', $path, Encode::FB_CROAK);
+        $vpath = quote_escape($vpath);
+        $vpath = decode('UTF-8', $vpath, Encode::FB_CROAK);
 
         my $type = $list[$count - 1][14];
         $type =~ s/\//\-/g;
@@ -256,19 +263,19 @@ sub print_interface {
         $permissions = sprintf("%04o", $list[$count - 1][3] & 07777);
         $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime($list[$count - 1][10]));
 
-        $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
+        $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$vlink\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
 
         if ($list[$count - 1][15] == 1) {
-            $href = "index.cgi?path=$path/$link";
+            $href = "index.cgi?path=".&urlize("$path/$link");
         } else {
-            $href = "download.cgi?file=$link&path=$path";
+            $href = "download.cgi?file=".&urlize($link)."&path=".&urlize($path);
             if($0 =~ /search.cgi/) {
                 ($fname,$fpath,$fsuffix) = fileparse($list[$count - 1][0]);
                 if($base ne '/') {
-                    $fpath =~ s/^$base//g;
+                    $fpath =~ s/^\Q$base\E//g;
                 }
                 $actions = "$actions<a class='action-link' ".
-                           "href='index.cgi?path=$fpath' ".
+                           "href='index.cgi?path=".&urlize($fpath)."' ".
                            "title='$text{'goto_folder'}'>$goto_icon</a>";
             }
             # Enable "Edit" link for allowed mimetypes
@@ -276,15 +283,15 @@ sub print_interface {
                 index($type, "text-") != -1 or
                 exists($allowed_for_edit{$type})
             ) {
-                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=$link&path=$path' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
+                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='action-link' href='extract.cgi?path=$path&file=$link' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
+                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
             }
         }
         @row_data = (
             "<a href='$href'><img src=\"$img\"></a>",
-            "<a href=\"$href\" data-filemin-path=\"$href\">$link</a>"
+            "<a href=\"$href\" data-filemin-path=\"$href\">$vlink</a>"
         );
         push @row_data, $type if($userconfig{'columns'} =~ /type/);
         push @row_data, $actions;
