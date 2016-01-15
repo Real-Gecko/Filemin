@@ -6,7 +6,7 @@ if (typeof $__theme_name__ != 'undefined' && $__theme_name__ == 'authentic')
 }
 else
 {
-	CodeMirror.modeURL = "unauthenticated/js/lib/codemirror/mode/%N/%N.js";
+	CodeMirror.modeURL = "/libraries/unauthenticated/codemirror/mode/%N/%N.js";
 
 	var editor = CodeMirror.fromTextArea(document.getElementById("data"), {
 		mode: "scheme",

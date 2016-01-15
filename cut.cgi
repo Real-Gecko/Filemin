@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
-&ReadParse();
+&ReadParseMime();
 
 get_paths();
 
@@ -10,10 +10,12 @@ print $fh "cut\n";
 print $fh "$path\n";
 #$info = "Copied ".scalar(@list)." files to buffer";
 
-foreach $name (split(/\0/, $in{'name'})) {
+@names = split(/\0/, $in{'name'});
+foreach $name (@names) {
     print $fh "$name\n";
 }
 
 close($fh);
 
-&redirect("index.cgi?path=$path");
+print_ajax_header();
+print scalar(@names)." ".$text{'cut_to_buffer'};

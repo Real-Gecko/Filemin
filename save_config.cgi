@@ -12,7 +12,6 @@ $columns =~ s/\0/,/g;
     'columns' => $columns,
     'per_page' => $in{'per_page'},
     'disable_pagination' => $in{'disable_pagination'},
-    'menu_style' => $in{'menu_style'}
 );
 
 $confdir = "$remote_user_info[7]/.filemin";

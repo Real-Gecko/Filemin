@@ -171,54 +171,70 @@
                 <h4 class="warning">$text{'chmod_selected'}</h4>
             </div>
             <div class="modal-body">
-                <form name="chmod" id="chmodForm">
-                    <div class="form-group">
-                        <label for="t_total">$text{'permissions'} : </label>
-                        <input id="perms" type="text" name="t_total" value="0644" size="4" onKeyUp="octalchange()" class="form-group-item">
-                        <input type="text" name="sym_total" value="" size="12" readonly="true" class="form-group-item">
-                    </div>
+                <form name="chmod">
                     <table class="table">
-                        <tr>
-                            <th></th>
-                            <th><b>$text{'chmod_owner'}</b></th>
-                            <th><b>$text{'chmod_group'}</b></th>
-                            <th><b>$text{'chmod_others'}<b></th>
+                        <tr bgcolor="white" align="center">
+                            <td colspan="2"><b>Superuser</b></td>
+                            <td><b>$text{'permissions'}</b></td>
+                            <td><b>$text{'chmod_owner'}</b></td>
+                            <td><b>$text{'chmod_group'}</b></td>
+                            <td><b>$text{'chmod_others'}</b></td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_setuid'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra4" onclick="calc(this, 4000)">
+                            </td>
+                            <td><b>$text{'chmod_read'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner4" onclick="calc(this, 400)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group4" onclick="calc(this, 40)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other4" onclick="calc(this, 4)">
+                            </td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_setgid'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra2" onclick="calc(this, 2000)">
+                            </td>
+                            <td><b>$text{'chmod_write'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner2" onclick="calc(this, 200)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group2" onclick="calc(this, 20)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other2" onclick="calc(this, 2)">
+                            </td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_sticky'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra1" onclick="calc(this, 1000)">
+                            </td>
+                            <td><b>$text{'chmod_execute'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner1" onclick="calc(this, 100)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group1" onclick="calc(this, 10)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other1" onclick="calc(this, 1)">
+                            </td>
                         </tr>
                         <tr>
-                            <td>$text{'chmod_read'}</td>
-                            <td><input type="checkbox" name="owner4" value="4" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="group4" value="4" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="other4" value="4" onclick="calc_chmod()"></td>
-                        </tr>
-                        <tr>		
-                            <td>$text{'chmod_write'}</td>
-                            <td><input type="checkbox" name="owner2" value="2" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="group2" value="2" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="other2" value="2" onclick="calc_chmod()"></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_execute'}</td>
-                            <td><input type="checkbox" name="owner1" value="1" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="group1" value="1" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="other1" value="1" onclick="calc_chmod()"></td>
-                        </tr>
-                        <tr>
-                            <td>----------</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_sticky'}</td>
-                            <td><input type="checkbox" name="sticky" value="1" onclick="calc_chmod()"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_setgid'}</td>
-                            <td><input type="checkbox" name="setgid" value="2" onclick="calc_chmod()"></td>
-                            <td></td>
-                            <td></td>
+                            <td><b>$text{'chmod_octal'}</b></td>
+                            <td>
+                                <input type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                            </td>
+                            <td colspan="4"><b>+</b>
+                            </td>
                         </tr>
                     </table>
                     <label>$text{'chmod_apply_to'}</label>
@@ -314,6 +330,144 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" onclick="search()">$text{'search_go'}</button>
                 <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="propertiesDialog" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="warning">$text{'properties_of'} <i class="obj-name"></i></h4>
+            </div>
+            <div class="modal-body">
+                <form name="chmod" action="change_properties.cgi" class="form-horizontal">
+                    <div class="well">
+                    <b>$text{'properties_path'}:</b> $path<br>
+                    <b>$text{'properties_type'}:</b> <i class="type"></i><br>
+                    <b>$text{'properties_size'}:</b> <i class="size"></i><br>
+                    <b>$text{'properties_mtime'}:</b> <i class="modified"></i><br>
+                    <b>$text{'properties_atime'}:</b> <i class="accessed"></i><br>
+                    </div>
+                    <table class="table">
+                        <tr bgcolor="white" align="center">
+                            <td colspan="2"><b>Superuser</b></td>
+                            <td><b>$text{'permissions'}</b></td>
+                            <td><b>$text{'chmod_owner'}</b></td>
+                            <td><b>$text{'chmod_group'}</b></td>
+                            <td><b>$text{'chmod_others'}</b></td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_setuid'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra4" onclick="calc(this, 4000)">
+                            </td>
+                            <td><b>$text{'chmod_read'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner4" onclick="calc(this, 400)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group4" onclick="calc(this, 40)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other4" onclick="calc(this, 4)">
+                            </td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_setgid'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra2" onclick="calc(this, 2000)">
+                            </td>
+                            <td><b>$text{'chmod_write'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner2" onclick="calc(this, 200)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group2" onclick="calc(this, 20)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other2" onclick="calc(this, 2)">
+                            </td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_sticky'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra1" onclick="calc(this, 1000)">
+                            </td>
+                            <td><b>$text{'chmod_execute'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner1" onclick="calc(this, 100)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group1" onclick="calc(this, 10)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other1" onclick="calc(this, 1)">
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="form-group form-group-sm">
+                        <label class="col-sm-3">$text{'chmod_octal'}</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-sm-3">$text{'user_name'}</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="owner">
+                        </div>
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label class="col-sm-3">$text{'group_name'}</label>
+                        <div class="col-sm-9">
+                            <input class="form-control" type="text" name="group">
+                        </div>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="chmod" value="1"> $text{'change_permissions'} </label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="chown" value="1"> $text{'change_owner'}</label>
+                    </div>
+                    <label>$text{'chmod_apply_to'}</label>
+                    <select class="form-control" name="applyto">
+                        <option value="1">$text{'chmod_dir_only'}</option>
+                        <option value="2">$text{'chmod_dir_and_its_files'}</option>
+                        <option value="3">$text{'chmod_all'}</option>
+                        <option value="4">$text{'chmod_dir_files_and_subs_files'}</option>
+                        <option value="5">$text{'chmod_dir_and_subs'}</option>
+                    </select>
+                    <input type='hidden' name='path' value='$path'>
+                    <input type='hidden' name='name' value=''>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="changeProperties()">$text{'dialog_change'}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="confirmDialog" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="warning">$text{'remove_selected'}</h4>
+            </div>
+            <div class="modal-body">
+                $text{'about_to_delete'}
+                <div id="items-to-remove-2" class="well">
+                </div>
+                $text{'are_you_sure'}
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger btn-ok">$text{'dialog_ok'}</a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
             </div>
         </div>
     </div>
