@@ -5,7 +5,7 @@ require './filemin-lib.pl';
 
 get_paths();
 
-open(my $fh, ">", &get_paste_buffer_file()) or die "Error: $!";
+open(my $fh, ">", &get_config_dir()."/.buffer") or die "Error: $!";
 print $fh "copy\n";
 print $fh "$path\n";
 

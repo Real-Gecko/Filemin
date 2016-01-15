@@ -12,7 +12,7 @@ get_paths();
 $head = "<link rel='stylesheet' type='text/css' href='unauthenticated/css/style.css' />";
 print $head;
 
-$confdir = "$remote_user_info[7]/.filemin";
+$confdir = get_config_dir();
 if(!-e $confdir) {
     mkdir $confdir or &error("$text{'error_creating_conf'}: $!");
 }
@@ -39,8 +39,6 @@ print &ui_table_row($text{'config_columns_to_display'},
     &ui_checkbox('columns', 'permissions', $text{'permissions'}, $config{'columns'} =~ /permissions/).
     &ui_checkbox('columns', 'last_mod_time', $text{'last_mod_time'}, $config{'columns'} =~ /last_mod_time/)
 );
-print &ui_table_row($text{'config_per_page'}, ui_textbox("per_page", $config{'per_page'}, 80));
-print &ui_table_row($text{'config_disable_pagination'}, &ui_checkbox('disable_pagination', 1, '', $config{'disable_pagination'}));
 print &ui_table_row($text{'config_bookmarks'}, &ui_textarea("bookmarks", $bookmarks, 5, 40));
 
 print &ui_table_end();

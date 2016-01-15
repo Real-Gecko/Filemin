@@ -241,13 +241,12 @@ sub print_interface {
         );
     push @ui_columns, $text{'name'};
     push @ui_columns, $text{'type'} if($userconfig{'columns'} =~ /type/);
-#    push @ui_columns, $text{'actions'};
     push @ui_columns, $text{'size'} if($userconfig{'columns'} =~ /size/);
     push @ui_columns, $text{'owner_user'} if($userconfig{'columns'} =~ /owner_user/);
     push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
     push @ui_columns, $text{'last_mod_time'} if($userconfig{'columns'} =~ /last_mod_time/);
 
-    print &ui_columns_start2(\@ui_columns);
+    print &filemin_ui_columns_start(\@ui_columns);
     foreach $item (@list) {
         my $link = $item->[0];
         $link =~ s/\Q$cwd\E\///;
@@ -304,11 +303,9 @@ sub print_interface {
                 index($type, "text-") != -1 or
                 exists($allowed_for_edit{$type})
             ) {
-#                $actions = "$actions <a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
                 $actions = "edit"
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-#                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a>";
                 $actions = "extract"
             }
         }
@@ -317,15 +314,14 @@ sub print_interface {
             "<a href=\"$href\" data-filemin-path=\"$href\">$vlink</a>"
         );
         push @row_data, $type if($userconfig{'columns'} =~ /type/);
-#        push @row_data, undef;
         push @row_data, $size if($userconfig{'columns'} =~ /size/);
         push @row_data, $user.':'.$group if($userconfig{'columns'} =~ /owner_user/);
         push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
         push @row_data, $mod_time if($userconfig{'columns'} =~ /last_mod_time/);
 
-        print ui_checked_columns_row2(\@row_data, undef, "name", $link);
+        print filemin_ui_checked_columns_row(\@row_data, undef, "name", $link);
     }
-    print ui_columns_end2();
+    print filemin_ui_columns_end();
     print &ui_hidden("path", $path),"\n";
     print &ui_form_end();
 }
@@ -343,11 +339,6 @@ sub init_datatables {
         $c = '{ "type": "file-size", "targets": [' . $b . '] },';
     }
 
-    if($userconfig{'disable_pagination'}) {
-        $bPaginate = 'false';
-    } else {
-        $bPaginate = 'true';
-    }
 print "<script>";
 print "\$( document ).ready(function() {";
 print "\$.fn.dataTableExt.sErrMode = 'throw';";
@@ -355,7 +346,7 @@ print "\$('#list-table').dataTable({";
 print "\"order\": [],";
 print "\"aaSorting\": [],";
 print "\"bDestroy\": true,";
-print "\"bPaginate\": $bPaginate,";
+print "\"bPaginate\": true,";
 print " \"fnDrawCallback\": function(oSettings) {
         if (oSettings.fnRecordsTotal() <= oSettings._iDisplayLength) {
             \$('.dataTables_paginate').hide();
@@ -385,7 +376,7 @@ print "\"sSearch\": \" \"";
 print "},";
 print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [$a] }, $c ],";
 print "\"bStateSave\": true,";
-print "\"iDisplayLength\": 50,";
+print "\"lengthMenu\": [5, 10, 25, 50, 100, 1000],";
 print "});";
 print "\$(\"form\").on('click', 'div.popover', function() {";
 print "\$(this).prev('input').popover('hide');";
@@ -395,11 +386,14 @@ print "</script>";
 }
 
 sub get_bookmarks {
-    $confdir = "$remote_user_info[7]/.filemin";
+    $confdir = get_config_dir();
     if(!-e "$confdir/.bookmarks") {
         return "<li><a>$text{'no_bookmarks'}</a></li>";
     }
     my $bookmarks = &read_file_lines($confdir.'/.bookmarks', 1);
+    if(scalar(@{$bookmarks}) == 0) {
+        return "<li><a>$text{'no_bookmarks'}</a></li>";
+    }
     $result = '';
     foreach $bookmark(@$bookmarks) {
         $result.= "<li><a href='index.cgi?path=$bookmark'>".
@@ -408,21 +402,21 @@ sub get_bookmarks {
     return $result;
 }
 
-# get_paste_buffer_file()
-# Returns the location of the file for temporary copy/paste state
-sub get_paste_buffer_file
+# get_config_dir()
+# Returns the directory for user config/bookmarks/copy & paste storage
+sub get_config_dir
 {
     if (&get_product_name() eq 'usermin') {
-        return $user_module_config_directory."/.buffer";
+        return $user_module_config_directory;
     }
     else {
         my $tmpdir = "$remote_user_info[7]/.filemin";
         &make_dir($tmpdir, 0700) if (!-d $tmpdir);
-        return $tmpdir."/.buffer";
+        return $tmpdir;
     }
 }
 
-sub ui_checked_columns_row2
+sub filemin_ui_checked_columns_row
 {
 my ($cols, $tdtags, $checkname, $checkvalue, $checked, $disabled, $tags) = @_;
 my $rv;
@@ -447,7 +441,7 @@ $rv .= "</tr>\n";
 return $rv;
 }
 
-sub ui_columns_start2
+sub filemin_ui_columns_start
 {
 my ($heads, $width, $noborder, $tdtags, $title) = @_;
 my $rv;
@@ -470,9 +464,9 @@ $rv .= "<tbody>";
 return $rv;
 }
 
-sub ui_columns_end2
+sub filemin_ui_columns_end
 {
-return "</tbody></table>\n";
+    return "</tbody></table>\n";
 }
 
 sub print_ajax_header {
