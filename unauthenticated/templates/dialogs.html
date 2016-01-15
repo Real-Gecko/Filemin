@@ -101,7 +101,7 @@
                         <label>$text{'archive_name'}</label>
                         <input name="filename" type="text" class="form-control" data-placement="right" data-content="$text{'provide_file_name'}" data-trigger="manual">
                     </div>
-                    <select name="method">
+                    <select class="form-control" name="method">
                         <option value="tar">.tar.gz</option>
                         <option value="zip">.zip</option>
                     </select> 
@@ -407,30 +407,38 @@
                                 <input type="checkbox" name="other1" onclick="calc(this, 1)">
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <label class="col-sm-3">$text{'chmod_octal'}</label>
+                            </td>
+                            <td>
+                            </td>
+                            <td colspan="4">
+                                <input class="form-control" type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                            </td>
+                        </tr>
                     </table>
-                    <div class="form-group form-group-sm">
-                        <label class="col-sm-3">$text{'chmod_octal'}</label>
-                        <div class="col-sm-9">
-                            <input class="form-control" type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-3">$text{'user_name'}</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" name="owner">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-sm-3">$text{'user_name'}</label>
-                        <div class="col-sm-9">
-                            <input class="form-control" type="text" name="owner">
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-3">$text{'group_name'}</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" name="group">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group form-group-sm">
-                        <label class="col-sm-3">$text{'group_name'}</label>
-                        <div class="col-sm-9">
-                            <input class="form-control" type="text" name="group">
                         </div>
                     </div>
                     <div class="checkbox">
-                        <label><input type="checkbox" name="chmod" value="1"> $text{'change_permissions'} </label>
+                        <label><input type="checkbox" name="chmod" value="1" onclick="toggleChmod(this)"> $text{'change_permissions'} </label>
                     </div>
                     <div class="checkbox">
-                        <label><input type="checkbox" name="chown" value="1"> $text{'change_owner'}</label>
+                        <label><input type="checkbox" name="chown" value="1" onclick="toggleChown(this)"> $text{'change_owner'}</label>
                     </div>
                     <label>$text{'chmod_apply_to'}</label>
                     <select class="form-control" name="applyto">

@@ -1,16 +1,18 @@
 $(function(){
+    /* Dynamic context menu, created on every right click */
     $.contextMenu({
         selector: '#list-table > tbody > tr', 
         build: function($trigger, e) {
             var extra_actions = $trigger.find('.actions')[0].textContent;
+            var trigger_checkbox = $trigger.find('.ui_checkbox')[0];
             var items = {};
+            items.rename = {name: text_rename, icon: "rename"};
             if (extra_actions == 'edit') {
                 items.edit =  {name: text_edit, icon: "Edit"};
             };
             if (extra_actions == 'extract') {
                 items.extract =  {name: text_extract, icon: "extract"};
             };
-            items.rename = {name: text_rename, icon: "rename"};
             items.sep1 = "-------";
             items.copy = {name: text_copy, icon: "copy"};
             items.cut = {name: text_cut, icon: "cut"};
@@ -27,7 +29,7 @@ $(function(){
                 items: items,
                 callback: function(key, options) {
                     var name = $(this).children()[2].textContent;
-                    var multi = checkSelectedNoWarn();
+                    var selected = checkSelected();
                     switch (key) {
                         case 'rename':
                             renameDialog(name);
@@ -39,53 +41,22 @@ $(function(){
                             window.location.href = 'extract.cgi?file=' + name + '&path=' + path;
                             break;
                         case 'copy':
-                            if(multi) {
-                                copySelected();
-                            } else {
-//                                window.location.href = 'copy.cgi?name=' + name + '&path=' + path;
-                                var formData = new FormData(document.forms.list);
-                                formData.append("name", name);
-//                                copySelected();
-                                var xhr = new XMLHttpRequest();
-                                xhr.open('POST', 'copy.cgi');
-                                xhr.send(formData);
-                                xhr.onloadend = function () {
-                                    Msg.success(xhr.responseText, 3000);
-selectNone();
-                                }
-                            }
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            copySelected();
                             break;
                         case 'cut':
-                            if(multi) {
-                                cutSelected();
-                            } else {
-                                var formData = new FormData(document.forms.list);
-                                formData.append("name", name);
-                                var xhr = new XMLHttpRequest();
-                                xhr.open('POST', 'cut.cgi');
-                                xhr.send(formData);
-                                xhr.onloadend = function () {
-                                    Msg.success(xhr.responseText, 3000);
-selectNone();
-                                }
-                            }
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            cutSelected();
                             break;
                         case 'paste':
                             window.location.href = 'paste.cgi?path=' + path;
                             break;
                         case 'delete':
-                            if(multi) {
-                                removeDialog();
-                            } else {
-                                $('#confirmDialog').find('.btn-ok').attr('href', 'delete.cgi?name=' + name + '&path=' + path);
-                                $('#items-to-remove-2').html('');
-                                $('#items-to-remove-2').append(name + '<br>');
-                                $("#confirmDialog").modal({
-                                      "backdrop"  : "static",
-                                      "keyboard"  : true,
-                                      "show"      : true
-                                });
-                            }
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            removeDialog();
                             break;
                         case 'properties':
                             propertiesDialog(name);
@@ -111,6 +82,8 @@ selectNone();
         rowClick($(this)[0].closest('tr'));
         e.stopPropagation;
     });*/
+
+    /* Code for current path edit form */
     $('.breadcrumb').click(function() {
         $('#path-edit').show();
         $('.breadcrumb').css("visibility", "hidden");
@@ -138,6 +111,8 @@ function propertiesDialog(name) {
         $("#propertiesDialog i.size").html(response.size);
         $("#propertiesDialog i.modified").html(response.mtime);
         $("#propertiesDialog i.accessed").html(response.atime);
+        $('#propertiesDialog table :input').attr('disabled', true);
+        $('#propertiesDialog .panel :input').attr('disabled', true);
         var form = $("#propertiesDialog form[name=chmod]")[0];
         form.permissions.value = response.permissions;
         form.name.value = name;
@@ -152,13 +127,29 @@ function propertiesDialog(name) {
     };
 }
 
+function toggleChmod(sender) {
+    $('#propertiesDialog table :input').attr('disabled', !sender.checked);
+}
+
+function toggleChown(sender) {
+    $('#propertiesDialog .panel :input').attr('disabled', !sender.checked);
+}
+
 function changeProperties() {
     var form = $("#propertiesDialog form[name=chmod]")[0];
-    var permissions = form.permissions.value;
-    var applyto = form.applyto.value;
-    if (permissions != null && permissions != "") {
-        form.submit();
-    }
+    if (form.chmod.checked || form.chown.checked) {
+        var permissions = form.permissions.value;
+        var owner = form.owner.value;
+        var group = form.group.value;
+        var applyto = form.applyto.value;
+        if ( permissions != null && permissions != "" &&
+             owner != null && owner != "" &&
+             group != null && owner != "" ) 
+        {
+            form.submit();
+        }
+    } else
+        $("#propertiesDialog").modal('hide');
 }
 
 function deleteThis(name) {
@@ -209,6 +200,8 @@ function compressDialog() {
           "keyboard"  : true,
           "show"      : true
         });
+    else
+        warnNothingSelected();
 }
 
 function compressSelected() {
@@ -236,7 +229,8 @@ function removeDialog() {
             "keyboard"  : true,
             "show"      : true
         });
-    }
+    } else
+        warnNothingSelected();
 }
 
 function removeSelected() {
@@ -251,6 +245,8 @@ function chmodDialog() {
           "keyboard"  : true,
           "show"      : true
         });
+    else
+        warnNothingSelected();
 }
 
 function chmodSelected() {
@@ -270,7 +266,9 @@ function chownDialog() {
           "backdrop"  : "static",
           "keyboard"  : true,
           "show"      : true
-        });    
+        });
+    else
+        warnNothingSelected();
 }
 
 function chownSelected() {
@@ -292,9 +290,9 @@ function chownSelected() {
     }
 }
 
-function renameDialog(file) {
-    $("#renameForm input[name=name]").val(file);
-    $("#renameForm input[name=file]").val(file);
+function renameDialog(name) {
+    $("#renameForm input[name=name]").val(name);
+    $("#renameForm input[name=file]").val(name);
     $("#renameForm input[name=name]").focus();
     $("#renameDialog").modal({
       "backdrop"  : "static",
@@ -323,7 +321,8 @@ function copySelected() {
             Msg.success(xhr.responseText, 3000);
             selectNone();
         }
-    }
+    } else
+        warnNothingSelected();
 }
 
 function cutSelected() {
@@ -335,7 +334,8 @@ function cutSelected() {
             Msg.success(xhr.responseText, 3000);
             selectNone();
         }
-    }
+    } else
+        warnNothingSelected();
 }
 
 function browseForUpload() {
@@ -357,7 +357,6 @@ function createFolderDialog() {
       "keyboard"  : true,
       "show"      : true
     });
-
 }
 
 function createFolder() {
@@ -465,7 +464,8 @@ function checkSelectedNoWarn() {
 }
 function checkSelected() {
     var checkboxes = $(".ui_checked_checkbox input[type='checkbox']:checked");
-    if(checkboxes.length == 0) {
+    return (checkboxes.length > 0);
+/*    if(checkboxes.length == 0) {
         $("#nothingSelected").modal({
           "backdrop"  : "static",
           "keyboard"  : true,
@@ -473,7 +473,15 @@ function checkSelected() {
         });
         return false
     }
-    return true;
+    return true;*/
+}
+
+function warnNothingSelected() {
+    $("#nothingSelected").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });
 }
 
 function searchDialog() {

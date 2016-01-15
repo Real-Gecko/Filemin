@@ -434,13 +434,13 @@ my $i;
 for($i=0; $i<@$cols; $i++) {
     $rv .= "<td ".$tdtags->[$i+1].">";
     if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
-	$rv .= "<label for=\"".
-	    &quote_escape("${checkname}_${checkvalue}")."\">";
-	}
+        $rv .= "<label for=\"".
+            &quote_escape("${checkname}_${checkvalue}")."\">";
+    }
     $rv .= ($cols->[$i] !~ /\S/ ? "<br>" : $cols->[$i]);
     if ($cols->[$i] !~ /<a\s+href|<input|<select|<textarea/) {
-	$rv .= "</label>";
-	}
+    $rv .= "</label>";
+    }
     $rv .= "</td>\n";
     }
 $rv .= "</tr>\n";
