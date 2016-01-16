@@ -6,3 +6,4 @@ version=0.10.0
 webmin=1
 usermin=1
 library=filemin-lib.pl
+depends=libraries
