@@ -13,7 +13,7 @@ if(!-e $confdir) {
 }
 
 if(!-e "$confdir/.bookmarks") {
-    utime time, time, "$configdir/.bookmarks";
+    utime time, time, "$confdir/.bookmarks";
 }
 
 $bookmarks = &read_file_lines($confdir.'/.bookmarks');

@@ -14,7 +14,12 @@ print_ajax_header();
 my @data = stat("$cwd/$in{'name'}");
 my %json = ();
 
-$json{'size'} = &nice_size($data[7]);
+if(-d "$cwd/$in{'name'}") {
+    $json{'size'} = &disk_usage_kb("$cwd/$in{'name'}")." KB";
+} else {
+    $json{'size'} = &nice_size($data[7]);
+}
+
 $json{'owner'} = getpwuid($data[4]) ? getpwuid($data[4]) : $data[4];
 $json{'group'} = getgrgid($data[5]) ? getgrgid($data[5]) : $data[5];
 $json{'permissions'} = sprintf("%04o", $data[2] & 07777);

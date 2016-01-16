@@ -93,6 +93,9 @@ $(function(){
         e.stopPropagation();
         return true;
     });
+    PNotify.prototype.options.styling = "bootstrap3";
+    PNotify.prototype.options.delay = 4000;
+    PNotify.prototype.options.icon = false;
 });
 
 function closePathEdit(){
@@ -318,7 +321,8 @@ function copySelected() {
         xhr.open('POST', 'copy.cgi');
         xhr.send(new FormData(document.forms.list));
         xhr.onloadend = function () {
-            Msg.success(xhr.responseText, 3000);
+//            $.jGrowl(xhr.responseText);
+            new PNotify({ text: xhr.responseText, type: 'success'});
             selectNone();
         }
     } else
@@ -331,7 +335,8 @@ function cutSelected() {
         xhr.open('POST', 'cut.cgi');
         xhr.send(new FormData(document.forms.list));
         xhr.onloadend = function () {
-            Msg.success(xhr.responseText, 3000);
+//            $.jGrowl(xhr.responseText);
+            new PNotify({ text: xhr.responseText, type: 'success'});
             selectNone();
         }
     } else

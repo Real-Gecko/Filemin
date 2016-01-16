@@ -8,10 +8,16 @@ if(!$in{'name'}) {
 }
 
 get_paths();
-if (-e "$cwd/$in{'name'}") {
-    print_errors("$in{'name'} $text{'error_exists'}");
+
+# Remove exploiting "../" in new file names
+$name = $in{'name'};
+$name =~ s/\.\.//g;
+&simplify_path($name);
+
+if (-e "$cwd/$name") {
+    print_errors("$name $text{'error_exists'}");
 } else {
-    if(&rename_file($cwd.'/'.$in{'file'}, $cwd.'/'.$in{'name'})) {
+    if(&rename_file($cwd.'/'.$in{'file'}, $cwd.'/'.$name)) {
         &redirect("index.cgi?path=$path");
     } else {
         print_errors("$text{'error_rename'} $in{'file'}: $!");

@@ -19,6 +19,9 @@ unless (opendir ( DIR, $cwd )) {
     $head = libraries::head_libraries(@libraries);
     $config_link = "<a href='config.cgi?path=$path' data-config-pagination='$userconfig{'per_page'}'>$text{'module_config'}</a>";
     &ui_print_header(undef, "Filemin", "", undef, 0, 1, 0, $config_link, $head);
+#    libraries::ui_print_header(undef, "Filemin", "", undef, 0, 1, 0, $config_link, $head);
+#print $head;
+#    use Data
 
     # Push file names with full paths to array, filtering out "." and ".."
     @list = map { &simplify_path("$cwd/$_") } grep { $_ ne '.' && $_ ne '..' } readdir(DIR);

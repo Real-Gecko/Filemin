@@ -8,15 +8,18 @@ get_paths();
 
 push @libraries, {
     'name' => 'codemirror',
+    'version' => '5.10.0',
     'files' => [
-        'lib/codemirror.js',
-        'lib/codemirror.css',
+        'codemirror.js',
+        'codemirror.css',
         'addon/mode/loadmode.js',
         'mode/meta.js',
     ]
 };
 
-$head = libraries::head_libraries(@libraries);
+@libs = &libraries_require;
+#$head = libraries::head_libraries(@libraries);
+$head = libraries::head_libraries(@libs);
 &ui_print_header(undef, "$text{'edit_file'}", "", undef, 0 , 0, 0, "<a href='config.cgi?path=$path' data-config-pagination='$userconfig{'per_page'}'>$text{'module_config'}</a>", $head);
 
 $data = &read_file_contents($cwd.'/'.$in{file});

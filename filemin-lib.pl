@@ -7,76 +7,7 @@ use Encode qw(decode encode);
 use File::Basename;
 use POSIX;
 
-=begin
-%libraries = (
-    'jquery' => {
-        'order' => 1,
-        'files' => ['jquery.min.js']
-    },
-    'jquery-ui' => {
-        'order' => 2,
-        'files' => ['jquery-ui.min.js', 'jquery-ui.min.css']
-    },
-    'bootstrap' => {
-        'order' => 3,
-        'files' => ['js/bootstrap.min.js', 'css/bootstrap.min.css']
-    }
-);
-=cut
-
-if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
-    @libraries = (
-        {
-            'name' => 'jquery.contextMenu',
-            'files' => ['jquery.contextMenu.min.js', 'jquery.contextMenu.min.css']
-        },
-        {
-            'name' => 'bootstrap-msg',
-            'files' => ['bootstrap-msg.min.js', 'bootstrap-msg.min.css']
-        },
-
-    );
-} else {
-    @libraries = (
-        {
-            'name' => 'jquery',
-            'files' => ['jquery.min.js']
-        },
-#        {
-#            'name' => 'jquery-ui',
-#            'files' => ['jquery-ui.min.js', 'jquery-ui.min.css']
-#        },
-        {
-            'name' => 'bootstrap',
-            'files' => ['js/bootstrap.min.js', 'css/bootstrap.min.css', 'css/bootstrap-theme.min.css']
-        },
-        {
-            'name' => 'jquery.contextMenu',
-            'files' => ['jquery.contextMenu.min.js', 'jquery.contextMenu.min.css']
-        },
-        {
-            'name' => 'fontawesome',
-            'files' => ['css/font-awesome.min.css']
-        },
-        {
-            'name' => 'bootstrap-msg',
-            'files' => ['bootstrap-msg.min.js', 'bootstrap-msg.min.css']
-        },
-#        {
-#            'name' => 'bootstrap3-editable',
-#            'files' => ['js/bootstrap-editable.min.js', 'css/bootstrap-editable.css']
-#        },
-        {
-            'name' => 'datatables',
-            'files' => [
-                'js/jquery.dataTables.min.js',
-                'css/jquery.dataTables.min.css',
-                'js/dataTables.bootstrap.min.js',
-                'css/dataTables.bootstrap.min.css'
-            ]
-        },
-    );
-}
+@libraries = libraries_require();
 
 sub get_paths {
     %access = &get_module_acl();
@@ -124,6 +55,7 @@ sub get_paths {
         }
     }
     $path = $in{'path'} ? $in{'path'} : '';
+    $path =~ s/\.\.//g;
     $path = &simplify_path($path);
     $cwd = &simplify_path($base.$path);
 
@@ -246,6 +178,21 @@ sub print_interface {
     push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
     push @ui_columns, $text{'last_mod_time'} if($userconfig{'columns'} =~ /last_mod_time/);
 
+    print "<script>";
+    print "var text_extract = '$text{'extract_archive'}';";
+    print "var text_edit = '$text{'edit_file'}';";
+    print "var text_rename = '$text{'rename'}';";
+    print "var text_copy = '$text{'copy_selected'}';";
+    print "var text_cut = '$text{'cut_selected'}';";
+    print "var text_delete = '$text{'delete'}';";
+    print "var text_paste = '$text{'paste'}';";
+    print "var text_properties = '$text{'properties'}';";
+    print "var text_select_all = '$text{'select_all'}';";
+    print "var text_select_none = '$text{'select_none'}';";
+    print "var text_invert_selection = '$text{'invert_selection'}';";
+    print "var path = '$path';";
+    print "</script>";
+
     print &filemin_ui_columns_start(\@ui_columns);
     foreach $item (@list) {
         my $link = $item->[0];
@@ -268,22 +215,7 @@ sub print_interface {
         $permissions = sprintf("%04o", $item->[3] & 07777);
         $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime($item->[10]));
 
-        print "<script>";
-        print "var text_extract = '$text{'extract_archive'}';";
-        print "var text_edit = '$text{'edit_file'}';";
-        print "var text_rename = '$text{'rename'}';";
-        print "var text_copy = '$text{'copy_selected'}';";
-        print "var text_cut = '$text{'cut_selected'}';";
-        print "var text_delete = '$text{'delete'}';";
-        print "var text_paste = '$text{'paste'}';";
-        print "var text_properties = '$text{'properties'}';";
-        print "var text_select_all = '$text{'select_all'}';";
-        print "var text_select_none = '$text{'select_none'}';";
-        print "var text_invert_selection = '$text{'invert_selection'}';";
-        print "var path = '$path';";
-        print "</script>";
-
-        $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$vlink\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
+#        $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$vlink\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
 
         if ($item->[15] == 1) {
             $href = "index.cgi?path=".&urlize("$path/$link");
@@ -385,6 +317,8 @@ print "});";
 print "</script>";
 }
 
+# get_bookmarks()
+# Return list of bookmarks made by user as set of HTML <li>
 sub get_bookmarks {
     $confdir = get_config_dir();
     if(!-e "$confdir/.bookmarks") {
@@ -472,6 +406,76 @@ sub filemin_ui_columns_end
 sub print_ajax_header {
     print "Content-Security-Policy: script-src 'self' 'unsafe-inline'; frame-src 'self'\n";
     print "Content-type: application/json; Charset=utf-8\n\n";
+}
+
+sub libraries_require {
+    @libraries = (
+        {
+            'name' => 'jquery',
+            'version' => '2.1.4',
+            'files' => ['jquery.min.js']
+        },
+        {
+            'name' => 'twitter-bootstrap',
+            'version' => '3.3.6',
+            'files' => ['js/bootstrap.min.js', 'css/bootstrap.min.css', 'css/bootstrap-theme.min.css']
+        },
+        {
+            'name' => 'jquery-contextmenu',
+            'version' => '2.1.0',
+            'files' => [
+                'jquery.contextMenu.min.js',
+                'jquery.contextMenu.min.css',
+                'font/context-menu-icons.eot',
+                'font/context-menu-icons.ttf',
+                'font/context-menu-icons.woff',
+                'font/context-menu-icons.woff2',
+            ]
+        },
+        {
+            'name' => 'font-awesome',
+            'version' => '4.5.0',
+            'files' => [
+                'css/font-awesome.min.css',
+                'fonts/fontawesome-webfont.eot',
+                'fonts/fontawesome-webfont.woff2',
+                'fonts/fontawesome-webfont.woff',
+                'fonts/fontawesome-webfont.ttf',
+                'fonts/fontawesome-webfont.svg'
+            ]
+        },
+        {
+            'name' => 'pnotify',
+            'version' => '3.0.0',
+            'files' => ['pnotify.min.js', 'pnotify.min.css', 'pnotify.buttons.min.js', 'pnotify.buttons.min.css']
+        },
+        {
+            'name' => 'datatables',
+            'version' => '1.10.10',
+            'files' => [
+                'js/jquery.dataTables.min.js',
+                'css/jquery.dataTables.min.css',
+                'js/dataTables.bootstrap.min.js',
+                'css/dataTables.bootstrap.min.css',
+                'images/sort_asc.png',
+                'images/sort_asc_disabled.png',
+                'images/sort_both.png',
+                'images/sort_desc.png',
+                'images/sort_desc_disabled.png',
+            ]
+        },
+        {
+            'name' => 'codemirror',
+            'version' => '5.10.0',
+            'files' => [
+                'codemirror.min.js',
+                'codemirror.min.css',
+                'addon/mode/loadmode.js',
+                'mode/meta.js',
+            ]
+        }
+    );
+    return @libraries;
 }
 
 1;
