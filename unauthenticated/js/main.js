@@ -1,24 +1,164 @@
-/*$( document ).ready(function() {
-/*    $.fn.dataTableExt.sErrMode = 'throw';
-    $('#list_form > table').dataTable({
-        "order": [],
-        "aaSorting": [],
-        "bDestroy": true,
-        "bPaginate": false,
-        "sScrollY": "600px",
-        "bInfo": false,
-        "destroy": true,
-        "oLanguage": {
-            "sSearch": " "
-        },
-        "columnDefs": [ { "orderable": false, "targets": [0, 1, 4] }, ],
-        "iDisplayLength": 50,
+$(function(){
+    /* Dynamic context menu, created on every right click */
+    $.contextMenu({
+        selector: '#list-table > tbody > tr', 
+        build: function($trigger, e) {
+            var extra_actions = $trigger.find('.actions')[0].textContent;
+            var trigger_checkbox = $trigger.find('.ui_checkbox')[0];
+            var items = {};
+            items.rename = {name: text_rename, icon: "rename"};
+            if (extra_actions == 'edit') {
+                items.edit =  {name: text_edit, icon: "Edit"};
+            };
+            if (extra_actions == 'extract') {
+                items.extract =  {name: text_extract, icon: "extract"};
+            };
+            items.sep1 = "-------";
+            items.copy = {name: text_copy, icon: "copy"};
+            items.cut = {name: text_cut, icon: "cut"};
+            items.paste = {name: text_paste, icon: "paste"};
+            items.sep2 = "-------";
+            items.delete = {name: text_delete, icon: "delete"};
+            items.sep3 = "-------";
+            items.properties = {name: text_properties, icon: "gear"};
+            items.sep4 = "-------";
+            items.select_all = {name: text_select_all, icon: "check-square-o"};
+            items.select_none = {name: text_select_none, icon: "square-o"};
+            items.invert_sel = {name: text_invert_selection, icon: "check-square"};
+            return {
+                items: items,
+                callback: function(key, options) {
+                    var name = $(this).children()[2].textContent;
+                    var selected = checkSelected();
+                    switch (key) {
+                        case 'rename':
+                            renameDialog(name);
+                            break;
+                        case 'edit':
+                            window.location.href = 'edit_file.cgi?file=' + name + '&path=' + path;
+                            break;
+                        case 'extract':
+                            window.location.href = 'extract.cgi?file=' + name + '&path=' + path;
+                            break;
+                        case 'copy':
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            copySelected();
+                            break;
+                        case 'cut':
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            cutSelected();
+                            break;
+                        case 'paste':
+                            window.location.href = 'paste.cgi?path=' + path;
+                            break;
+                        case 'delete':
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            removeDialog();
+                            break;
+                        case 'properties':
+                            propertiesDialog(name);
+                            break;
+                        case 'select_all':
+                            selectAll();
+                            break;
+                        case 'select_none':
+                            selectNone();
+                            break;
+                        case 'invert_sel':
+                            invertSelection();
+                            break;
+                    }
+                }
+            };
+        }
+    });/*
+    $('.ui_checked_columns').click( function(e) {
+        rowClick($(this)[0]);
     });
-    $("form").on('click', 'div.popover', function() {
-        $(this).prev('input').popover('hide');
+    $('.ui_checkbox').click( function(e) {
+        rowClick($(this)[0].closest('tr'));
+        e.stopPropagation;
+    });*/
+
+    /* Code for current path edit form */
+    $('.breadcrumb').click(function() {
+        $('#path-edit').show();
+        $('.breadcrumb').css("visibility", "hidden");
+        $('.breadcrumb input[name=path]').focus();
     });
+    $(".breadcrumb a").click(function(e) {
+        e.stopPropagation();
+        return true;
+    });
+    PNotify.prototype.options.styling = "bootstrap3";
+    PNotify.prototype.options.delay = 4000;
+    PNotify.prototype.options.icon = false;
 });
-*/
+
+function closePathEdit(){
+    $('#path-edit').hide();
+    $('.breadcrumb').css("visibility", "visible");
+}
+
+function propertiesDialog(name) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'get_properties.cgi?name=' + name + '&path=' + path);
+    xhr.send();
+    xhr.onloadend = function () {
+        var response = JSON.parse(xhr.responseText);
+        $("#propertiesDialog i.obj-name").html(name);
+        $("#propertiesDialog i.type").html(response.type);
+        $("#propertiesDialog i.size").html(response.size);
+        $("#propertiesDialog i.modified").html(response.mtime);
+        $("#propertiesDialog i.accessed").html(response.atime);
+        $('#propertiesDialog table :input').attr('disabled', true);
+        $('#propertiesDialog .panel :input').attr('disabled', true);
+        var form = $("#propertiesDialog form[name=chmod]")[0];
+        form.permissions.value = response.permissions;
+        form.name.value = name;
+        form.owner.value = response.owner;
+        form.group.value = response.group;
+        octalchange(form.permissions);
+        $("#propertiesDialog").modal({
+            "backdrop"  : "static",
+            "keyboard"  : true,
+            "show"      : true
+        });
+    };
+}
+
+function toggleChmod(sender) {
+    $('#propertiesDialog table :input').attr('disabled', !sender.checked);
+}
+
+function toggleChown(sender) {
+    $('#propertiesDialog .panel :input').attr('disabled', !sender.checked);
+}
+
+function changeProperties() {
+    var form = $("#propertiesDialog form[name=chmod]")[0];
+    if (form.chmod.checked || form.chown.checked) {
+        var permissions = form.permissions.value;
+        var owner = form.owner.value;
+        var group = form.group.value;
+        var applyto = form.applyto.value;
+        if ( permissions != null && permissions != "" &&
+             owner != null && owner != "" &&
+             group != null && owner != "" ) 
+        {
+            form.submit();
+        }
+    } else
+        $("#propertiesDialog").modal('hide');
+}
+
+function deleteThis(name) {
+    return;
+}
+
 function countUploads(files) {
     if(files.files.length = 0) return;
     var info = '';
@@ -28,19 +168,23 @@ function countUploads(files) {
     $('#readyForUploadList').html(info);
 }
 
-function invertSelection() {
-    var rows = document.getElementsByClassName('ui_checked_columns');
-
-    for (i = 0; i < rows.length; i++)
-        rowClick(rows[i]);
-}
-
 function selectAll() {
     var rows = document.getElementsByClassName('ui_checked_columns');
 
     for (i = 0; i < rows.length; i++) {
         var input = rows[i].getElementsByTagName('input')[0];
         if (!input.checked) {
+            rowClick(rows[i]);
+        }
+    }
+}
+
+function selectNone() {
+    var rows = document.getElementsByClassName('ui_checked_columns');
+
+    for (i = 0; i < rows.length; i++) {
+        var input = rows[i].getElementsByTagName('input')[0];
+        if (input.checked) {
             rowClick(rows[i]);
         }
     }
@@ -58,7 +202,9 @@ function compressDialog() {
           "backdrop"  : "static",
           "keyboard"  : true,
           "show"      : true
-        });    
+        });
+    else
+        warnNothingSelected();
 }
 
 function compressSelected() {
@@ -82,11 +228,12 @@ function removeDialog() {
         });
 
         $("#removeDialog").modal({
-        "backdrop"  : "static",
-        "keyboard"  : true,
-        "show"      : true
+            "backdrop"  : "static",
+            "keyboard"  : true,
+            "show"      : true
         });
-    }
+    } else
+        warnNothingSelected();
 }
 
 function removeSelected() {
@@ -100,15 +247,18 @@ function chmodDialog() {
           "backdrop"  : "static",
           "keyboard"  : true,
           "show"      : true
-        });    
+        });
+    else
+        warnNothingSelected();
 }
 
 function chmodSelected() {
-    var perms = $('#perms').val();
-    var recursive = $('#recursive').prop('checked');
-    if (perms != null && perms != "") {
-        var applyto = $('#chmodForm select[name=applyto] option:selected').val();
-        $('#list_form').attr('action', "chmod.cgi?perms=" + perms + "&applyto=" + applyto);
+    var form = $("#chmodDialog form[name=chmod]")[0];
+    var permissions = form.permissions.value;
+    var applyto = form.applyto.value;
+    console.log(form, permissions, applyto);
+    if (permissions != null && permissions != "") {
+        $('#list_form').attr('action', "chmod.cgi?permissions=" + permissions + "&applyto=" + applyto);
         $('#list_form').submit();
     }
 }
@@ -119,7 +269,9 @@ function chownDialog() {
           "backdrop"  : "static",
           "keyboard"  : true,
           "show"      : true
-        });    
+        });
+    else
+        warnNothingSelected();
 }
 
 function chownSelected() {
@@ -141,9 +293,10 @@ function chownSelected() {
     }
 }
 
-function renameDialog(file) {
-    $("#renameForm input[name=name]").val(file);
-    $("#renameForm input[name=file]").val(file);
+function renameDialog(name) {
+    $("#renameForm input[name=name]").val(name);
+    $("#renameForm input[name=file]").val(name);
+    $("#renameForm input[name=name]").focus();
     $("#renameDialog").modal({
       "backdrop"  : "static",
       "keyboard"  : true,
@@ -164,16 +317,30 @@ function renameSelected() {
 
 function copySelected() {
     if(checkSelected()) {
-        document.forms['list_form'].action = "copy.cgi";
-        document.forms['list_form'].submit();
-    }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'copy.cgi');
+        xhr.send(new FormData(document.forms.list));
+        xhr.onloadend = function () {
+//            $.jGrowl(xhr.responseText);
+            new PNotify({ text: xhr.responseText, type: 'success'});
+            selectNone();
+        }
+    } else
+        warnNothingSelected();
 }
 
 function cutSelected() {
     if(checkSelected()) {
-        document.forms['list_form'].action = "cut.cgi";
-        document.forms['list_form'].submit();
-    }
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', 'cut.cgi');
+        xhr.send(new FormData(document.forms.list));
+        xhr.onloadend = function () {
+//            $.jGrowl(xhr.responseText);
+            new PNotify({ text: xhr.responseText, type: 'success'});
+            selectNone();
+        }
+    } else
+        warnNothingSelected();
 }
 
 function browseForUpload() {
@@ -195,7 +362,6 @@ function createFolderDialog() {
       "keyboard"  : true,
       "show"      : true
     });
-
 }
 
 function createFolder() {
@@ -290,12 +456,21 @@ function viewReadyForUpload() {
       "backdrop"  : "static",
       "keyboard"  : true,
       "show"      : true
-    });    
+    });
 }
 
-function checkSelected() {
+function checkSelectedNoWarn() {
     var checkboxes = $(".ui_checked_checkbox input[type='checkbox']:checked");
     if(checkboxes.length == 0) {
+        return false
+    }
+    return true;
+
+}
+function checkSelected() {
+    var checkboxes = $(".ui_checked_checkbox input[type='checkbox']:checked");
+    return (checkboxes.length > 0);
+/*    if(checkboxes.length == 0) {
         $("#nothingSelected").modal({
           "backdrop"  : "static",
           "keyboard"  : true,
@@ -303,7 +478,15 @@ function checkSelected() {
         });
         return false
     }
-    return true;
+    return true;*/
+}
+
+function warnNothingSelected() {
+    $("#nothingSelected").modal({
+      "backdrop"  : "static",
+      "keyboard"  : true,
+      "show"      : true
+    });
 }
 
 function searchDialog() {

@@ -4,14 +4,19 @@ require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
 
+&foreign_require("libraries", "libraries-lib.pl");
+
 &ReadParse();
 
 get_paths();
 
 $query = $in{'query'};
 
-&ui_print_header(undef, $text{'search_results'}." '".
-			&html_escape($query)."'", "");
+$head = libraries::head_libraries(@libraries);
+&ui_print_header(undef, "$text{'search_results'} '".&html_escape($query)."'", "", undef, 0 , 0, 0, "<a href='config.cgi?path=$path' data-config-pagination='$userconfig{'per_page'}'>$text{'module_config'}</a>", $head);
+
+#&ui_print_header(undef, $text{'search_results'}." '".
+#			&html_escape($query)."'", "");
 
 print $head;
 if($in{'caseins'}) {

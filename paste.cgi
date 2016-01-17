@@ -6,7 +6,7 @@ use Cwd 'abs_path';
 
 get_paths();
 
-open(my $fh, "<".&get_paste_buffer_file()) or die "Error: $!";
+open(my $fh, "<".&get_config_dir()."/.buffer") or die "Error: $!";
 my @arr = <$fh>;
 close($fh);
 my $act = $arr[0];
@@ -25,7 +25,7 @@ if ($cwd eq $from) {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
                 system("cp -r ".quotemeta("$from/$arr[$i]").
-		       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
+                       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
             }
         }
         elsif ($act eq "cut") {
@@ -33,7 +33,7 @@ if ($cwd eq $from) {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
                 system("mv ".quotemeta("$from/$arr[$i]").
-		       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
+                       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
             }
         }
     }

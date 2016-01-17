@@ -152,3 +152,54 @@ a.pages {
     clear: both;
     margin-bottom: 10px;
 }
+
+.actions {
+    visibility: hidden;
+}
+.context-menu-icon::before {
+    color: #000;
+}
+
+.context-menu-icon-extract:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
+.context-menu-icon-rename:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
+.context-menu-icon-gear:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
+.context-menu-icon-check-square-o:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
+.context-menu-icon-check-square:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
+.context-menu-icon-square-o:before {
+  content: "";
+  font-family: FontAwesome;
+}
+
+#path-edit {
+    display: none; 
+    position: absolute;
+}
+
+.btn-group .btn {
+    height: 34px;
+    border: solid 1px #bbb;
+}
+
+ul li {
+    list-style: none;
+}

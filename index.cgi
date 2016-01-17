@@ -3,6 +3,7 @@
 
 #$unsafe_index_cgi = 1;
 require './filemin-lib.pl';
+&foreign_require("libraries", "libraries-lib.pl");
 use lib './lib';
 use File::MimeInfo;
 #use File::Basename;
@@ -15,10 +16,13 @@ unless (opendir ( DIR, $cwd )) {
     $path="";
     print_errors("$text{'error_opendir'} $cwd $!");
 } else {
-    &ui_print_header(undef, "Filemin", "", undef, 0 , 0, 0, "<a href='config.cgi?path=$path' data-config-pagination='$userconfig{'per_page'}'>$text{'module_config'}</a>");
+    $head = libraries::head_libraries(@libraries);
+    $config_link = "<a href='config.cgi?path=$path' data-config-pagination='$userconfig{'per_page'}'>$text{'module_config'}</a>";
+    &ui_print_header(undef, "Filemin", "", undef, 0, 1, 0, $config_link, $head);
+#    libraries::ui_print_header(undef, "Filemin", "", undef, 0, 1, 0, $config_link, $head);
+#print $head;
+#    use Data
 
-##########################################
-#---------LET DA BRAINF###ING BEGIN----------
     # Push file names with full paths to array, filtering out "." and ".."
     @list = map { &simplify_path("$cwd/$_") } grep { $_ ne '.' && $_ ne '..' } readdir(DIR);
     closedir(DIR);
@@ -52,8 +56,6 @@ unless (opendir ( DIR, $cwd )) {
     # Recreate list
     undef(@list);
     push @list, @folders, @files;
-
-#########################################
 
     print_interface();
 

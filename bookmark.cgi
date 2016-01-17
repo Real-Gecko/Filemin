@@ -7,13 +7,13 @@ use lib './lib';
 
 get_paths();
 
-$confdir = "$remote_user_info[7]/.filemin";
+$confdir = get_config_dir();
 if(!-e $confdir) {
     mkdir $confdir or &error("$text{'error_creating_conf'}: $!");
 }
 
 if(!-e "$confdir/.bookmarks") {
-    utime time, time, "$configdir/.bookmarks";
+    utime time, time, "$confdir/.bookmarks";
 }
 
 $bookmarks = &read_file_lines($confdir.'/.bookmarks');
