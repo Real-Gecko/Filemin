@@ -295,11 +295,9 @@
         <h4 class="warning">$text{'upload_files'}</h4>
       </div>
       <div class="modal-body">
-        <form id='upload-form' method='post' action='upload.cgi?path=$path&id=$upid' enctype='multipart/form-data' onsubmit='window.open("/uptracker.cgi?id=$upid&uid=$uid", "uptracker", "toolbar=no, menubar=no, scrollbars=no, location=no, resizable=no, width=screen.width, height=screen.height")'>
-            <input type='file' id='upfiles' name='upfiles' multiple onchange='countUploads(this)'>
-            <input type='hidden' name='path' value='$path'>
-        </form>
+        <input id="fileupload" type="file" name="files[]" data-url="upload.cgi?path=$path" multiple>
           <div id="readyForUploadList" class="well">
+              $text{'upload_tip'}
           </div>
       </div>
       <div class="modal-footer">
@@ -476,6 +474,21 @@
             <div class="modal-footer">
                 <a class="btn btn-danger btn-ok">$text{'dialog_ok'}</a>
                 <button type="button" class="btn btn-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="uploadProgressDialog" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="warning">$text{'upload_progress'}</h4>
+            </div>
+            <div class="modal-body">
+                <div id="progress">
+                    <div class="bar" style="width: 0%;"></div>
+                </div>
             </div>
         </div>
     </div>

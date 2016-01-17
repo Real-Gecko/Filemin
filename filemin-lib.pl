@@ -215,8 +215,6 @@ sub print_interface {
         $permissions = sprintf("%04o", $item->[3] & 07777);
         $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime($item->[10]));
 
-#        $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$vlink\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
-
         if ($item->[15] == 1) {
             $href = "index.cgi?path=".&urlize("$path/$link");
         } else {
@@ -251,7 +249,7 @@ sub print_interface {
         push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
         push @row_data, $mod_time if($userconfig{'columns'} =~ /last_mod_time/);
 
-        print filemin_ui_checked_columns_row(\@row_data, undef, "name", $link);
+        print filemin_ui_checked_columns_row(\@row_data, undef, "name", $vlink);
     }
     print filemin_ui_columns_end();
     print &ui_hidden("path", $path),"\n";
@@ -416,6 +414,11 @@ sub libraries_require {
             'files' => ['jquery.min.js']
         },
         {
+            'name' => 'jqueryui',
+            'version' => '1.11.4',
+            'files' => ['jquery-ui.min.js']
+        },
+        {
             'name' => 'twitter-bootstrap',
             'version' => '3.3.6',
             'files' => ['js/bootstrap.min.js', 'css/bootstrap.min.css', 'css/bootstrap-theme.min.css']
@@ -472,6 +475,16 @@ sub libraries_require {
                 'codemirror.min.css',
                 'addon/mode/loadmode.js',
                 'mode/meta.js',
+            ]
+        },
+        {
+            'name' => 'blueimp-file-upload',
+            'version' => '9.5.7',
+            'files' => [
+                'jquery.fileupload.min.js',
+                'css/jquery.fileupload.min.css',
+                'jquery.iframe-transport.min.js',
+                'jquery.fileupload.min.js',
             ]
         }
     );

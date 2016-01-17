@@ -203,3 +203,12 @@ a.pages {
 ul li {
     list-style: none;
 }
+
+.bar {
+    height: 18px;
+    background: green;
+}
+
+#fileupload {
+    visibility: hidden;
+}

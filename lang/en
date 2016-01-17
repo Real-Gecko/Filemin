@@ -157,3 +157,5 @@ change_permissions=Change permissions
 change_owner=Change owner
 copied_to_buffer= item(s) copied to buffer
 cut_to_buffer= item(s) cut to buffer
+upload_progress=Upload Progress
+upload_tip=Drag and drop files anywhere in browser window, any time you want

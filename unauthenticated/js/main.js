@@ -96,6 +96,32 @@ $(function(){
     PNotify.prototype.options.styling = "bootstrap3";
     PNotify.prototype.options.delay = 4000;
     PNotify.prototype.options.icon = false;
+
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .bar').css(
+                'width',
+                progress + '%'
+            );
+        },
+        start: function(e) {
+            $("#uploadProgressDialog").modal({
+                "backdrop"  : "static",
+                "keyboard"  : true,
+                "show"      : true
+            });
+        },
+        stop: function(e) {
+            window.location.href = 'index.cgi?path=' + path;
+        }
+    });
 });
 
 function closePathEdit(){
