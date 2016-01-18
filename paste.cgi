@@ -20,12 +20,14 @@ if ($cwd eq $from) {
     my @errors;
     for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
         chomp($arr[$i]);
+        $arr[$i] =~ s/\.\.//g;
+        $arr[$i] = &simplify_path($arr[$i]);
         if ($act eq "copy") {
             if (-e "$cwd/$arr[$i]") {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
                 system("cp -r ".quotemeta("$from/$arr[$i]").
-		       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
+                       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
             }
         }
         elsif ($act eq "cut") {
@@ -33,7 +35,7 @@ if ($cwd eq $from) {
                 push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
             } else {
                 system("mv ".quotemeta("$from/$arr[$i]").
-		       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
+                       " ".quotemeta($cwd)) == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
             }
         }
     }
