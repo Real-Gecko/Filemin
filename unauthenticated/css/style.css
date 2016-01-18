@@ -5,6 +5,16 @@ body
 #list_form {
   clear: both;
 }
+#list-table {
+    width: 100%;
+    border: none;
+    border-collapse: collapse;
+}
+
+#list-table td, #list-table th {
+    padding: 5px;
+}
+
 #listing {
   //border: solid 1px;
   border-collapse: collapse;

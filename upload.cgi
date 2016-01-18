@@ -10,20 +10,16 @@ get_paths();
 my @errors;
 $line = "";
 
-# Use Webmin's callback function to track progress
-$cbfunc = \&read_parse_mime_callback;
-
 # Get multipart form boundary
 $ENV{'CONTENT_TYPE'} =~ /boundary=(.*)$/ || &error($text{'readparse_enc'});
 $boundary = $1;
+
+print_ajax_header();
 
 # Comment right now
 #if ($ENV{'CONTENT_LENGTH'} && $max && $ENV{'CONTENT_LENGTH'} > $max) {
 #  	&error($err);
 #}
-
-# Initialize progress tracker
-&$cbfunc(0, $ENV{'CONTENT_LENGTH'}, undef, $in{'id'});
 
 #Read the data
 while(index($line,"$boundary--") == -1) {
@@ -35,22 +31,21 @@ while(index($line,"$boundary--") == -1) {
     $line = <STDIN>;
     $got += length($line);
     if ($upload_max && $got > $upload_max) {
-	&error(&text('error_upload_emax', &nice_size($upload_max)));
+        &error(&text('error_upload_emax', &nice_size($upload_max)));
     }
-  	&$cbfunc($got, $ENV{'CONTENT_LENGTH'}, undef, $in{'id'});
     if ($line =~ /(\S+):\s*form-data(.*)$/) {
-    		$rest = $2; # We found form data definition, let`s check it
+                $rest = $2; # We found form data definition, let`s check it
     } else {
         next;
     }
     # Check if current form data part is file
-		while ($rest =~ /([a-zA-Z]*)=\"([^\"]*)\"(.*)/) {
-		    if ($1 eq 'filename') {
-				    $file = $2;
-				}
-		    $rest = $3;
+                while ($rest =~ /([a-zA-Z]*)=\"([^\"]*)\"(.*)/) {
+                    if ($1 eq 'filename') {
+                                    $file = $2;
+                                }
+                    $rest = $3;
     }
-    
+
     if(defined($file)){
         # OK, we have a file, let`s save it
         if (-e "$cwd/$file") {
@@ -59,7 +54,7 @@ while(index($line,"$boundary--") == -1) {
         } else {
             if (!open(OUTFILE, ">$cwd/$file")) {
                 push @errors, "$text{'error_opening_file_for_writing'} $path/$file - $!"; #die "Can't open $cwd/$file for writing - $!";
-                next;        
+                next;
             } else {
               binmode(OUTFILE);
               # Skip "content-type" as we work in binmode anyway and skip empty line
@@ -67,9 +62,8 @@ while(index($line,"$boundary--") == -1) {
               # Read all lines until next boundary or form data end
               while(1) {
                   $line = <STDIN>;
-                  # Inform progress tracker about our actions
+                  # Calculate data got
                   $got += length($line);
-       	          &$cbfunc($got, $ENV{'CONTENT_LENGTH'}, $file, $in{'id'});
                   # Some brainf###ing to deal with last CRLF
                   if(index($line,"$boundary") != -1 || index($line,"$boundary--") != -1) {
                       chop($prevline);
@@ -95,14 +89,10 @@ while(index($line,"$boundary--") == -1) {
         # Just skip everything until next boundary or form data end
         while(index($line,"$boundary") == -1 or index($line,"$boundary--") == -1) {
             $line = <STDIN>;
-        }        
+        }
     }
 }
-# Everything finished, inform progress tracker
-&$cbfunc(-1, $ENV{'CONTENT_LENGTH'}, undef, $in{'id'});
-#&ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+
 if (scalar(@errors) > 0) {
     print_errors(@errors);
-} else {
-    &redirect("index.cgi?path=$path");
 }

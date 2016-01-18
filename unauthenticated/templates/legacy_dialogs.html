@@ -81,10 +81,7 @@
 </div>
 
 <div id="readyForUploadDialog" class="modal">
-    <form id='upload-form' method='post' action='upload.cgi?path=$path&id=$upid' enctype='multipart/form-data' onsubmit='window.open("/uptracker.cgi?id=$upid&uid=$uid", "uptracker", "toolbar=no, menubar=no, scrollbars=no, location=no, resizable=no, width=screen.width, height=screen.height")'>
-        <input type='file' id='upfiles' name='upfiles' multiple onchange='countUploads(this)'>
-        <input type='hidden' name='path' value='$path'>
-    </form>
+    <input id="fileupload" type="file" name="files[]" data-url="upload.cgi?path=$path" multiple>
     <div id="readyForUploadList" class="well">
     </div>
 </div>
@@ -160,4 +157,128 @@
           <input type='hidden' name='path' value='$path'>
       </div>
   </form>
+</div>
+
+<div id="uploadProgressDialog" class="modal fade">
+    <h4 class="warning">$text{'upload_progress'}</h4>
+    <div id="progress">
+        <div class="bar" style="width: 0%;"></div>
+    </div>
+</div>
+
+<div id="propertiesDialog" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="warning">$text{'properties_of'} <i class="obj-name"></i></h4>
+            </div>
+            <div class="modal-body">
+                <form name="chmod" action="change_properties.cgi" class="form-horizontal">
+                    <div class="well">
+                    <b>$text{'properties_path'}:</b> $path<br>
+                    <b>$text{'properties_type'}:</b> <i class="type"></i><br>
+                    <b>$text{'properties_size'}:</b> <i class="size"></i><br>
+                    <b>$text{'properties_mtime'}:</b> <i class="modified"></i><br>
+                    <b>$text{'properties_atime'}:</b> <i class="accessed"></i><br>
+                    </div>
+                    <table class="table">
+                        <tr bgcolor="white" align="center">
+                            <td colspan="2"><b>Superuser</b></td>
+                            <td><b>$text{'permissions'}</b></td>
+                            <td><b>$text{'chmod_owner'}</b></td>
+                            <td><b>$text{'chmod_group'}</b></td>
+                            <td><b>$text{'chmod_others'}</b></td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_setuid'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra4" onclick="calc(this, 4000)">
+                            </td>
+                            <td><b>$text{'chmod_read'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner4" onclick="calc(this, 400)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group4" onclick="calc(this, 40)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other4" onclick="calc(this, 4)">
+                            </td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_setgid'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra2" onclick="calc(this, 2000)">
+                            </td>
+                            <td><b>$text{'chmod_write'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner2" onclick="calc(this, 200)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group2" onclick="calc(this, 20)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other2" onclick="calc(this, 2)">
+                            </td>
+                        </tr>
+                        <tr bgcolor="white" align="center">
+                            <td><b>$text{'chmod_sticky'}</b></td>
+                            <td>
+                                <input type="checkbox" name="extra1" onclick="calc(this, 1000)">
+                            </td>
+                            <td><b>$text{'chmod_execute'}</b></td>
+                            <td>
+                                <input type="checkbox" name="owner1" onclick="calc(this, 100)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="group1" onclick="calc(this, 10)">
+                            </td>
+                            <td>
+                                <input type="checkbox" name="other1" onclick="calc(this, 1)">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="col-sm-3">$text{'chmod_octal'}</label>
+                            </td>
+                            <td>
+                            </td>
+                            <td colspan="4">
+                                <input class="form-control" type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                            </td>
+                        </tr>
+                    </table>
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-3">$text{'user_name'}</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" name="owner">
+                            </div>
+                        </div>
+                        <div class="form-group form-group-sm">
+                            <label class="col-sm-3">$text{'group_name'}</label>
+                            <div class="col-sm-9">
+                                <input class="form-control" type="text" name="group">
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    <input type="checkbox" name="chmod" value="1" onclick="toggleChmod(this)"> $text{'change_permissions'}
+                    <input type="checkbox" name="chown" value="1" onclick="toggleChown(this)"> $text{'change_owner'}
+                    <label>$text{'chmod_apply_to'}</label>
+                    <select class="form-control" name="applyto">
+                        <option value="1">$text{'chmod_dir_only'}</option>
+                        <option value="2">$text{'chmod_dir_and_its_files'}</option>
+                        <option value="3">$text{'chmod_all'}</option>
+                        <option value="4">$text{'chmod_dir_files_and_subs_files'}</option>
+                        <option value="5">$text{'chmod_dir_and_subs'}</option>
+                    </select>
+                    <input type='hidden' name='path' value='$path'>
+                    <input type='hidden' name='name' value=''>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>

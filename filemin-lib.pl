@@ -136,15 +136,7 @@ sub print_interface {
         $extract_icon = "<i class='fa fa-external-link' alt='$text{'extract_archive'}'></i>";
         $goto_icon = "<i class='fa fa-arrow-right' alt='$text{'goto_folder'}'></i>";
         # Add static files
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/main.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/dataTables.bootstrap.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/bootstrap-hover-dropdown.min.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.ui.position.min.js\"></script>";
-        print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
-        print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/dataTables.bootstrap.css\" />";
-        print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.css\" />";
+        print_template("unauthenticated/templates/modern_static.html");
         init_datatables();
         # Set "root" icon
         if($base eq '/') {
@@ -179,20 +171,10 @@ sub print_interface {
         $rename_icon = "<img src='images/icons/quick/rename.png' alt='$text{'rename'}' />";
         $extract_icon = "<img src='images/icons/quick/extract.png' alt='$text{'extract_archive'}' />";
         $goto_icon = "<img src='images/icons/quick/go-next.png' alt='$text{'goto_folder'}'";
+
         # Add static files
-        $head = "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery/jquery.min.js\"></script>";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery/jquery-ui.min.js\"></script>";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/legacy.js\"></script>";
-        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery/jquery-ui.min.css\" />";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
-        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/dropdown/fg.menu.css\" />";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/dropdown/fg.menu.js\"></script>";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.js\"></script>";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.ui.position.min.js\"></script>";
-        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.css\" />";
-        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/font-awesome/css/font-awesome.min.css\" />";
-        print $head;
+        print_template("unauthenticated/templates/legacy_static.html");
+
         # Set "root" icon
         if($base eq '/') {
             $root_icon = "<img src=\"images/icons/quick/drive-harddisk.png\" class=\"hdd-icon\" />";
@@ -251,7 +233,7 @@ sub print_interface {
     push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
     push @ui_columns, $text{'last_mod_time'} if($userconfig{'columns'} =~ /last_mod_time/);
 
-    print &ui_columns_start(\@ui_columns);
+    print &filemin_ui_columns_start(\@ui_columns);
     #foreach $link (@list) {
     for(my $count = 1 + $pagelimit*($page-1);$count <= $pagelimit+$pagelimit*($page-1);$count++) {
         if ($count > scalar(@list)) { last; }
@@ -372,6 +354,27 @@ sub get_paste_buffer_file
         &make_dir($tmpdir, 0700) if (!-d $tmpdir);
         return $tmpdir."/.buffer";
     }
+}
+
+sub filemin_ui_columns_start {
+    my ($heads, $tdtags, $title) = @_;
+    my $rv;
+    $rv .= "<table id='list-table'>\n";
+    if ($title) {
+        $rv .= "<tr".($tb ? " ".$tb : "")." class='ui_columns_heading'>".
+               "<td colspan=".scalar(@$heads)."><b>$title</b></td></tr>\n";
+        }
+    $rv .= "<thead>";
+    $rv .= "<tr".($tb ? " ".$tb : "")." class='ui_columns_heads'>\n";
+    my $i;
+    for($i=0; $i<@$heads; $i++) {
+        $rv .= "<th ".$tdtags->[$i].">".
+               ($heads->[$i] eq "" ? "<br>" : $heads->[$i])."</th>\n";
+        }
+    $rv .= "</tr>\n";
+    $rv .= "</thead>\n";
+    $rv .= "<tbody>";
+    return $rv;
 }
 
 sub print_ajax_header {

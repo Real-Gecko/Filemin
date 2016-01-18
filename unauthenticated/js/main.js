@@ -1,7 +1,7 @@
 $(document).ready(function() {
     /* Dynamic context menu, created on every right click */
     $.contextMenu({
-        selector: '#list_form > table > tbody > tr', 
+        selector: '#list-table > tbody > tr', 
         build: function($trigger, e) {
             var extra_actions = $trigger.find('.actions')[0].textContent;
             var trigger_checkbox = $trigger.find("input[type='checkbox']")[0];
@@ -119,6 +119,33 @@ $(document).ready(function() {
     });
     $("form").on('click', 'div.popover', function() {
         $(this).prev('input').popover('hide');
+    });
+
+    /* Initialise upload library */
+    $('#fileupload').fileupload({
+        dataType: 'json',
+        done: function (e, data) {
+            $.each(data.result.files, function (index, file) {
+                $('<p/>').text(file.name).appendTo(document.body);
+            });
+        },
+        progressall: function (e, data) {
+            var progress = parseInt(data.loaded / data.total * 100, 10);
+            $('#progress .bar').css(
+                'width',
+                progress + '%'
+            );
+        },
+        start: function(e) {
+            $("#uploadProgressDialog").modal({
+                "backdrop"  : "static",
+                "keyboard"  : true,
+                "show"      : true
+            });
+        },
+        stop: function(e) {
+            window.location.href = 'index.cgi?path=' + path;
+        }
     });
 });
 
