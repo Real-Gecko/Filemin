@@ -1,24 +1,49 @@
-/*$( document ).ready(function() {
-/*    $.fn.dataTableExt.sErrMode = 'throw';
-    $('#list_form > table').dataTable({
+$(document).ready(function() {
+    $.fn.dataTableExt.sErrMode = 'throw';
+    $('#list_form &gt; table').dataTable({
         "order": [],
         "aaSorting": [],
         "bDestroy": true,
-        "bPaginate": false,
-        "sScrollY": "600px",
+        "bPaginate": dt.bPaginate,
+        "fnDrawCallback": function(oSettings) {
+            if (oSettings.fnRecordsTotal() <= oSettings._iDisplayLength) {
+                $('.dataTables_paginate').hide();
+            } else {
+                $('.dataTables_paginate').show();
+            }
+        },
+        "initComplete": function() {
+            $('div.dataTables_filter input').val('').trigger('keyup');
+            $('div.dataTables_filter input').focus();
+            $(document).on('keydown', function(event) {
+                var keycode = event.keyCode ? event.keyCode : event.which;
+                if (!$('input').is(':focus') && !$('select').is(':focus') && !$('textarea').is(':focus')) {
+                    if (keycode === 39) {
+                        $('.paginate_button.next').trigger('click');
+                    }
+                    if (keycode === 37) {
+                        $('.paginate_button.previous').trigger('click');
+                    }
+                }
+            });
+        },
         "bInfo": false,
         "destroy": true,
         "oLanguage": {
             "sSearch": " "
         },
-        "columnDefs": [ { "orderable": false, "targets": [0, 1, 4] }, ],
-        "iDisplayLength": 50,
+        "columnDefs": [{
+            "orderable": false,
+            "targets": dt.a
+        }, dt.c ],
+        "lengthMenu": [ 10, 25, 50, 75, 100 , 1000],
+        "bStateSave": true,
     });
     $("form").on('click', 'div.popover', function() {
         $(this).prev('input').popover('hide');
     });
 });
-*/
+
 function countUploads(files) {
     if(files.files.length = 0) return;
     var info = '';

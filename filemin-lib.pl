@@ -300,7 +300,7 @@ sub print_interface {
         push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
         push @row_data, $mod_time if($userconfig{'columns'} =~ /last_mod_time/);
 
-        print &ui_checked_columns_row(\@row_data, "", "name", $link);
+        print &ui_checked_columns_row(\@row_data, "", "name", $vlink);
     }
     print ui_columns_end();
     print &ui_hidden("path", $path),"\n";
@@ -317,7 +317,7 @@ sub init_datatables {
         $b = '5';
     }
     if ($userconfig{'columns'} =~ /size/) {
-        $c = '{ "type": "file-size", "targets": [' . $b . '] },';
+        $c = '{ "type": "file-size", "targets": [' . $b . '] }';
     }
 
     if($userconfig{'disable_pagination'}) {
@@ -325,50 +325,10 @@ sub init_datatables {
     } else {
         $bPaginate = 'true';
     }
-print "<script>";
-print "\$( document ).ready(function() {";
-print "\$.fn.dataTableExt.sErrMode = 'throw';";
-print "\$('#list_form > table').dataTable({";
-print "\"order\": [],";
-print "\"aaSorting\": [],";
-print "\"bDestroy\": true,";
-print "\"bPaginate\": $bPaginate,";
-print " \"fnDrawCallback\": function(oSettings) {
-        if (oSettings.fnRecordsTotal() <= oSettings._iDisplayLength) {
-            \$('.dataTables_paginate').hide();
-        } else {
-            \$('.dataTables_paginate').show();
-        }
-    },";
-print " \"initComplete\": function() {
-        \$('div.dataTables_filter input').val('').trigger('keyup');
-        \$('div.dataTables_filter input').focus();
-        \$(document).on('keydown', function (event) {
-            var keycode = event.keyCode ? event.keyCode : event.which;
-            if (!\$('input').is(':focus') && !\$('select').is(':focus') && !\$('textarea').is(':focus')) {
-                if (keycode === 39) {
-                    \$('.paginate_button.next').trigger('click');
-                }
-                if (keycode === 37) {
-                    \$('.paginate_button.previous').trigger('click');
-                }
-            }
-        });
-    },";
-print "\"bInfo\": false,";
-print "\"destroy\": true,";
-print "\"oLanguage\": {";
-print "\"sSearch\": \" \"";
-print "},";
-print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [$a] }, $c ],";
-print "\"bStateSave\": true,";
-print "\"iDisplayLength\": 50,";
-print "});";
-print "\$(\"form\").on('click', 'div.popover', function() {";
-print "\$(this).prev('input').popover('hide');";
-print "});";
-print "});";
-print "</script>";
+    print "<script>var dt = {};</script>";
+    print "<script>dt.bPaginate = $bPaginate;</script>";
+    print "<script>dt.a = [ $a ];</script>";
+    print "<script>dt.c = $c;</script>";
 }
 
 sub get_bookmarks {
