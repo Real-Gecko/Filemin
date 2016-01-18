@@ -103,7 +103,9 @@ table.dataTable thead .sorting_desc::after {
 .breadcrumb {
     border: solid 1px #ddd;
     background: #fbfbfb;
+    padding: 5px;
 }
+
 .breadcrumb i {
     font-size: 16px;
 }

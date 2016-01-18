@@ -117,7 +117,23 @@ $( document ).ready(function() {
             window.location.href = 'index.cgi?path=' + path;
         }
     });
+
+    /* Code for current path edit form */
+    $('.breadcrumb').click(function() {
+        $('#path-edit').show();
+        $('.breadcrumb').css("visibility", "hidden");
+        $('.breadcrumb input[name=path]').focus();
+    });
+    $(".breadcrumb a").click(function(e) {
+        e.stopPropagation();
+        return true;
+    });
 });
+
+function closePathEdit(){
+    $('#path-edit').hide();
+    $('.breadcrumb').css("visibility", "visible");
+}
 
 window.onload = function() {
     var checkboxes = document.getElementsByClassName('ui_checkbox');
@@ -545,6 +561,17 @@ function propertiesDialog(name) {
             }
         });
     };
+
+    /* Code for current path edit form */
+    $('.breadcrumb').click(function() {
+        $('#path-edit').show();
+        $('.breadcrumb').css("visibility", "hidden");
+        $('.breadcrumb input[name=path]').focus();
+    });
+    $(".breadcrumb a").click(function(e) {
+        e.stopPropagation();
+        return true;
+    });
 }
 
 function toggleChmod(sender) {

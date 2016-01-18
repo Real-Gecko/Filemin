@@ -155,6 +155,8 @@ sub print_interface {
                   &html_escape($breadcr[$i])."</a></li>";
         }
         print "</ol>";
+        print_template('unauthenticated/templates/path-edit-form.html');
+
         # And toolbar
         if($userconfig{'menu_style'}) {
             print_template("unauthenticated/templates/menu.html");
@@ -182,7 +184,7 @@ sub print_interface {
             $root_icon = "~";
         }
         # Legacy breadcrumbs
-        print "<div id='bread' style='float: left; padding-bottom: 2px;'><a href='index.cgi?path='>$root_icon</a> / ";
+        print "<div id='bread' class='breadcrumb' style='float: left; padding-bottom: 2px;'><a href='index.cgi?path='>$root_icon</a> / ";
         my @breadcr = split('/', $path);
         my $cp = '';
         for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
@@ -213,6 +215,8 @@ sub print_interface {
             }
         }
         print "</div>";
+        print_template('unauthenticated/templates/path-edit-form.html');
+
         # And toolbar
         print_template("unauthenticated/templates/legacy_quicks.html");
         print_template("unauthenticated/templates/legacy_dialogs.html");
