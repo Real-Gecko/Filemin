@@ -11,12 +11,12 @@ get_paths();
 $archive_type = mimetype($cwd.'/'.$in{'file'});
 
 if ($archive_type eq 'application/zip') {
-    &backquote_logged("unzip ".quotemeta("$cwd/$in{'file'}").
-		      " -d ".quotemeta($cwd));
+    &backquote_logged("unzip -o ".quotemeta("$cwd/$in{'file'}").
+                      " -d ".quotemeta($cwd));
     &redirect("index.cgi?path=$path");
 } elsif (index($archive_type, "tar") != -1) {
     &backquote_logged("tar xf ".quotemeta("$cwd/$in{'file'}").
-		      " -C ".quotemeta($cwd));
+                      " -C ".quotemeta($cwd));
     &redirect("index.cgi?path=$path");
 } else {
     &ui_print_header(undef, "Filemin", "");
