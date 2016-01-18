@@ -1,18 +1,81 @@
 $( document ).ready(function() {
-/*
-    $( "input[title]" ).tooltip({
-        position: {
-            my: "left top",
-            at: "right+5 top-5"
+    /* Dynamic context menu, created on every right click */
+    $.contextMenu({
+        selector: '#list_form > table > tbody > tr', 
+        build: function($trigger, e) {
+            var extra_actions = $trigger.find('.actions')[0].textContent;
+            var trigger_checkbox = $trigger.find("input[type='checkbox']")[0];
+            var items = {};
+            items.rename = {name: text.rename, icon: "rename"};
+            if (extra_actions == 'edit') {
+                items.edit =  {name: text.edit, icon: "Edit"};
+            };
+            if (extra_actions == 'extract') {
+                items.extract =  {name: text.extract, icon: "extract"};
+            };
+            items.sep1 = "-------";
+            items.copy = {name: text.copy, icon: "copy"};
+            items.cut = {name: text.cut, icon: "cut"};
+            items.paste = {name: text.paste, icon: "paste"};
+            items.sep2 = "-------";
+            items.delete = {name: text.delete, icon: "delete"};
+            items.sep3 = "-------";
+            items.properties = {name: text.properties, icon: "gear"};
+            items.sep4 = "-------";
+            items.select_all = {name: text.select_all, icon: "check-square-o"};
+            items.select_none = {name: text.select_none, icon: "square-o"};
+            items.invert_sel = {name: text.invert_selection, icon: "check-square"};
+            return {
+                items: items,
+                callback: function(key, options) {
+                    var name = $(this).children()[2].textContent;
+                    var selected = checkSelected();
+                    switch (key) {
+                        case 'rename':
+                            renameDialog(name);
+                            break;
+                        case 'edit':
+                            window.location.href = 'edit_file.cgi?file=' + name + '&path=' + path;
+                            break;
+                        case 'extract':
+                            window.location.href = 'extract.cgi?file=' + name + '&path=' + path;
+                            break;
+                        case 'copy':
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            copySelected();
+                            break;
+                        case 'cut':
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            cutSelected();
+                            break;
+                        case 'paste':
+                            window.location.href = 'paste.cgi?path=' + path;
+                            break;
+                        case 'delete':
+                            if(!selected)
+                                trigger_checkbox.checked = true;
+                            removeSelected();
+                            break;
+                        case 'properties':
+                            propertiesDialog(name);
+                            break;
+                        case 'select_all':
+                            selectAll();
+                            break;
+                        case 'select_none':
+                            selectNone();
+                            break;
+                        case 'invert_sel':
+                            invertSelection();
+                            break;
+                    }
+                }
+            };
         }
     });
-/*
-    $( "a[title]" ).tooltip({
-        position: {
-            my: "bottom center",
-            at: "bottom+30"
-        }
-    });*/
+
     $('tr').removeAttr('onmouseover');
     $('tr').removeAttr('onmouseout');
     $('input').removeAttr('onclick');
@@ -71,6 +134,18 @@ function invertSelection() {
 
     for (i = 0; i < rows.length; i++)
         rowClick(rows[i]);
+}
+
+
+function selectNone() {
+    var rows = document.getElementsByClassName('ui_checked_columns');
+
+    for (i = 0; i < rows.length; i++) {
+        var input = rows[i].getElementsByTagName('input')[0];
+        if (input.checked) {
+            rowClick(rows[i]);
+        }
+    }
 }
 
 function compressDialog() {
@@ -351,6 +426,13 @@ function unselectRow(row) {
         row.className = row.className.replace(' checked', '');
     }
 }
+
+function checkSelected() {
+    var checkboxes = $(".ui_checked_columns input[type='checkbox']:checked");
+    return (checkboxes.length > 0);
+}
+
+/*
 function checkSelected() {
     var checkboxes = $('.ui_checkbox');
     for(var i = 0; i < checkboxes.length; i++) {
@@ -366,7 +448,7 @@ function checkSelected() {
     });
     return false;
 }
-
+*/
 function searchDialog() {
     $( "#searchDialog" ).dialog({
         modal: true,
@@ -397,3 +479,66 @@ function checkSelected() {
     return false;
 }
 */
+
+function warnNothingSelected() {
+    $( "#nothingSelected" ).dialog({
+        modal: true,
+        buttons: {
+            "OK": function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    });
+}
+
+function propertiesDialog(name) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', 'get_properties.cgi?name=' + name + '&path=' + path);
+    xhr.send();
+    xhr.onloadend = function () {
+        var response = JSON.parse(xhr.responseText);
+        $("#propertiesDialog i.obj-name").html(name);
+        $("#propertiesDialog i.type").html(response.type);
+        $("#propertiesDialog i.size").html(response.size);
+        $("#propertiesDialog i.modified").html(response.mtime);
+        $("#propertiesDialog i.accessed").html(response.atime);
+        $('#propertiesDialog table :input').attr('disabled', true);
+        $('#propertiesDialog .panel :input').attr('disabled', true);
+        var form = $("#propertiesDialog form[name=chmod]")[0];
+        form.permissions.value = response.permissions;
+        form.name.value = name;
+        form.owner.value = response.owner;
+        form.group.value = response.group;
+        octalchange(form.permissions);
+        $("#propertiesDialog").modal({
+            "backdrop"  : "static",
+            "keyboard"  : true,
+            "show"      : true
+        });
+    };
+}
+
+function toggleChmod(sender) {
+    $('#propertiesDialog table :input').attr('disabled', !sender.checked);
+}
+
+function toggleChown(sender) {
+    $('#propertiesDialog .panel :input').attr('disabled', !sender.checked);
+}
+
+function changeProperties() {
+    var form = $("#propertiesDialog form[name=chmod]")[0];
+    if (form.chmod.checked || form.chown.checked) {
+        var permissions = form.permissions.value;
+        var owner = form.owner.value;
+        var group = form.group.value;
+        var applyto = form.applyto.value;
+        if ( permissions != null && permissions != "" &&
+             owner != null && owner != "" &&
+             group != null && owner != "" ) 
+        {
+            form.submit();
+        }
+    } else
+        $("#propertiesDialog").modal('hide');
+}

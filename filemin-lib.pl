@@ -123,6 +123,10 @@ sub print_interface {
     @allowed_for_edit = split(/\s+/, $access{'allowed_for_edit'});
     %allowed_for_edit = map { $_ => 1} @allowed_for_edit;
 
+
+    # Transfer some locale data to JS
+    print_template("unauthenticated/templates/js_locale.html");
+
     # Set things up according to currently used theme
     if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
         # Interface for Bootstrap 3 powered themes
@@ -136,8 +140,11 @@ sub print_interface {
         print "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
         print "<script type=\"text/javascript\" src=\"unauthenticated/js/dataTables.bootstrap.js\"></script>";
         print "<script type=\"text/javascript\" src=\"unauthenticated/js/bootstrap-hover-dropdown.min.js\"></script>";
+        print "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.js\"></script>";
+        print "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.ui.position.min.js\"></script>";
         print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
         print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/dataTables.bootstrap.css\" />";
+        print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.css\" />";
         init_datatables();
         # Set "root" icon
         if($base eq '/') {
@@ -181,6 +188,10 @@ sub print_interface {
         $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
         $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/dropdown/fg.menu.css\" />";
         $head.= "<script type=\"text/javascript\" src=\"unauthenticated/dropdown/fg.menu.js\"></script>";
+        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.js\"></script>";
+        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery-contextmenu/jquery.ui.position.min.js\"></script>";
+        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery-contextmenu/jquery.contextMenu.min.css\" />";
+        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/font-awesome/css/font-awesome.min.css\" />";
         print $head;
         # Set "root" icon
         if($base eq '/') {
@@ -234,7 +245,7 @@ sub print_interface {
         );
     push @ui_columns, $text{'name'};
     push @ui_columns, $text{'type'} if($userconfig{'columns'} =~ /type/);
-    push @ui_columns, $text{'actions'};
+#    push @ui_columns, $text{'actions'};
     push @ui_columns, $text{'size'} if($userconfig{'columns'} =~ /size/);
     push @ui_columns, $text{'owner_user'} if($userconfig{'columns'} =~ /owner_user/);
     push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
@@ -285,18 +296,20 @@ sub print_interface {
                 index($type, "text-") != -1 or
                 exists($allowed_for_edit{$type})
             ) {
-                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
+#                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
+                $actions = "edit";
             }
             if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
+#                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
+                $actions = "extract";
             }
         }
         @row_data = (
-            "<a href='$href'><img src=\"$img\"></a>",
+            "<a href='$href'><img src=\"$img\"></a><span class='actions'>$actions</span>",
             "<a href=\"$href\" data-filemin-path=\"$href\">$vlink</a>"
         );
         push @row_data, $type if($userconfig{'columns'} =~ /type/);
-        push @row_data, $actions;
+#        push @row_data, $actions;
         push @row_data, $size if($userconfig{'columns'} =~ /size/);
         push @row_data, $user.':'.$group if($userconfig{'columns'} =~ /owner_user/);
         push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
@@ -311,12 +324,12 @@ sub print_interface {
 
 sub init_datatables {
     my ($a, $b, $c);
-    $a = '0, 1, 3';
-    $b = '4';
+    $a = '0, 1';
+    $b = '3';
     $c = '';
     if ($userconfig{'columns'} =~ /type/) {
         $a = '0, 1, 4';
-        $b = '5';
+        $b = '4';
     }
     if ($userconfig{'columns'} =~ /size/) {
         $c = '{ "type": "file-size", "targets": [' . $b . '] }';
@@ -359,6 +372,11 @@ sub get_paste_buffer_file
         &make_dir($tmpdir, 0700) if (!-d $tmpdir);
         return $tmpdir."/.buffer";
     }
+}
+
+sub print_ajax_header {
+    print "Content-Security-Policy: script-src 'self' 'unsafe-inline'; frame-src 'self'\n";
+    print "Content-type: application/json; Charset=utf-8\n\n";
 }
 
 1;
