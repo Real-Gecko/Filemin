@@ -1,0 +1,109 @@
+<nav id="main-menu" class="navbar navbar-default">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="https://github.com/Real-Gecko/filemin" target="_blank">
+        <img alt="Brand" src="images/icon.png">
+      </a>
+    </div>
+    <ul class="nav navbar-nav">
+        <li>
+            <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                $text{'menu_file'} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="main-menu-file">
+              <li>
+                <a data-item="create_file">
+                  <i class="fa fa-file-o"></i> $text{'create_file'}
+                </a>
+              </li>
+              <li>
+                <a data-item="create_folder">
+                  <i class="fa fa-folder-o"></i> $text{'create_folder'}
+                </a>
+              </li>
+              <li>
+                <a data-item="upload_files">
+                    <i class="fa fa-upload"></i> $text{'upload_files'}
+                </a>
+              </li>
+                <li>
+                    <a data-item="get_from_url">
+                        <i class="fa fa-globe"></i> $text{'get_from_url'}
+                    </a>                  
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                $text{'menu_edit'} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="main-menu-edit">
+                <li>
+                    <a data-item="copy_selected">
+                        <i class="fa fa-copy"></i> $text{'copy_selected'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="cut_selected">
+                        <i class="fa fa-cut"></i> $text{'cut_selected'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="paste">
+                        <i class="fa fa-paste"></i> $text{'paste'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="symlink">
+                        <i class="fa fa-link"></i> $text{'paste_symlink'}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                $text{'menu_tools'} <span class="caret"></span>
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="main-menu-tools">
+                <li>
+                    <a data-item="chmod_selected">
+                        <i class="fa fa-gears"></i> $text{'chmod_selected'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="chown_selected">
+                        <i class="fa fa-users"></i> $text{'chown_selected'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="compress_selected">
+                        <i class="fa fa-file-archive-o"></i> $text{'compress_selected'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="search">
+                        <i class="fa fa-search"></i> $text{'search'}
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown">
+                $text{'menu_bookmarks'} <span class="caret"></span>
+            </a>
+            <ul id="bookmarks" class="dropdown-menu pull-right" aria-labelledby="main-menu-bookmarks">
+                <li>
+                    <a data-item="bookmark">
+                        <i class="fa fa-bookmark-o"></i> $text{'bookmark_folder'}
+                    </a>
+                </li>
+                <li>
+                    <a data-item="manage_bookmarks">
+                        <i class="fa fa-book"></i> $text{'manage_bookmarks'}
+                    </a>
+                </li>
+                <li role="separator" class="divider"></li>
+                $bookmarks
+            </ul>
+        </li>
+    </ul>
+</nav>

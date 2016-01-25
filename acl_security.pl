@@ -53,7 +53,7 @@ sub acl_security_save {
         $access->{'work_as_root'} = 0;
         $access->{'work_as_user'} = undef;
     } else {
-	defined(getpwnam($in->{'acl_user'})) || &error($text{'acl_euser'});
+        defined(getpwnam($in->{'acl_user'})) || &error($text{'acl_euser'});
         $access->{'work_as_root'} = 0;
         $access->{'work_as_user'} = $in->{'acl_user'};
     }

@@ -1,19 +1,22 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use lib './lib';
+use JSON;
 
 &ReadParse();
-
 get_paths();
 
+print_ajax_header();
+
 if(!$in{'owner'} or !$in{'group'}) {
-    &redirect("index.cgi?path=$path");
+    print encode_json({'error' => \@errors});
 }
 
 (my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'});
 my $grid = getgrnam($in{'group'});
 my $recursive;
-if($in{'recursive'} eq 'true') { $recursive = '-R'; } else { $recursive = ''; }
+if($in{'recursive'}) { $recursive = '-R'; } else { $recursive = ''; }
 
 my @errors;
 
@@ -26,7 +29,7 @@ if(! defined $grid) {
 }
 
 if (scalar(@errors) > 0) {
-        print_errors(@errors);
+    print encode_json({'error' => \@errors});
 } else {
     foreach $name (split(/\0/, $in{'name'})) {
 #        if(!chown $uid, $grid, $cwd.'/'.$name) {
@@ -35,8 +38,8 @@ if (scalar(@errors) > 0) {
         }
     }
     if (scalar(@errors) > 0) {
-        print_errors(@errors);
+        print encode_json({'error' => \@errors});
     } else {
-        &redirect("index.cgi?path=$path");
+        print encode_json({'success' => 1});
     }
 }

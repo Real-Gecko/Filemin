@@ -1,0 +1,199 @@
+.navbar-default .navbar-nav > li > a {
+    color: #000;
+}
+
+#tabs-control .btn-xs {
+    border: none;
+    padding: 0 5px;
+    margin-left: 6px;
+}
+
+#tabs-control.nav > li > a {
+    padding: 5px 15px;
+    transition: background-color 0.3s ease;
+}
+
+#tabs-control.nav > li > a.closable {
+    padding-right: 10px;
+}
+
+#tabs-container {
+    position: relative;
+}
+
+#path-edit {
+    position: absolute;
+    top: 10px;
+    z-index: 100;
+}
+
+#navigator .popover {
+    width: 300px;
+    max-width: 400px;
+}
+
+nav.navbar {
+    min-height: 49px;
+    height: 49px;
+}
+
+.navbar-nav > li > a {
+    padding-top: 11px !important;
+    padding-bottom: 12px !important;
+    line-height: 25px !important;
+    font-size: 16px;
+    transition: ease all 0.3s;
+}
+
+
+.navbar-brand {
+    height: 48px;
+    padding: 0px;
+}
+
+.breadcrumb {
+    line-height: 1.42857;
+    margin-bottom: 0;
+    margin-left: 50px;
+}
+
+.breadcrumb li:hover {
+    cursor: pointer;
+}
+
+#context-menu > li > a,
+.navbar ul > li > a,
+.dropdown-menu > li > a {
+    cursor: pointer;
+}
+
+.progress {
+    text-align:center;
+}
+
+#fileupload {
+    visibility: hidden;
+}
+
+.bootstrap-table .dropdown-menu {
+    min-width: 180px;
+}
+
+#bookmarks [data-item="goto"]:before {
+    font-family: FontAwesome;
+    content: '';
+    padding-right: 5px;
+}
+/*
+.column-field-name {
+    cursor: pointer;
+}
+
+td.column-field-name:hover {
+    background-color: #dff0d8;
+}
+*/
+.modal-400 > .modal-dialog {
+    width: 450px;
+}
+
+.modal-500 > .modal-dialog {
+    width: 500px;
+}
+
+.bootbox .modal-footer .pull-right {
+    margin-left: 5px;
+}
+
+.table > tbody > tr.selected > td,
+.table > tbody > tr.selected > th,
+.table > tbody > tr > td.selected,
+.table > tbody > tr > th.selected,
+.table > tfoot > tr.selected > td,
+.table > tfoot > tr.selected > th,
+.table > tfoot > tr > td.selected,
+.table > tfoot > tr > th.selected,
+.table > thead > tr.selected > td,
+.table > thead > tr.selected > th,
+.table > thead > tr > td.selected,
+.table > thead > tr > th.selected {
+    background-color: #dff0d8;
+}
+
+tr, td {
+    transition: ease background 0.3s;
+}
+
+span.name-column-link {
+    background: #eee;
+    border-radius: 4px;
+    display: block;
+    height: 22px;
+    margin-left: 27px;
+    padding-left: 10px;
+    padding-right: 10px;
+    vertical-align: middle;
+    transition: ease background 0.3s;
+}
+
+tr.selected span.name-column-link {
+    background: #eff7f7;
+}
+
+span.name-column-link:hover {
+    background: #fff;
+    cursor: pointer;
+}
+
+tr.selected span.name-column-link:hover {
+    background: #fff;
+}
+
+ui-pnotify.stack-bottomright{
+    right:auto;
+    top:auto;
+    left:auto;
+    bottom:auto;
+}
+
+.CodeMirror {
+    height: 470px;
+}
+
+.dropdown-menu {
+  animation-name: slidenavAnimation;
+  animation-duration:.3s;
+  animation-iteration-count: 1;
+  animation-timing-function: ease;
+  animation-fill-mode: forwards;
+
+  -webkit-animation-name: slidenavAnimation;
+  -webkit-animation-duration:.3s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: ease;
+  -webkit-animation-fill-mode: forwards;
+
+  -moz-animation-name: slidenavAnimation;
+  -moz-animation-duration:.3s;
+  -moz-animation-iteration-count: 1;
+  -moz-animation-timing-function: ease;
+  -moz-animation-fill-mode: forwards;
+}
+
+@keyframes slidenavAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes slidenavAnimation {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

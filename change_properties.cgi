@@ -1,33 +1,16 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use lib './lib';
+use JSON;
 
 &ReadParse();
-
 get_paths();
 
+print_ajax_header();
+
 my @errors;
-
 my $permissions = $in{'permissions'};
-
-=begin
-if(defined $in{'chown'}) {
-    if (!$in{'owner'} or !$in{'group'}) {
-        &redirect("index.cgi?path=$path");
-    }
-
-    (my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'});
-    my $grid = getgrnam($in{'group'});
-
-    if(! defined $login) {
-        push @errors, "<b>$in{'owner'}</b> $text{'error_user_not_found'}";
-    }
-
-    if(! defined $grid) {
-        push @errors, "<b>$in{'group'}</b> $text{'error_group_not_found'}";
-    }
-}
-=cut
 
 if(defined $in{'chmod'}) {
     # Selected directories and files only
@@ -172,7 +155,7 @@ if(defined $in{'chown'}) {
 }
 
 if (scalar(@errors) > 0) {
-    print_errors(@errors);
+    print encode_json({'error' => \@errors});
 } else {
-    &redirect("index.cgi?path=$path");
+    print encode_json({'success' => 1});
 }

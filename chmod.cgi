@@ -1,10 +1,13 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use lib './lib';
+use JSON;
 
 &ReadParse();
-
 get_paths();
+
+print_ajax_header();
 
 my @errors;
 
@@ -72,7 +75,7 @@ if($in{'applyto'} eq '5') {
 }
 
 if (scalar(@errors) > 0) {
-    print_errors(@errors);
+    print encode_json({'error' => \@errors});
 } else {
-    &redirect("index.cgi?path=$path");
+    print encode_json({'success' => 1});
 }

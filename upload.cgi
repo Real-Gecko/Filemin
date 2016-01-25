@@ -2,19 +2,20 @@
 
 require './filemin-lib.pl';
 use Cwd 'abs_path';
+use lib './lib';
+use JSON;
 
 &ReadParse(\%in, "GET");
-
 get_paths();
 
 my @errors;
 $line = "";
 
-# Get multipart form boundary
-$ENV{'CONTENT_TYPE'} =~ /boundary=(.*)$/ || &error($text{'readparse_enc'});
-$boundary = $1;
-
 print_ajax_header();
+
+# Get multipart form boundary
+$ENV{'CONTENT_TYPE'} =~ /boundary=(.*)$/ || push @rrors, $text{'readparse_enc'};
+$boundary = $1;
 
 # Comment right now
 #if ($ENV{'CONTENT_LENGTH'} && $max && $ENV{'CONTENT_LENGTH'} > $max) {
@@ -48,8 +49,9 @@ while(index($line,"$boundary--") == -1) {
 
     if(defined($file)){
         # OK, we have a file, let`s save it
-        if (-e "$cwd/$file") {
+        if (-e "$cwd/$file" and !$in{'overwrite'}) {
             push @errors, "$path/$file $text{'error_exists'}";
+#            print encode_json({'error' => "$path/$file $text{'error_exists'}"});
             next;
         } else {
             if (!open(OUTFILE, ">$cwd/$file")) {
@@ -94,5 +96,7 @@ while(index($line,"$boundary--") == -1) {
 }
 
 if (scalar(@errors) > 0) {
-    print_errors(@errors);
+    print encode_json({'error' => \@errors});
+} else {
+    print encode_json({'success' => '1'});
 }

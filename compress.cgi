@@ -1,21 +1,33 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use lib './lib';
+use JSON;
+
 &ReadParse();
 get_paths();
 
-if(!$in{'arch'}) {
-    &redirect("index.cgi?path=$path");
+print_ajax_header();
+
+if(!$in{'archivename'}) {
+    print encode_json({'error' => \@errors});
 }
+
+# Remove exploiting "../" in new file names
+$archivename = $in{'archivename'};
+$archivename =~ s/\.\.//g;
+&simplify_path($archivename);
+
+my @errors;
 
 my $command;
 
 if($in{'method'} eq 'tar') {
-    $command = "tar czf ".quotemeta("$cwd/$in{'arch'}.tar.gz").
+    $command = "tar czf ".quotemeta("$cwd/$archivename.tar.gz").
 	       " -C ".quotemeta($cwd);
 } elsif($in{'method'} eq 'zip') {
     $command = "cd ".quotemeta($cwd)." && zip -r ".
-	       quotemeta("$cwd/$in{'arch'}.zip");
+	       quotemeta("$cwd/$archivename.zip");
 }
 
 foreach my $name(split(/\0/, $in{'name'}))
@@ -26,4 +38,8 @@ foreach my $name(split(/\0/, $in{'name'}))
 
 system_logged($command);
 
-&redirect("index.cgi?path=$path");
+if (scalar(@errors) > 0) {
+    print encode_json({'error' => \@errors});
+} else {
+    print encode_json({'success' => 1});
+}
