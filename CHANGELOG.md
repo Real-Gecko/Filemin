@@ -1,6 +1,6 @@
 # Change Log
 
-## [1.1.0] - 
+## [1.1.0] - 2016-02-08
 ### Fixed
 - Fixed HTML special characters decoding - #82
 - Fixed relative symlinks navigation in "chroot"
