@@ -9,12 +9,6 @@ sub acl_security_form {
 		    join("\n", split(/\s+/, $access->{'allowed_paths'})),
 		    10, 80, undef, undef, "style='width: 100%'"), 2);
 
-    # Mimetypes allowed to be edited
-    print &ui_table_row($text{'acl_allowed_for_edit'},
-	ui_textarea("allowed_for_edit",
-		    join("\n", split(/\s+/, $access->{'allowed_for_edit'})),
-		    10, 80, undef, undef, "style='width: 100%'"), 2);
-
     # Run as Unix user
     print &ui_table_row($text{'acl_work_as'},
 	ui_radio_table("user_mode", $access->{'work_as_root'} ? 0 :
@@ -41,10 +35,6 @@ sub acl_security_save {
         }
     }
     $access->{'allowed_paths'} = join(" ", @allowed_paths);
-
-    local @allowed_for_edit = split(/\s+/, $in->{'allowed_for_edit'});
-    if (scalar(@allowed_for_edit) == 0) { &error("No mimetypes allowed for edit defined"); }
-    $access->{'allowed_for_edit'} = join(" ", @allowed_for_edit);
 
     if ($in->{'user_mode'} == 0) {
         $access->{'work_as_root'} = 1;

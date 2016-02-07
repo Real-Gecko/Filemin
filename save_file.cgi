@@ -11,7 +11,12 @@ print_ajax_header();
 
 my @errors;
 
+# Remove exploiting of "../" in parameters
 $file = $in{'name'};
+$file =~ s/\.\.//g;
+&simplify_path($file);
+
+# Correct end of lines
 $data = $in{'data'};
 $data =~ s/\r\n/\n/g;
 if(open(SAVE, ">", $cwd.'/'.$file)) {

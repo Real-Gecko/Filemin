@@ -7,18 +7,16 @@ use JSON;
 &ReadParse();
 get_paths();
 
-#print_ajax_header();
-
-if(!$in{'archivename'}) {
-    print encode_json({'error' => \@errors});
+# Exploits, exploits everywhere
+if(!$in{'archivename'} || ($in{'method'} ne 'tar' && $in{'method'} ne 'zip')) {
+    print encode_json({'error' => $text{'provide_correct_parameters'}});
+    exit;
 }
 
-# Remove exploiting "../" in new file names
+# Prevent exploiting "../"
 $archivename = $in{'archivename'};
 $archivename =~ s/\.\.//g;
 &simplify_path($archivename);
-
-my @errors;
 
 my $command;
 

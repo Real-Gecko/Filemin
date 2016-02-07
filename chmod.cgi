@@ -13,6 +13,9 @@ my @errors;
 
 my $permissions = $in{'permissions'};
 
+# Fix chmod setuid/setgid to 0 for directories
+my $permissions = oct_to_symbolic($permissions);
+
 # Selected directories and files only
 if($in{'applyto'} eq '1') {
     foreach $name (split(/\0/, $in{'name'})) {

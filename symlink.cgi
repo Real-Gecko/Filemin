@@ -16,27 +16,26 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
     my $dir = $arr[1];
     chomp($act);
     chomp($dir);
-    $from = &simplify_path("$base/$dir");
-    if ($cwd eq $from) {
-        print encode_json({'error' => $text{'error_pasting_nonsence'}});
-    } else {
-        my @errors;
-        for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
-            chomp($arr[$i]);
-            $arr[$i] =~ s/\.\.//g;
-            $arr[$i] = &simplify_path($arr[$i]);
-            if (-e $cwd.$arr[$i]) {
-                push @errors, $cwd.$arr[$i]." $text{'error_exists'}";
-            } else {
-                system("ln -s ".quotemeta($from.$arr[$i]).
-                       " ".quotemeta($cwd.$arr[$i])) == 0 or push @errors, $from.$arr[$i]." $text{'error_symlink'} $!";
-            }
-        }
-        if (scalar(@errors) > 0) {
-            print encode_json({'error' => $errors});
+    $dir =~ s/\.\.//g;
+    $dir = &simplify_path($dir);
+    my @errors;
+    for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
+        chomp($arr[$i]);
+        $arr[$i] =~ s/\.\.//g;
+        $arr[$i] = &simplify_path($arr[$i]);
+        my @p = split('/', $arr[$i]);
+        my $name = pop(\@p);
+        if (-e "$cwd/$name") {
+            push @errors, "$cwd/$name $text{'error_exists'}";
         } else {
-            print encode_json({'success' => '1'});
+            system("ln -s ".quotemeta($base.$arr[$i]).
+                   " ".quotemeta("$cwd/$name")) == 0 or push @errors, $base.$arr[$i]." $text{'error_symlink'} $!";
         }
+    }
+    if (scalar(@errors) > 0) {
+        print encode_json({'error' => @errors});
+    } else {
+        print encode_json({'success' => '1'});
     }
 } else {
     print("{\"error\": \" Error .buffer $!\"}");

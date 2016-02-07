@@ -22,7 +22,7 @@ if($in{'query'}) {
     }
     @list = split('\n', &backquote_logged(
                     "find ".quotemeta($cwd)." $criteria ".quotemeta("*$in{'query'}*")));
-    @list = map { [ $_, stat($_), mimetype($_), -d $_ ] } @list;
+    @list = map { [ $_, lstat($_), mimetype($_), -d, -l $_ ] } @list;
 # Or not to search
 } else {
     unless (opendir ( DIR, $cwd )) {
@@ -47,7 +47,7 @@ if($in{'query'}) {
             @list = keys %hash;
         }
         # Get info about directory entries
-        @info = map { [ $_, stat($_), mimetype($_), -d $_ ] } @list;
+        @info = map { [ $_, lstat($_), mimetype($_), -d, -l $_ ] } @list;
 
         # Filter out folders
         @folders = map {$_} grep {$_->[15] == 1 } @info;
@@ -64,10 +64,6 @@ if($in{'query'}) {
         push @list, @folders, @files;
     }
 }
-# Get editables
-%access = &get_module_acl();
-@allowed_for_edit = split(/\s+/, $access{'allowed_for_edit'});
-%allowed_for_edit = map { $_ => 1} @allowed_for_edit;
 
 # Push everything to JSON
 @result = ();
@@ -78,28 +74,44 @@ foreach(@list) {
     my $group = getgrgid($_->[6]) ? getgrgid($_->[6]) : $_->[6];
     my $permissions = sprintf("%04o", $_->[3] & 07777);
     my $type = $_->[14];
+    my $link_target = "";
+    my $link_target_mime = "";
+    my $size;
 
-    my $link = "$_->[0]";
+    my $link = $_->[0];
+
+    if($in{'sizes'} & $_->[15]) {
+        $size = &recursive_disk_usage($link);
+    } else {
+        $size = $_->[8];
+    }
+
+    if($_->[16]) {
+        $link_target = readlink($link);
+        $link_target_mime = mimetype($link_target);
+        unless(-e &resolve_links($link)) {
+            $_->[16] = 'broken'
+        }
+    }
+
     $link =~ s/\Q$cwd\E\///;
     $link =~ s/^\///g;
-#    my $vlink = html_escape($link);
-    my $vlink = $link;
-#    $vlink = quote_escape($vlink);
-    $vlink = decode('UTF-8', $vlink, Encode::FB_CROAK);
+    $link = decode('UTF-8', $link, Encode::FB_CROAK);
 
-    my $ed = index($_->[14], "text/");
     my %entry = (
-        'name' => $vlink,
+        'name' => $link,
         'type' => $type,
-        'size' => $_->[8],
+        'size' => $size,
         'user' => $user,
         'group' => $group,
         'permissions' => $permissions,
         'directory' => $_->[15],
+        'symlink' => $_->[16],
         'atime' => $_->[9],
         'mtime' => $_->[10],
-        'editable' => (index($type, "text/") != -1 or exists($allowed_for_edit{$type})),
-        'archive' => (index($type, "zip") != -1 or index($type, "compressed") != -1)
+        'archive' => (index($type, "zip") != -1 or index($type, "compressed") != -1),
+        'link_target' => $link_target,
+        'link_target_mime' => $link_target_mime
     );
 
     push @result, \%entry;

@@ -12,6 +12,9 @@ print_ajax_header();
 my @errors;
 my $permissions = $in{'permissions'};
 
+# Fix chmod setuid/setgid to 0 for directories
+my $permissions = oct_to_symbolic($permissions);
+
 if(defined $in{'chmod'}) {
     # Selected directories and files only
     if($in{'applyto'} eq '1') {

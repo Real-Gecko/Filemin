@@ -20,9 +20,16 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/codemirror.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/addon/mode/loadmode.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/mode/meta.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/mode/scheme/scheme.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/addon/display/autorefresh.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.15.0/jquery.fancytree-all.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.4/js/bootstrap-select.min.js"></script>
         <script src="unauthenticated/js/chmod-calculator.js"></script>
+        <script src="unauthenticated/js/bs-table-patch.js"></script>
+        <script>
+            var text = $text_to_js;
+            var root_icon = "$root_icon";
+        </script>
+        <script src="unauthenticated/js/spec-ops.js"></script>
         <script src="unauthenticated/js/filemin.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap-theme.min.css">
@@ -33,30 +40,50 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.buttons.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pnotify/3.0.0/pnotify.brighttheme.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.fancytree/2.15.0/skin-bootstrap/ui.fancytree.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.4/css/bootstrap-select.min.css">
         <link rel="stylesheet" href="unauthenticated/css/filemin.css">
-        <script>
-            var text = $text_to_js;
-        </script>
+        <link rel="stylesheet" href="unauthenticated/css/pnotify-filemin.css">
     </head>
     <body>
         <div class="container-fluid">
             $main_menu
             <ul id="tabs-control" class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active">
-                    <a href="#navigator" aria-controls="navigator" role="tab" data-toggle="tab"><i class="fa fa-folder-open-o"></i> $text{'navigator'}</a>
+                <li role="presentation">
+                    <a id="new-tab"><i class="fa fa-plus"></i></a>
                 </li>
             </ul>
-            <div id="tabs-container" class="tab-content">
-                <div role="tabpanel" class="tab-pane active fade in" id="navigator">
-                    <ol class="breadcrumb pull-left">
-                        <li>$root_icon</li>
-                    </ol>
-                    <button id="path-edit" type="button" class="btn btn-default"><i class="fa fa-edit"></i></button>
-                    <table id="list-table"></table>
+            <div id="filemin-tree" class="filemin-tree pull-left" style="width: 240px;">
+                <div class="tree"></div>
+                <div class="input-group input-group-sm">
+                    <input name="tree-filter" placeholder="Filter..." autocomplete="off" class="form-control">
+                    <span class="input-group-btn">
+                        <button name="reset-tree-filter" class="btn btn-danger"><i class="fa fa-close"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div id="tabs-container" class="tab-content pull-left"></div>
+            <div id="bottom-panel" class="panel panel-default">
+                <div class="panel-body">
+                    <div id="bottom-controls" class="btn-group pull-left">
+                        <button id="hide-tree" class="btn btn-xs btn-default pull-left" value="false">
+                            <i class="fa fa-caret-left"></i>
+                            <i class="fa fa-caret-right"></i>
+                        </button>
+                        <button id="close-all" class="btn btn-xs btn-default pull-left">
+                            <i class="fa fa-folder-o"></i>
+                        </button>
+                        <button id="open-all" class="btn btn-xs btn-default pull-left">
+                            <i class="fa fa-folder-open-o"></i>
+                        </button>
+                    </div>
+                    <div id="bottom-stats" class="pull-left"></div>
                 </div>
             </div>
         </div>
         $context_menu
+        $context_menu_search
         <input id="fileupload" type="file" name="files[]" multiple>
         $dialogs
     </body>

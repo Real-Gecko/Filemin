@@ -1,3 +1,84 @@
+/* Trick to disable browser scrollbar */
+body {
+    overflow: hidden;
+    height: 100vh;
+}
+
+a:focus {
+    outline: none;
+    outline-offset: unset;
+}
+
+#bottom-panel {
+    clear: both;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#bottom-panel .panel-body {
+    padding: 5px 10px;
+}
+
+#bottom-stats {
+    margin-left: 10px;
+    line-height: 22px;
+}
+
+pre.well {
+    overflow: auto;
+}
+
+.tooltip {
+    font-size: 14px;
+}
+
+.tooltip-inner {
+    max-width: 100%;
+}
+
+ul.fancytree-container {
+    border: none;
+}
+
+#filemin-tree {
+    padding-right: 10px;
+    margin-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-right: solid 2px #ddd;
+}
+
+#filemin-tree .input-group {
+    margin-top: 10px;
+}
+
+.filemin-tab .filemin-table {
+    width: 100%;
+}
+
+.filemin-tab > form > .btn {
+    margin-right: 10px;
+}
+
+#tabs-control.nav > li.tab {
+    min-width: 140px;
+}
+
+#tabs-control.nav > li > a {
+    background: #f5f5f5;
+    color: #777;
+    border-bottom-color: #ddd;
+    cursor: pointer;
+}
+
+#tabs-control.nav > li > a:focus,
+#tabs-control.nav > li > a:hover,
+#tabs-control.nav > li.active > a {
+    background: #fff;
+    color: #333;
+    border-bottom-color: transparent;
+}
+
 .navbar-default .navbar-nav > li > a {
     color: #000;
 }
@@ -6,6 +87,7 @@
     border: none;
     padding: 0 5px;
     margin-left: 6px;
+    margin-top: 1px;
 }
 
 #tabs-control.nav > li > a {
@@ -14,14 +96,15 @@
 }
 
 #tabs-control.nav > li > a.closable {
-    padding-right: 10px;
+    padding-right: 6px;
 }
 
 #tabs-container {
     position: relative;
+    margin-bottom: 10px;
 }
 
-#path-edit {
+.path-edit {
     position: absolute;
     top: 10px;
     z-index: 100;
@@ -42,9 +125,8 @@ nav.navbar {
     padding-bottom: 12px !important;
     line-height: 25px !important;
     font-size: 16px;
-    transition: ease all 0.3s;
+    transition: ease background 0.3s;
 }
-
 
 .navbar-brand {
     height: 48px;
@@ -57,8 +139,29 @@ nav.navbar {
     margin-left: 50px;
 }
 
-.breadcrumb li:hover {
+#new-tab {
     cursor: pointer;
+}
+
+.breadcrumb a {
+    text-decoration: none;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: ease background 0.3s;
+    color: inherit;
+}
+
+.breadcrumb a:hover {
+    text-decoration: none;
+    cursor: pointer;
+    background: #ddd;
+    color: inherit;
+}
+
+.breadcrumb > li + li::before {
+    color: #aaa;
+    padding: 0;
 }
 
 #context-menu > li > a,
@@ -84,6 +187,7 @@ nav.navbar {
     content: '';
     padding-right: 5px;
 }
+
 /*
 .column-field-name {
     cursor: pointer;
@@ -103,6 +207,10 @@ td.column-field-name:hover {
 
 .bootbox .modal-footer .pull-right {
     margin-left: 5px;
+}
+
+.bootbox-body .img-responsive {
+    margin: 0 auto;
 }
 
 .table > tbody > tr.selected > td,
@@ -156,28 +264,12 @@ ui-pnotify.stack-bottomright{
     bottom:auto;
 }
 
-.CodeMirror {
-    height: 470px;
-}
-
 .dropdown-menu {
   animation-name: slidenavAnimation;
   animation-duration:.3s;
   animation-iteration-count: 1;
   animation-timing-function: ease;
   animation-fill-mode: forwards;
-
-  -webkit-animation-name: slidenavAnimation;
-  -webkit-animation-duration:.3s;
-  -webkit-animation-iteration-count: 1;
-  -webkit-animation-timing-function: ease;
-  -webkit-animation-fill-mode: forwards;
-
-  -moz-animation-name: slidenavAnimation;
-  -moz-animation-duration:.3s;
-  -moz-animation-iteration-count: 1;
-  -moz-animation-timing-function: ease;
-  -moz-animation-fill-mode: forwards;
 }
 
 @keyframes slidenavAnimation {
@@ -196,4 +288,25 @@ ui-pnotify.stack-bottomright{
   to {
     opacity: 1;
   }
+}
+
+/* -- Another modals animation-- */
+.modal.fade .modal-dialog {
+    transform: unset;
+	opacity: 0;
+	transition: opacity 0.3s;
+}
+
+.modal.fade.in .modal-dialog {
+	opacity: 1;
+    transition: opacity 0.3s;
+}
+/* -- -- */
+
+form[name="properties"] div {
+    line-height: 22px;
+}
+
+form[name="properties"] .btn-xs {
+    padding: 0 5px;
 }

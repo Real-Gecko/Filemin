@@ -132,16 +132,19 @@
 <div id="propertiesDialog" class="modal fade">
     <form name="properties" class="form-horizontal">
         <div class="well well-sm">
-        <b>$text{'properties_path'}:</b> $path<br>
-        <b>$text{'properties_type'}:</b> <i class="type"></i><br>
-        <b>$text{'properties_size'}:</b> <i class="size"></i>
-        <input type="button" name='getsize' class='btn btn-info btn-xs' value="$text{'get_size'}" onclick="getSize(this)"><br>
-        <b>$text{'properties_mtime'}:</b> <i class="modified"></i><br>
-        <b>$text{'properties_atime'}:</b> <i class="accessed"></i><br>
+            <div class="path"><b>$text{'properties_path'}:</b> <i></i><br></div>
+            <div class="type"><b>$text{'properties_type'}:</b> <i></i><br></div>
+            <div class="stats"><b>$text{'properties_stats'}:</b> <i></i><br></div>
+            <div class="size">
+                <b>$text{'properties_size'}:</b> <i></i>
+                <input type="button" name='getsize' class='btn btn-info btn-xs' value="$text{'get_size'}" onclick="getSize(this)">
+            </div>
+            <div class="modified"><b>$text{'properties_mtime'}:</b> <i></i><br></div>
+            <div class="accessed"><b>$text{'properties_atime'}:</b> <i></i><br></div>
         </div>
         <table class="table table-condensed">
             <tr align="center">
-                <td colspan="2"><b>Superuser</b></td>
+                <td colspan="2"><b>$text{'dialog_superuser'}</b></td>
                 <td><b>$text{'permissions'}</b></td>
                 <td><b>$text{'chmod_owner'}</b></td>
                 <td><b>$text{'chmod_group'}</b></td>

@@ -8,17 +8,18 @@ use JSON;
 get_paths();
 
 print_ajax_header();
+my @errors;
+
 
 if(!$in{'owner'} or !$in{'group'}) {
-    print encode_json({'error' => \@errors});
+    print encode_json({'error' => $text{'provide_correct_parameters'}});
+    exit;
 }
 
 (my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'});
 my $grid = getgrnam($in{'group'});
 my $recursive;
 if($in{'recursive'}) { $recursive = '-R'; } else { $recursive = ''; }
-
-my @errors;
 
 if(! defined $login) {
     push @errors, "<b>$in{'owner'}</b> $text{'error_user_not_found'}";

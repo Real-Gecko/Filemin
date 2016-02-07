@@ -71,13 +71,13 @@ while(index($line,"$boundary--") == -1) {
                       chop($prevline);
                       chop($prevline);
                       if (!print OUTFILE $prevline) {
-                          push errors, "text{'error_writing_file'} $path/$file";
+                          push @errors, "text{'error_writing_file'} $path/$file";
                           last;
                       }
                       last;
                   } else {
                       if (!print OUTFILE $prevline) {
-                          push errors, "text{'error_writing_file'} $path/$file";
+                          push @errors, "text{'error_writing_file'} $path/$file";
                           last;
                       }
                       $prevline = $line;

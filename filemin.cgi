@@ -53,6 +53,7 @@ $text_to_js = to_json(%user_locale);
 # Load interface templates
 $main_menu = get_template('main_menu.html');
 $context_menu = get_template('context_menu.html');
+$context_menu_search = get_template('context_menu_search.html');
 $ dialogs = get_template('dialogs.html');
 
 # Print main interface

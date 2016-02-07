@@ -9,6 +9,7 @@ use POSIX;
 $templates_path = "unauthenticated/templates";
 
 sub get_paths {
+    my @errors;
     %access = &get_module_acl();
 
     # Switch to the correct user
@@ -25,7 +26,7 @@ sub get_paths {
         # A specific user
         @remote_user_info = getpwnam($access{'work_as_user'});
         @remote_user_info ||
-            &error("Unix user $access{'work_as_user'} does not exist!");
+            push @errors, "Unix user $access{'work_as_user'} does not exist!";
         &switch_to_unix_user(\@remote_user_info);
     }
     else {
@@ -56,7 +57,7 @@ sub get_paths {
     $path = $in{'path'} ? $in{'path'} : '';
     $path =~ s/\.\.//g;
     $path = &simplify_path($path);
-    $cwd = &simplify_path($base.$path);
+    $cwd = &simplify_path(&resolve_links($base.$path));
 
     # Work out max upload size
     if (&get_product_name() eq 'usermin') {
@@ -74,13 +75,26 @@ sub get_paths {
         }
     }
     if ($error) {
-        &error(&text('notallowed', &html_escape($cwd),
-                                   &html_escape(join(" , ", @allowed_paths))));
+#        &error(&text('notallowed', &html_escape($cwd),
+#                                   &html_escape(join(" , ", @allowed_paths))));
+        push @errors, &text('notallowed', &html_escape($cwd),
+                                   &html_escape(join(" , ", @allowed_paths)));
     }
 
     if (index($cwd, $base) == -1)
     {
         $cwd = $base;
+    }
+
+    # Not really elegant, but working :D
+    if (scalar(@errors) > 0) {
+        $result = '';
+        foreach $error(@errors) {
+            $result.= "$error<br>";
+        }
+        print_ajax_header();
+        print '{"error": "'.$result.'"}';
+        exit;
     }
 
     # Initiate per user config
@@ -227,6 +241,36 @@ sub filemin_progress_callback {
 sub to_json {
     my %hash = @_;
     return "{".join(q{,}, map{qq{"$_":"$hash{$_}"}} keys %hash)."}";
+}
+
+sub oct_to_symbolic {
+    my $permissions = $_[0];
+
+    my $sup = substr $permissions, 0, 1;
+    my $res = "";
+    if(($sup & 4) >> 2) { $res .= 'u+s,' } else { $res .= 'u-s,' }
+    if(($sup & 2) >> 1) {$res .= 'g+s,'} else { $res .= 'g-s,' }
+    if($sup & 1) { $res .= '+t,' } else { $res .= '-t,' }
+    
+    my $usr = substr $permissions, 1, 1;
+    $res .= "u";
+    if(($usr & 4) >> 2) { $res .= '+r' } else { $res .= '-r' }
+    if(($usr & 2) >> 1) { $res .= '+w' } else { $res .= '-w' }
+    if($usr & 1) { $res .= '+x,' } else { $res .= '-x,' }
+    
+    my $grp = substr $permissions, 2, 1;
+    $res .= "g";
+    if(($grp & 4) >> 2) { $res .= '+r' } else { $res .= '-r' }
+    if(($grp & 2) >> 1) { $res .= '+w' } else { $res .= '-w' }
+    if($grp & 1) { $res .= '+x,' } else { $res .= '-x,' }
+    
+    my $oth = substr $permissions, 3, 1;
+    $res .= "o";
+    if(($oth & 4) >> 2) { $res .= '+r' } else { $res .= '-r' }
+    if(($oth & 2) >> 1) { $res .= '+w' } else { $res .= '-w' }
+    if($oth & 1) { $res .= '+x' } else { $res .= '-x' }
+
+    return $res;
 }
 
 1;
