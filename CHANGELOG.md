@@ -1,5 +1,8 @@
 # Change Log
 
+## [Not released]
+- Fixed notitfications bugs
+
 ## [1.1.0] - 2016-02-08
 ### Fixed
 - Fixed HTML special characters decoding - #82

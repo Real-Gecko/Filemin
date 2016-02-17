@@ -266,9 +266,9 @@ function bookmark(tab) {
     .done(function(response) {
         if(response.success) {
             $('#bookmarks').append('<li><a data-item="goto">' + tab.path + '</a></li>');
-            showSucccess(text.bookmark_added);
+            showSuccess(null, text.bookmark_added);
         } else {
-            showError(null, response.errror)
+            showError(null, response.error)
         }
     }).fail(function(jqx, text, e) {
         showError(null, text);
@@ -696,7 +696,7 @@ function manageBookmarks() {
                     $.post("save_bookmarks.cgi", data)
                     .done(function(response) {
                         if(response.success) {
-                            showSuccess(text.saved_successfully);
+                            showSuccess(null, text.saved_successfully);
                             var lines = form.bookmarks.value.split('\n');
                             var ul = $('#bookmarks');
                             var lis = ul.children();
@@ -935,50 +935,50 @@ function escapeHTML(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-function showSuccess(title, text) {
+function showSuccess(title, message) {
     new PNotify({
         icon: "fa fa-check-circle",
         type: 'success',
         title: title ? title : text.notice_success,
-        text: text ? text : ''
+        text: message ? message : ''
     });
 }
 
-function showNotice(title, text) {
+function showNotice(title, message) {
     new PNotify({
         icon: "fa fa-exclamation-circle",
         type: 'notice',
-        title: title,
-        text: text ? text : ''
+        title: title ? title : text.warning_title,
+        text: message ? message : ''
     });
 }
 
-function showError(title, text) {
+function showError(title, message) {
     new PNotify({
         icon: "fa fa-exclamation-triangle",
         type: 'error',
         title: title ? title : text.error_title,
-        text: text ? text : ''
+        text: message ? message : ''
     });
 }
 
-function showWait(title, text) {
+function showWait(title, message) {
     return new PNotify({
         icon: "fa fa-cog fa-spin",
         type: 'notice',
         hide: false,
         title: title ? title : text.notice_wait,
-        text: text ? text : ''
+        text: message ? message : ''
     });
 }
 
-function waitToSuccess(notice, title, text) {
+function waitToSuccess(notice, title, message) {
     notice.update({
         type: 'success',
         hide: true,
         icon: 'fa fa-check-circle',
         title: title ? title : text.notice_success,
-        text: text ? text : '',
+        text: message ? message : '',
         buttons: {
             closer: true,
         }
