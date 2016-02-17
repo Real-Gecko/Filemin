@@ -6,11 +6,12 @@ use version;
 
 &ui_print_header(undef, "Filemin", "", undef, 0 , 0, 0);
 
-print "<h3>$text{'will_open'} <a target='_blank' href='filemin.cgi'>$text{'new_tab'}</a><br></h3>";
-print "<script>window.open('filemin.cgi','_blank');</script>";
+print "<h3>$text{'will_open'} <a target='_blank' href='/filemin/filemin.cgi'>$text{'new_tab'}</a><br></h3>";
+print "<script>window.open('/filemin/filemin.cgi','_blank');</script>";
 
 # Check for updates
 if($remote_user eq 'root') {
+    print $text{'checking_for_update'};
     my $url = 'https://github.com/Real-Gecko/filemin/raw/master/module.info';
     my $tempfile = transname();
     my %remote_module_info = ();
@@ -23,6 +24,8 @@ if($remote_user eq 'root') {
     my $local = version->parse($module_info{'version'});
     if($local < $remote) {
         print "<h4>$text{'newer_version_available'}<br><a href='update.cgi?version=$remote'>$text{'click_to_update'}</a></h4>";
+    } else {
+        print $text{'module_up_to_date'};
     };
 }
 
