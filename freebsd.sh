@@ -42,7 +42,7 @@ FILES="unauthenticated/templates/*.html"
 for f in $FILES
 do
   if [ -f $f -a -r $f ]; then
-   sed -e "s/$OLD/$NEW/g" -e "s/filemin\./filemin\.min\./g" -e "s/chmod-calculator\./chmod-calculator\.min\./g" -e "s/spec-ops\./spec-ops\.min\./g" -e "s/bs-table-patch\./bs-table-patch\.min\./g" "$f" > "$TGDIR/$f"
+   sed -e "s/$OLD/$NEW/g" -e "s/filemin\./filemin\.min\./g" -e "s/chmod-calculator\./chmod-calculator\.min\./g" -e "s/spec-ops\./spec-ops\.min\./g" "$f" > "$TGDIR/$f"
   else
    echo "Error: Cannot read $f"
   fi
