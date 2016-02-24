@@ -4,7 +4,7 @@
 require './filemin-lib.pl';
 use version;
 
-&ui_print_header(undef, "Filemin", "", undef, 0 , 0, 0);
+&ui_print_header(undef, "Filemin", "", undef, 1 , 0, 0);
 
 print "<h3>$text{'will_open'} <a target='_blank' href='/filemin/filemin.cgi'>$text{'new_tab'}</a><br></h3>";
 print "<script>window.open('/filemin/filemin.cgi','_blank');</script>";
