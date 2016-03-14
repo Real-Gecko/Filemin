@@ -1,0 +1,51 @@
+<ul id="context-menu-search" class="dropdown-menu">
+    <li data-item="open_folder">
+        <a><i class="fa fa-folder-open-o"></i> $text{'menu_open_folder'}</a>
+    </li>
+    <li data-item="open_containing">
+        <a><i class="fa fa-folder-open-o"></i> $text{'open_containing_folder'}</a>
+    </li>
+    <li data-item="edit">
+        <a><i class="fa fa-edit"></i> $text{'edit'}</a>
+    </li>
+    <li data-item="view">
+        <a><i class="fa fa-eye"></i> $text{'menu_view'}</a>
+    </li>
+    <li role="separator" class="divider"></li>
+    <li class="dropdown-submenu">
+        <a tabindex="0" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><i class="fa fa-list"></i> $text{'menu_buffer'}</a>
+        <ul class="dropdown-menu">
+            <li data-item="copy_selected">
+                <a><i class="fa fa-copy"></i> $text{'copy_selected'}</a>
+            </li>
+            <li data-item="cut_selected">
+                <a><i class="fa fa-cut"></i> $text{'cut_selected'}</a>
+            </li>
+        </ul>
+    </li>
+    <li class="dropdown-submenu">
+        <a tabindex="0" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><i class="fa fa-check"></i> $text{'menu_select'}</a>
+        <ul class="dropdown-menu">
+            <li data-item="select_all">
+                <a><i class="fa fa-check-square-o"></i> $text{'select_all'}</a>
+            </li>
+            <li data-item="select_none">
+                <a><i class="fa fa-square-o"></i> $text{'select_none'}</a>
+            </li>
+            <li data-item="select_inverse">
+                <a><i class="fa fa-check-square"></i> $text{'invert_selection'}</a>
+            </li>
+        </ul>
+    </li>
+    <li class="dropdown-submenu">
+        <a tabindex="0" class="dropdown-toggle" data-hover="dropdown" data-toggle="dropdown"><i class="fa fa-wrench"></i> $text{'menu_tools'}</a>
+        <ul class="dropdown-menu">
+            <li data-item="chmod_selected">
+                <a><i class="fa fa-gears" aria-hidden="true"></i> $text{'chmod_selected'}</a>
+            </li>
+            <li data-item="chown_selected">
+                <a><i class="fa fa-users" aria-hidden="true"></i> $text{'chown_selected'}</a>
+            </li>
+        </ul>
+    </li>
+</ul>

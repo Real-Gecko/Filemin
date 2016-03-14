@@ -2,14 +2,18 @@
 
 require './filemin-lib.pl';
 use lib './lib';
+use JSON;
 
 &ReadParse();
-
 get_paths();
 
-$confdir = "$remote_user_info[7]/.filemin";
+print_ajax_header();
+
+$confdir = get_config_dir();
+my @errors;
+
 if(!-e $confdir) {
-    mkdir $confdir or &error("$text{'error_creating_conf'}: $!");
+    mkdir $confdir or push @error, "$text{'error_creating_conf'}: $!";
 }
 
 if(!-e "$confdir/.bookmarks") {
@@ -17,7 +21,18 @@ if(!-e "$confdir/.bookmarks") {
 }
 
 $bookmarks = &read_file_lines($confdir.'/.bookmarks');
-push @$bookmarks, $path;
+# Check if already exists
+my %h_bookmarks = map { $_ => 1 } @$bookmarks;
+if(exists($h_bookmarks{$path})) {
+    push @errors, $text{'bookmark_exists'};
+} else {
+    push @$bookmarks, $path;
+}
+#@bookmarks = sort(@bookmarks);
 &flush_file_lines("$confdir/.bookmarks");
 
-&redirect("index.cgi?path=$path");
+if (scalar(@errors) > 0) {
+    print encode_json({'error' => \@errors});
+} else {
+    print encode_json({'success' => 1});
+}

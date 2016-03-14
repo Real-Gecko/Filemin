@@ -5,17 +5,24 @@ require './filemin-lib.pl';
 
 get_paths();
 
-if(!$in{'name'}) {
-    &redirect("index.cgi?path=$path");
-}
+# Remove exploiting "../" in new file names
+$name = $in{'name'};
+$name =~ s/\.\.//g;
+&simplify_path($name);
 
-if (-e "$cwd/$in{'name'}") {
-    print_errors("$in{'name'} $text{'error_exists'}");
+print_ajax_header();
+
+if(!$in{'name'}) {
+    print("{\"error\": \"$text{'provide_file_name'}\"}");
 } else {
-    if (open my $fh, "> $cwd/$in{'name'}") {
-        close($fh);
-        &redirect("index.cgi?path=$path");
+    if (-e "$cwd/$in{'name'}") {
+        print("{\"error\": \"<b>$name</b> $text{'error_exists'}\"}");
     } else {
-        print_errors("$in{'name'} - $text{'error_create'} $!");
+        if (open my $fh, "> $cwd/$in{'name'}") {
+            close($fh);
+            print '{"success": "1"}';
+        } else {
+            print("{\"error\": \"$name - $text{'error_create'} $!\"}");
+        }
     }
 }

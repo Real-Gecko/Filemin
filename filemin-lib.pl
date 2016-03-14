@@ -6,14 +6,17 @@ use WebminCore;
 use Encode qw(decode encode);
 use File::Basename;
 use POSIX;
+$templates_path = "unauthenticated/templates";
 
 sub get_paths {
+    my @errors;
     %access = &get_module_acl();
 
     # Switch to the correct user
     if (&get_product_name() eq 'usermin') {
         # In Usermin, the module only ever runs as the connected user
         &switch_to_remote_user();
+        &create_user_config_dirs();
     }
     elsif ($access{'work_as_root'}) {
         # Root user, so no switching
@@ -23,7 +26,7 @@ sub get_paths {
         # A specific user
         @remote_user_info = getpwnam($access{'work_as_user'});
         @remote_user_info ||
-            &error("Unix user $access{'work_as_user'} does not exist!");
+            push @errors, "Unix user $access{'work_as_user'} does not exist!";
         &switch_to_unix_user(\@remote_user_info);
     }
     else {
@@ -33,6 +36,10 @@ sub get_paths {
 
     # Get and check allowed paths
     @allowed_paths = split(/\s+/, $access{'allowed_paths'});
+    if (&get_product_name() eq 'usermin') {
+        # Add paths from Usermin config
+        push(@allowed_paths, split(/\t+/, $config{'allowed_paths'}));
+    }
     if($remote_user_info[0] eq 'root' || $allowed_paths[0] eq '$ROOT') {
         # Assume any directory can be accessed
         $base = "/";
@@ -40,6 +47,7 @@ sub get_paths {
     } else {
         @allowed_paths = map { $_ eq '$HOME' ? @remote_user_info[7] : $_ }
                              @allowed_paths;
+        @allowed_paths = map { s/\$USER/$remote_user/g; $_ } @allowed_paths;
         if (scalar(@allowed_paths == 1)) {
             $base = $allowed_paths[0];
         } else {
@@ -47,7 +55,16 @@ sub get_paths {
         }
     }
     $path = $in{'path'} ? $in{'path'} : '';
-    $cwd = &simplify_path($base.$path);
+    $path =~ s/\.\.//g;
+    $path = &simplify_path($path);
+    $cwd = &simplify_path(&resolve_links($base.$path));
+
+    # Work out max upload size
+    if (&get_product_name() eq 'usermin') {
+        $upload_max = $config{'max'};
+    } else {
+        $upload_max = $access{'max'};
+    }
 
     # Check that current directory is one of those that is allowed
     my $error = 1;
@@ -58,8 +75,10 @@ sub get_paths {
         }
     }
     if ($error) {
-        &error(&text('notallowed', &html_escape($cwd),
-                                   &html_escape(join(" , ", @allowed_paths))));
+#        &error(&text('notallowed', &html_escape($cwd),
+#                                   &html_escape(join(" , ", @allowed_paths))));
+        push @errors, &text('notallowed', &html_escape($cwd),
+                                   &html_escape(join(" , ", @allowed_paths)));
     }
 
     if (index($cwd, $base) == -1)
@@ -67,311 +86,191 @@ sub get_paths {
         $cwd = $base;
     }
 
+    # Not really elegant, but working :D
+    if (scalar(@errors) > 0) {
+        $result = '';
+        foreach $error(@errors) {
+            $result.= "$error<br>";
+        }
+        print_ajax_header();
+        print '{"error": "'.$result.'"}';
+        exit;
+    }
+
     # Initiate per user config
     $confdir = "$remote_user_info[7]/.filemin";
     if(!-e "$confdir/.config") {
-        &read_file_cached("$module_root_directory/defaultuconf", \%userconfig);
+#        &read_file_cached("$module_root_directory/defaultuconf", \%userconfig);
     } else {
-        &read_file_cached("$confdir/.config", \%userconfig);
+#        &read_file_cached("$confdir/.config", \%userconfig);
     }
 }
 
 sub print_template {
     $template_name = @_[0];
-    if (open(my $fh, '<:encoding(UTF-8)', $template_name)) {
+    if (open(my $fh, '<:encoding(UTF-8)', "$templates_path/$template_name")) {
       while (my $row = <$fh>) {
         print (eval "qq($row)");
       }
+      close($fh);
     } else {
       print "$text{'error_load_template'} '$template_name' $!";
     }
 }
 
-sub print_errors {
-    my @errors = @_;
-    &ui_print_header(undef, "Filemin", "");
-    print $text{'errors_occured'};
-    print "<ul>";
-    foreach $error(@errors) {
-        print("<li>$error</li>");
-    }
-    print "<ul>";
-    &ui_print_footer("index.cgi?path=".&urlize($path), $text{'previous_page'});
-}
-
-sub print_interface {
-    # Some vars for "upload" functionality
-    local $upid = time().$$;
-    local @remote_user_info = getpwnam($remote_user);
-    local $uid = @remote_user_info[2];
-    $bookmarks = get_bookmarks();
-
-    # Set things up according to currently used theme
-    if ($current_theme eq 'authentic-theme' or $current_theme eq 'bootstrap') {
-        # Interface for Bootstrap 3 powered themes
-        # Set icons variables
-        $edit_icon = "<i class='fa fa-edit' alt='$text{'edit'}'></i>";
-        $rename_icon = "<i class='fa fa-font' title='$text{'rename'}'></i>";
-        $extract_icon = "<i class='fa fa-external-link' alt='$text{'extract_archive'}'></i>";
-        $goto_icon = "<i class='fa fa-arrow-right' alt='$text{'goto_folder'}'></i>";
-        # Add static files
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/main.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/dataTables.bootstrap.js\"></script>";
-        print "<script type=\"text/javascript\" src=\"unauthenticated/js/bootstrap-hover-dropdown.min.js\"></script>";
-        print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
-        print "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/dataTables.bootstrap.css\" />";
-        init_datatables();
-        # Set "root" icon
-        if($base eq '/') {
-            $root_icon = "<i class='fa fa-hdd-o'></i>";
-        } else {
-            $root_icon = "~";
-        }
-        # Breadcrumbs
-        print "<ol class='breadcrumb pull-left'><li><a href='index.cgi?path='>$root_icon</a></li>";
-        my @breadcr = split('/', $path);
-        my $cp = '';
-        for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
-            chomp($breadcr[$i]);
-            $cp = $cp.'/'.$breadcr[$i];
-            print "<li><a href='index.cgi?path=".&urlize($cp)."'>".
-		  &html_escape($breadcr[$i])."</a></li>";
-        }
-        print "</ol>";
-        # And toolbar
-        if($userconfig{'menu_style'}) {
-            print_template("unauthenticated/templates/menu.html");
-        } else {
-            print_template("unauthenticated/templates/quicks.html");
-        }
-        $page = 1;
-        $pagelimit = 9001; # IT'S OVER NINE THOUSAND!
-        print_template("unauthenticated/templates/dialogs.html");
+sub get_template {
+    $template_name = @_[0];
+    my $result = "";
+    if (open(my $fh, '<:encoding(UTF-8)', "$templates_path/$template_name")) {
+      while (my $row = <$fh>) {
+        $result .= (eval "qq($row)");
+      }
+      close($fh);
     } else {
-        # Interface for legacy themes
-        # Set icons variables
-        $edit_icon = "<img src='images/icons/quick/edit.png' alt='$text{'edit'}' />";
-        $rename_icon = "<img src='images/icons/quick/rename.png' alt='$text{'rename'}' />";
-        $extract_icon = "<img src='images/icons/quick/extract.png' alt='$text{'extract_archive'}' />";
-        $goto_icon = "<img src='images/icons/quick/go-next.png' alt='$text{'goto_folder'}'";
-        # Add static files
-        $head = "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/css/style.css\" />";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery/jquery.min.js\"></script>";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/jquery/jquery-ui.min.js\"></script>";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/legacy.js\"></script>";
-        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/jquery/jquery-ui.min.css\" />";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/js/chmod-calculator.js\"></script>";
-        $head.= "<link rel=\"stylesheet\" type=\"text/css\" href=\"unauthenticated/dropdown/fg.menu.css\" />";
-        $head.= "<script type=\"text/javascript\" src=\"unauthenticated/dropdown/fg.menu.js\"></script>";
-        print $head;
-        # Set "root" icon
-        if($base eq '/') {
-            $root_icon = "<img src=\"images/icons/quick/drive-harddisk.png\" class=\"hdd-icon\" />";
-        } else {
-            $root_icon = "~";
-        }
-        # Legacy breadcrumbs
-        print "<div id='bread' style='float: left; padding-bottom: 2px;'><a href='index.cgi?path='>$root_icon</a> / ";
-        my @breadcr = split('/', $path);
-        my $cp = '';
-        for(my $i = 1; $i <= scalar(@breadcr)-1; $i++) {
-            chomp($breadcr[$i]);
-            $cp = $cp.'/'.$breadcr[$i];
-            print "<a href='index.cgi?path=".&urlize($cp)."'>".
-		  &html_escape($breadcr[$i])."</a> / ";
-        }
-        print "<br />";
-        # And pagination
-        $page = $in{'page'};
-        $pagelimit = $userconfig{'per_page'};
-        $pages = ceil((scalar(@list))/$pagelimit);
-        if (not defined $page or $page > $pages) { $page = 1; }
-        print "Pages: ";
-        for(my $i = 1;$i <= $pages;$i++) {
-            if($page eq $i) {
-                print "<a class='pages active' ".
-                      "href='?path=".&urlize($path).
-                      "&page=".&urlize($i).
-                      "&query=".&urlize($query).
-                      "'>".&html_escape($i)."</a>";
-            } else {
-                print "<a class='pages' ".
-                      "href='?path=".&urlize($path).
-                      "&page=".&urlize($i).
-                      "&query=".&urlize($query)."'>".&html_escape($i)."</a>";
-            }
-        }
-        print "</div>";
-        # And toolbar
-        print_template("unauthenticated/templates/legacy_quicks.html");
-        print_template("unauthenticated/templates/legacy_dialogs.html");
+      $result = "$text{'error_load_template'} '$template_name' $!";
     }
-
-    # Render current directory entries
-    print &ui_form_start("", "post", undef, "id='list_form'");
-    @ui_columns = (
-            '<input id="select-unselect" type="checkbox" onclick="selectUnselect(this)" />',
-            ''
-        );
-    push @ui_columns, $text{'name'};
-    push @ui_columns, $text{'type'} if($userconfig{'columns'} =~ /type/);
-    push @ui_columns, $text{'actions'};
-    push @ui_columns, $text{'size'} if($userconfig{'columns'} =~ /size/);
-    push @ui_columns, $text{'owner_user'} if($userconfig{'columns'} =~ /owner_user/);
-    push @ui_columns, $text{'permissions'} if($userconfig{'columns'} =~ /permissions/);
-    push @ui_columns, $text{'last_mod_time'} if($userconfig{'columns'} =~ /last_mod_time/);
-
-    print &ui_columns_start(\@ui_columns);
-    #foreach $link (@list) {
-    for(my $count = 1 + $pagelimit*($page-1);$count <= $pagelimit+$pagelimit*($page-1);$count++) {
-        if ($count > scalar(@list)) { last; }
-        my $class = $count & 1 ? "odd" : "even";
-        my $link = $list[$count - 1][0];
-        $link =~ s/$cwd\///;
-        $link =~ s/^\///g;
-        $link = html_escape($link);
-        $link = quote_escape($link);
-        $link = decode('UTF-8', $link, Encode::FB_CROAK);
-        $path = html_escape($path);
-        $path = quote_escape($path);
-        $path = decode('UTF-8', $path, Encode::FB_CROAK);
-
-        my $type = $list[$count - 1][14];
-        $type =~ s/\//\-/g;
-        my $img = "images/icons/mime/$type.png";
-        unless (-e $img) { $img = "images/icons/mime/unknown.png"; }
-        $size = &nice_size($list[$count - 1][8]);
-        $user = getpwuid($list[$count - 1][5]);
-        $group = getgrgid($list[$count - 1][6]);
-        $permissions = sprintf("%04o", $list[$count - 1][3] & 07777);
-        $mod_time = POSIX::strftime('%Y/%m/%d - %T', localtime($list[$count - 1][10]));
-
-        $actions = "<a class='action-link' href='javascript:void(0)' onclick='renameDialog(\"$link\")' title='$text{'rename'}' data-container='body'>$rename_icon</a>";
-
-        if ($list[$count - 1][15] == 1) {
-            $href = "index.cgi?path=".&urlize("$path/$link");
-        } else {
-            $href = "download.cgi?file=".&urlize($link)."&path=".&urlize($path);
-            if($0 =~ /search.cgi/) {
-                ($fname,$fpath,$fsuffix) = fileparse($list[$count - 1][0]);
-                if($base ne '/') {
-                    $fpath =~ s/^$base//g;
-                }
-                $actions = "$actions<a class='action-link' ".
-			   "href='index.cgi?path=".&urlize($fpath)."' ".
-			   "title='$text{'goto_folder'}'>$goto_icon</a>";
-            }
-            if (
-                index($type, "text-") != -1 or
-                $type eq "application-x-php" or
-                $type eq "application-x-ruby" or
-                $type eq "application-xml" or
-                $type eq "application-javascript" or
-                $type eq "application-x-shellscript" or
-                $type eq "application-x-perl" or
-                $type eq "application-x-yaml"
-            ) {
-                $actions = "$actions<a class='action-link' href='edit_file.cgi?file=".&urlize($link)."&path=".&urlize($path)."' title='$text{'edit'}' data-container='body'>$edit_icon</a>";
-            }
-            if (index($type, "zip") != -1 or index($type, "compressed") != -1) {
-                $actions = "$actions <a class='action-link' href='extract.cgi?path=".&urlize($path)."&file=".&urlize($link)."' title='$text{'extract_archive'}' data-container='body'>$extract_icon</a> ";
-            }
-        }
-        @row_data = (
-            "<a href='$href'><img src=\"$img\"></a>",
-            "<a href=\"$href\" data-filemin-path=\"$href\">$link</a>"
-        );
-        push @row_data, $type if($userconfig{'columns'} =~ /type/);
-        push @row_data, $actions;
-        push @row_data, $size if($userconfig{'columns'} =~ /size/);
-        push @row_data, $user.':'.$group if($userconfig{'columns'} =~ /owner_user/);
-        push @row_data, $permissions if($userconfig{'columns'} =~ /permissions/);
-        push @row_data, $mod_time if($userconfig{'columns'} =~ /last_mod_time/);
-
-        print &ui_checked_columns_row(\@row_data, "", "name", $link);
-    }
-    print ui_columns_end();
-    print &ui_hidden("path", $path),"\n";
-    print &ui_form_end();
+    return $result;
 }
 
-sub init_datatables {
-    my ($a, $b, $c);
-    $a = '0, 1, 3';
-    $b = '4';
-    $c = '';
-    if ($userconfig{'columns'} =~ /type/) {
-        $a = '0, 1, 4';
-        $b = '5';
-    }
-    if ($userconfig{'columns'} =~ /size/) {
-        $c = '{ "type": "file-size", "targets": [' . $b . '] },';
-    }
-
-    if($userconfig{'disable_pagination'}) {
-        $bPaginate = 'false';
-    } else {
-        $bPaginate = 'true';
-    }
-print "<script>";
-print "\$( document ).ready(function() {";
-print "\$.fn.dataTableExt.sErrMode = 'throw';";
-print "\$('#list_form > table').dataTable({";
-print "\"order\": [],";
-print "\"aaSorting\": [],";
-print "\"bDestroy\": true,";
-print "\"bPaginate\": $bPaginate,";
-print " \"fnDrawCallback\": function(oSettings) {
-        if (oSettings.fnRecordsTotal() <= oSettings._iDisplayLength) {
-            \$('.dataTables_paginate').hide();
-        } else {
-            \$('.dataTables_paginate').show();
-        }
-    },";
-print " \"initComplete\": function() {
-        \$('div.dataTables_filter input').val('').trigger('keyup');
-        \$('div.dataTables_filter input').focus();
-        \$(document).on('keydown', function (event) {
-            var keycode = event.keyCode ? event.keyCode : event.which;
-            if (!\$('input').is(':focus') && !\$('select').is(':focus') && !\$('textarea').is(':focus')) {
-                if (keycode === 39) {
-                    \$('.paginate_button.next').trigger('click');
-                }
-                if (keycode === 37) {
-                    \$('.paginate_button.previous').trigger('click');
-                }
-            }
-        });
-    },";
-print "\"bInfo\": false,";
-print "\"destroy\": true,";
-print "\"oLanguage\": {";
-print "\"sSearch\": \" \"";
-print "},";
-print "\"columnDefs\": [ { \"orderable\": false, \"targets\": [$a] }, $c ],";
-print "\"bStateSave\": true,";
-print "\"iDisplayLength\": 50,";
-print "});";
-print "\$(\"form\").on('click', 'div.popover', function() {";
-print "\$(this).prev('input').popover('hide');";
-print "});";
-print "});";
-print "</script>";
-}
-
+# get_bookmarks()
+# Return list of bookmarks made by user as set of HTML <li>
 sub get_bookmarks {
-    $confdir = "$remote_user_info[7]/.filemin";
+    $confdir = get_config_dir();
     if(!-e "$confdir/.bookmarks") {
         return "<li><a>$text{'no_bookmarks'}</a></li>";
     }
     my $bookmarks = &read_file_lines($confdir.'/.bookmarks', 1);
+    if(scalar(@{$bookmarks}) == 0) {
+        return "<li><a>$text{'no_bookmarks'}</a></li>";
+    }
     $result = '';
     foreach $bookmark(@$bookmarks) {
-        $result.= "<li><a href='index.cgi?path=".&urlize($bookmark)."'>".
-		  &html_escape($bookmark)."</a><li>";
+        $result.= "<li><a data-item='goto'>$bookmark</a><li>";
     }
     return $result;
+}
+
+# get_config_dir()
+# Returns the directory for user config/bookmarks/copy & paste storage
+sub get_config_dir
+{
+    if (&get_product_name() eq 'usermin') {
+        return $user_module_config_directory;
+    }
+    else {
+        my $tmpdir = "$remote_user_info[7]/.filemin";
+        &make_dir($tmpdir, 0700) if (!-d $tmpdir);
+        return $tmpdir;
+    }
+}
+
+# get_paste_buffer_file()
+# Returns the location of the file for temporary copy/paste state
+sub get_paste_buffer_file
+{
+    if (&get_product_name() eq 'usermin') {
+        return $user_module_config_directory."/.buffer";
+    }
+    else {
+        my $tmpdir = "$remote_user_info[7]/.filemin";
+        &make_dir($tmpdir, 0700) if (!-d $tmpdir);
+        return $tmpdir."/.buffer";
+    }
+}
+
+sub print_ajax_header {
+    print "Content-Security-Policy: script-src 'self' 'unsafe-inline'; frame-src 'self'\n";
+    print "Content-type: application/json; Charset=utf-8\n\n";
+}
+
+sub filemin_progress_callback {
+    if ($_[0] == 2) {
+        # Got size
+        print $progress_callback_prefix;
+        if ($_[1]) {
+            $progress_size = $_[1];
+            $progress_step = int($_[1] / 10);
+            print &text('progress_size2', $progress_callback_url,
+                    &nice_size($progress_size)),"\n";
+        }
+        else {
+            $progress_size = undef;
+            print &text('progress_nosize', $progress_callback_url),"\n";
+        }
+        $last_progress_time = $last_progress_size = undef;
+    }
+    elsif ($_[0] == 3) {
+        # Got data update
+        if ($progress_size) {
+            # And we have a size to compare against
+            my $st = int(($_[1] * 10) / $progress_size);
+            my $time_now = time();
+            if ($st != $progress_step ||
+                $time_now - $last_progress_time > 60) {
+                # Show progress every 10% or 60 seconds
+                print &text('progress_datan', &nice_size($_[1]),
+                            int($_[1]*100/$progress_size)),"\n";
+                $last_progress_time = $time_now;
+                }
+            $progress_step = $st;
+            }
+        else {
+            # No total size .. so only show in 1M jumps
+            if ($_[1] > $last_progress_size+1024*1024) {
+                print &text('progress_data2n',
+                        &nice_size($_[1])),"\n";
+                $last_progress_size = $_[1];
+            }
+        }
+    }
+    elsif ($_[0] == 4) {
+        # All done downloading
+        print $progress_callback_prefix,&text('progress_done'),"\n";
+    }
+    elsif ($_[0] == 5) {
+        # Got new location after redirect
+        $progress_callback_url = $_[1];
+    }
+    elsif ($_[0] == 6) {
+        # URL is in cache
+        $progress_callback_url = $_[1];
+        print &text('progress_incache', $progress_callback_url),"\n";
+    }
+}
+
+sub to_json {
+    my %hash = @_;
+    return "{".join(q{,}, map{qq{"$_":"$hash{$_}"}} keys %hash)."}";
+}
+
+sub oct_to_symbolic {
+    my $permissions = $_[0];
+
+    my $sup = substr $permissions, 0, 1;
+    my $res = "";
+    if(($sup & 4) >> 2) { $res .= 'u+s,' } else { $res .= 'u-s,' }
+    if(($sup & 2) >> 1) {$res .= 'g+s,'} else { $res .= 'g-s,' }
+    if($sup & 1) { $res .= '+t,' } else { $res .= '-t,' }
+    
+    my $usr = substr $permissions, 1, 1;
+    $res .= "u";
+    if(($usr & 4) >> 2) { $res .= '+r' } else { $res .= '-r' }
+    if(($usr & 2) >> 1) { $res .= '+w' } else { $res .= '-w' }
+    if($usr & 1) { $res .= '+x,' } else { $res .= '-x,' }
+    
+    my $grp = substr $permissions, 2, 1;
+    $res .= "g";
+    if(($grp & 4) >> 2) { $res .= '+r' } else { $res .= '-r' }
+    if(($grp & 2) >> 1) { $res .= '+w' } else { $res .= '-w' }
+    if($grp & 1) { $res .= '+x,' } else { $res .= '-x,' }
+    
+    my $oth = substr $permissions, 3, 1;
+    $res .= "o";
+    if(($oth & 4) >> 2) { $res .= '+r' } else { $res .= '-r' }
+    if(($oth & 2) >> 1) { $res .= '+w' } else { $res .= '-w' }
+    if($oth & 1) { $res .= '+x' } else { $res .= '-x' }
+
+    return $res;
 }
 
 1;

@@ -1,45 +1,55 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
-use Cwd 'abs_path';
-&ReadParse();
+use lib './lib';
+use JSON;
 
+&ReadParse();
 get_paths();
 
-$tmpdir = "$remote_user_info[7]/.filemin";
+print_ajax_header();
 
-open(my $fh, "< $tmpdir/.buffer") or die "Error: $!";
-my @arr = <$fh>;
-close($fh);
-my $act = $arr[0];
-my $dir = $arr[1];
-chomp($act);
-chomp($dir);
-$from = abs_path($base.$dir);
-if ($cwd eq $from) {
-    print_errors($text{'error_pasting_nonsence'});
-} else {
+if(open(my $fh, "<".&get_paste_buffer_file())) {
+    my @arr = <$fh>;
+    close($fh);
+    my $act = $arr[0];
+    my $dir = $arr[1];
+    chomp($act);
+    chomp($dir);
+    $dir =~ s/\.\.//g;
+    $dir = &simplify_path($dir);
     my @errors;
     for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
         chomp($arr[$i]);
+        $arr[$i] =~ s/\.\.//g;
+        $arr[$i] = &simplify_path($arr[$i]);
+        my @p = split('/', $arr[$i]);
+        my $name = pop(\@p);
         if ($act eq "copy") {
-            if (-e "$cwd/$arr[$i]") {
-                push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
+            if (-e "$cwd/$name") {
+                push @errors, "<b>$cwd/$name</b> $text{'error_exists'}";
             } else {
-                system("cp -r $from/$arr[$i] $cwd") == 0 or push @errors, "$from/$arr[$i] $text{'error_copy'} $!";
+                system("cp -r ".quotemeta($base.$arr[$i]).
+                       " ".quotemeta($cwd)) == 0 or push @errors, $base.$arr[$i]." $text{'error_copy'} $!";
             }
-        }
-        elsif ($act eq "cut") {
-            if (-e "$cwd/$arr[$i]") {
-                push @errors, "$cwd/$arr[$i] $text{'error_exists'}";
+        } elsif ($act eq "cut") {
+            if (-e "$cwd/$name") {
+                push @errors, "<b>$cwd/$name</b> $text{'error_exists'}";
             } else {
-                system("mv $from/$arr[$i] $cwd") == 0 or push @errors, "$from/$arr[$i] $text{'error_cut'} $!";
+                system("mv ".quotemeta($base.$arr[$i]).
+                       " ".quotemeta($cwd)) == 0 or push @errors, $base.$arr[$i]." $text{'error_copy'} $!";
             }
         }
     }
     if (scalar(@errors) > 0) {
-        print_errors(@errors);
+        $result = '';
+        foreach $error(@errors) {
+            $result.= "$error<br>";
+        }
+        print '{"error": "'.$result.'"}';
     } else {
-        &redirect("index.cgi?path=$path");
+        print encode_json({'success' => '1'});
     }
+} else {
+    print("{\"error\": \" Error .buffer $!\"}");
 }

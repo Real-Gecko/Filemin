@@ -1,30 +1,33 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
-&ReadParse();
+use lib './lib';
+use JSON;
 
+&ReadParse();
 get_paths();
+
+print_ajax_header();
 
 my @errors;
 
-$file = $in{'file'};
+# Remove exploiting of "../" in parameters
+$file = $in{'name'};
+$file =~ s/\.\.//g;
+&simplify_path($file);
+
+# Correct end of lines
 $data = $in{'data'};
 $data =~ s/\r\n/\n/g;
-open(SAVE, ">", $cwd.'/'.$file) or push @errors, "$text{'error_saving_file'} - $!";
-print SAVE $data;
-close SAVE;
+if(open(SAVE, ">", $cwd.'/'.$file)) {
+    print SAVE $data;
+    close SAVE;
+} else {
+    push @errors, "$text{'error_saving_file'} - $!";
+}
 
 if (scalar(@errors) > 0) {
-    &ui_print_header(undef, "Filemin", "");
-    print $text{'errors_occured'};
-    print "<ul>";
-    foreach $error(@errors) {
-        print("<li>$error</li>");
-    }
-    print "<ul>";
-    &ui_print_footer("javascript:history.back();", $text{'previous_page'});
-} elsif ($in{'save_close'}) {
-    &redirect("index.cgi?path=$path");
+    print encode_json({'error' => \@errors});
 } else {
-    &redirect("edit_file.cgi?path=$path&file=$in{'file'}");
+    print encode_json({'success' => '1'});
 }
