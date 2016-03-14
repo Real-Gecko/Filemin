@@ -1,15 +1,33 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
-&ReadParse();
+use lib './lib';
+use JSON;
 
+&ReadParse();
 get_paths();
 
-$file = $in{'file'};
+print_ajax_header();
+
+my @errors;
+
+# Remove exploiting of "../" in parameters
+$file = $in{'name'};
+$file =~ s/\.\.//g;
+&simplify_path($file);
+
+# Correct end of lines
 $data = $in{'data'};
 $data =~ s/\r\n/\n/g;
-open(SAVE, ">", $cwd.'/'.$file) or $info = $!;
-print SAVE $data;
-close SAVE;
+if(open(SAVE, ">", $cwd.'/'.$file)) {
+    print SAVE $data;
+    close SAVE;
+} else {
+    push @errors, "$text{'error_saving_file'} - $!";
+}
 
-&redirect("index.cgi?path=$path");
+if (scalar(@errors) > 0) {
+    print encode_json({'error' => \@errors});
+} else {
+    print encode_json({'success' => '1'});
+}

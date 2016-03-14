@@ -1,289 +1,271 @@
-<div id="nothingSelected" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'warning_title'}</h4>
-            </div>
-            <div class="modal-body">
-                <h5>$text{'nothing_selected'}</h5>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_ok'}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="createFolderDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'create_folder'}</h4>
-            </div>
-            <div class="modal-body">
-                <form id="createFolderForm" action="create_folder.cgi" method="post">
-                    <div class="form-group">
-                        <label>$text{'new_folder_name'}</label>
-                        <input id="name" name="name" type="text" class="form-control" data-placement="right" data-content="$text{'provide_folder_name'}" data-trigger="manual">
-                        <input type='hidden' name='path' value='$path'>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="createFolder()">$text{'create'}</button>
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="createFileDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'create_file'}</h4>
-            </div>
-            <div class="modal-body">
-                <form id="createFileForm" action="create_file.cgi" method="post">
-                    <div class="form-group">
-                        <label>$text{'new_file_name'}</label>
-                        <input name="name" type="text" class="form-control" data-placement="right" data-content="$text{'provide_file_name'}" data-trigger="manual">
-                        <input type='hidden' name='path' value='$path'>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="createFile()">$text{'create'}</button>
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="renameDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'rename'}</h4>
-            </div>
-            <div class="modal-body">
-                <form id="renameForm" action="rename.cgi" method="post">
-                    <div class="form-group">
-                        <label>$text{'new_name'}</label>
-                        <input name="name" type="text" class="form-control" data-placement="right" data-content="$text{'provide_new_file_name'}" data-trigger="manual">
-                        <input type='hidden' name='file' value='' required>
-                        <input type='hidden' name='path' value='$path'>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="renameSelected()" name="button">$text{'rename'}</button>
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="compressDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'compress_selected'}</h4>
-            </div>
-            <div class="modal-body">
-                <form id="compressSelectedForm">
-                    <div class="form-group">
-                        <label>$text{'archive_name'}</label>
-                        <input name="filename" type="text" class="form-control" data-placement="right" data-content="$text{'provide_file_name'}" data-trigger="manual">.tar.gz
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="compressSelected()">$text{'dialog_compress'}</button>
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div id="removeDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'remove_selected'}</h4>
-            </div>
-            <div class="modal-body">
-                $text{'about_to_delete'}
-                <div id="items-to-remove" class="well">
-                </div>
-                $text{'are_you_sure'}
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" onclick="removeSelected()">$text{'remove_selected'}</button>
-                <button type="button" class="btn bnt-primary" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div id="chownDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'chown_selected'}</h4>
-            </div>
-            <div class="modal-body">
-                <form id="chownForm">
-                    <div class="form-group">
-                        <label>$text{'user_name'}</label>
-                        <input name="owner" type="text" class="form-control" data-placement="right" data-content="$text{'provide_user_name'}" data-trigger="manual">
-                        <label>$text{'group_name'}</label>
-                        <input name="group" type="text" class="form-control" data-placement="right" data-content="$text{'provide_group_name'}" data-trigger="manual">
-                        <label>$text{'dialog_recursive'}</label>
-                        <input id="chown-recursive" type="checkbox" name="recursive" class="form-control">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="chownSelected()">$text{'dialog_change'}</button>
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
+    <form name="chown">
+        <div class="form-group">
+            <label>$text{'user_name'}</label>
+            <input name="owner" type="text" class="form-control">
+            <label>$text{'group_name'}</label>
+            <input name="group" type="text" class="form-control">
         </div>
-    </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="recursive" value="1"> $text{'dialog_recursive'}
+            </label>
+        </div>
+        <input type='hidden' name='path' value=''>
+    </form>
 </div>
 
 <div id="chmodDialog" class="modal fade">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="warning">$text{'chmod_selected'}</h4>
-            </div>
-            <div class="modal-body">
-                <form name="chmod">
-                    <div class="form-group">
-                        <label for="t_total">$text{'permissions'} : </label>
-                        <input id="perms" type="text" name="t_total" value="0644" size="4" onKeyUp="octalchange()" class="form-group-item">
-                        <input type="text" name="sym_total" value="" size="12" readonly="true" class="form-group-item">
-                    </div>
-                    <table class="table">
-                        <tr>
-                            <th></th>
-                            <th><b>$text{'chmod_owner'}</b></th>
-                            <th><b>$text{'chmod_group'}</b></th>
-                            <th><b>$text{'chmod_others'}<b></th>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_read'}</td>
-                            <td><input type="checkbox" name="owner4" value="4" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="group4" value="4" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="other4" value="4" onclick="calc_chmod()"></td>
-                        </tr>
-                        <tr>		
-                            <td>$text{'chmod_write'}</td>
-                            <td><input type="checkbox" name="owner2" value="2" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="group2" value="2" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="other2" value="2" onclick="calc_chmod()"></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_execute'}</td>
-                            <td><input type="checkbox" name="owner1" value="1" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="group1" value="1" onclick="calc_chmod()"></td>
-                            <td><input type="checkbox" name="other1" value="1" onclick="calc_chmod()"></td>
-                        </tr>
-                        <tr>
-                            <td>----------</td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_sticky'}</td>
-                            <td><input type="checkbox" name="sticky" value="1" onclick="calc_chmod()"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'chmod_setgid'}</td>
-                            <td><input type="checkbox" name="setgid" value="2" onclick="calc_chmod()"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>$text{'dialog_recursive'}</td>
-                            <td><input id="chmod-recursive" type="checkbox" name="recursive"></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="chmodSelected()">$text{'dialog_change'}</button>
-                <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-            </div>
-        </div>
-    </div>
+    <form name="chmod">
+        <table class="table">
+            <tr align="center">
+                <td colspan="2"><b>Superuser</b></td>
+                <td><b>$text{'permissions'}</b></td>
+                <td><b>$text{'chmod_owner'}</b></td>
+                <td><b>$text{'chmod_group'}</b></td>
+                <td><b>$text{'chmod_others'}</b></td>
+            </tr>
+            <tr align="center">
+                <td><b>$text{'chmod_setuid'}</b></td>
+                <td>
+                    <input type="checkbox" name="extra4" onclick="calc(this, 4000)">
+                </td>
+                <td><b>$text{'chmod_read'}</b></td>
+                <td>
+                    <input type="checkbox" name="owner4" onclick="calc(this, 400)">
+                </td>
+                <td>
+                    <input type="checkbox" name="group4" onclick="calc(this, 40)">
+                </td>
+                <td>
+                    <input type="checkbox" name="other4" onclick="calc(this, 4)">
+                </td>
+            </tr>
+            <tr align="center">
+                <td><b>$text{'chmod_setgid'}</b></td>
+                <td>
+                    <input type="checkbox" name="extra2" onclick="calc(this, 2000)">
+                </td>
+                <td><b>$text{'chmod_write'}</b></td>
+                <td>
+                    <input type="checkbox" name="owner2" onclick="calc(this, 200)">
+                </td>
+                <td>
+                    <input type="checkbox" name="group2" onclick="calc(this, 20)">
+                </td>
+                <td>
+                    <input type="checkbox" name="other2" onclick="calc(this, 2)">
+                </td>
+            </tr>
+            <tr align="center">
+                <td><b>$text{'chmod_sticky'}</b></td>
+                <td>
+                    <input type="checkbox" name="extra1" onclick="calc(this, 1000)">
+                </td>
+                <td><b>$text{'chmod_execute'}</b></td>
+                <td>
+                    <input type="checkbox" name="owner1" onclick="calc(this, 100)">
+                </td>
+                <td>
+                    <input type="checkbox" name="group1" onclick="calc(this, 10)">
+                </td>
+                <td>
+                    <input type="checkbox" name="other1" onclick="calc(this, 1)">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="col-sm-3">$text{'chmod_octal'}</label>
+                </td>
+                <td>
+                </td>
+                <td colspan="4">
+                    <input class="form-control" type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                </td>
+            </tr>
+        </table>
+        <label>$text{'chmod_apply_to'}</label>
+        <select class="form-control" name="applyto">
+            <option value="1">$text{'chmod_dir_only'}</option>
+            <option value="2">$text{'chmod_dir_and_its_files'}</option>
+            <option value="3">$text{'chmod_all'}</option>
+            <option value="4">$text{'chmod_dir_files_and_subs_files'}</option>
+            <option value="5">$text{'chmod_dir_and_subs'}</option>
+        </select>
+        <input type='hidden' name='path' value=''>
+    </form>
 </div>
 
 <div id="downFromUrlDialog" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="warning">$text{'get_from_url'}</h4>
-      </div>
-      <div class="modal-body">
-        <form id="downFromUrlForm" action="http_download.cgi" method="post">
-          <div class="form-group">
+    <form name="down_from_url">
+        <div class="form-group">
             <label>$text{'dialog_file_url'}</label>
             <input name="link" type="url" class="form-control" data-placement="top" data-content="$text{'provide_url'}" data-trigger="manual">
-          </div>
-          <div class="form-group">
+        </div>
+        <div class="form-group">
             <label>$text{'dialog_user_name'}</label>
             <input name="username" type="text" class="form-control">
-          </div>
-          <div class="form-group">
+        </div>
+        <div class="form-group">
             <label>$text{'dialog_user_pass'}</label>
             <input name="password" type="password" class="form-control">
-          </div>
-          <input type='hidden' name='path' value='$path'>
-        </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="downFromUrl()">$text{'dialog_download'}</button>
-        <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-      </div>
-    </div>
-  </div>
+        </div>
+        <input type='hidden' name='path' value=''>
+    </form>
 </div>
 
-<div id="readyForUploadDialog" class="modal fade">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="warning">$text{'upload_files'}</h4>
-      </div>
-      <div class="modal-body">
-        <form id='upload-form' method='post' action='upload.cgi?path=$path&id=$upid' enctype='multipart/form-data' onsubmit='window.open("/uptracker.cgi?id=$upid&uid=$uid", "uptracker", "toolbar=no, menubar=no, scrollbars=no, location=no, resizable=no, width=screen.width, height=screen.height")'>
-            <input type='file' id='upfiles' name='upfiles' multiple onchange='countUploads(this)'>
-            <input type='hidden' name='path' value='$path'>
-        </form>
-          <div id="readyForUploadList" class="well">
-          </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" onclick="uploadFiles()">$text{'upload_files'}</button>
-        <button type="button" class="btn bnt-default" data-dismiss="modal">$text{'dialog_cancel'}</button>
-      </div>
-    </div>
-  </div>
+<div id="searchDialog" class="modal fade">
+    <form name="search">
+        <div class="form-group">
+            <label>$text{'search_label'}</label>
+            <input id="query" name="query" type="text" class="form-control"><br>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input id="caseins" name="caseins" type="checkbox" checked="checked"> $text{'search_insensitive'}
+            </label>
+        </div>
+        <input type='hidden' name='path' value=''>
+    </form>
+</div>
+
+<div id="propertiesDialog" class="modal fade">
+    <form name="properties" class="form-horizontal">
+        <div class="well well-sm">
+            <div class="path"><b>$text{'properties_path'}:</b> <i></i><br></div>
+            <div class="type"><b>$text{'properties_type'}:</b> <i></i><br></div>
+            <div class="stats"><b>$text{'properties_stats'}:</b> <i></i><br></div>
+            <div class="size">
+                <b>$text{'properties_size'}:</b> <i></i>
+                <input type="button" name='getsize' class='btn btn-info btn-xs' value="$text{'get_size'}" onclick="getSize(this)">
+            </div>
+            <div class="modified"><b>$text{'properties_mtime'}:</b> <i></i><br></div>
+            <div class="accessed"><b>$text{'properties_atime'}:</b> <i></i><br></div>
+        </div>
+        <table class="table table-condensed">
+            <tr align="center">
+                <td colspan="2"><b>$text{'dialog_superuser'}</b></td>
+                <td><b>$text{'permissions'}</b></td>
+                <td><b>$text{'chmod_owner'}</b></td>
+                <td><b>$text{'chmod_group'}</b></td>
+                <td><b>$text{'chmod_others'}</b></td>
+            </tr>
+            <tr align="center">
+                <td><b>$text{'chmod_setuid'}</b></td>
+                <td>
+                    <input type="checkbox" name="extra4" onclick="calc(this, 4000)">
+                </td>
+                <td><b>$text{'chmod_read'}</b></td>
+                <td>
+                    <input type="checkbox" name="owner4" onclick="calc(this, 400)">
+                </td>
+                <td>
+                    <input type="checkbox" name="group4" onclick="calc(this, 40)">
+                </td>
+                <td>
+                    <input type="checkbox" name="other4" onclick="calc(this, 4)">
+                </td>
+            </tr>
+            <tr align="center">
+                <td><b>$text{'chmod_setgid'}</b></td>
+                <td>
+                    <input type="checkbox" name="extra2" onclick="calc(this, 2000)">
+                </td>
+                <td><b>$text{'chmod_write'}</b></td>
+                <td>
+                    <input type="checkbox" name="owner2" onclick="calc(this, 200)">
+                </td>
+                <td>
+                    <input type="checkbox" name="group2" onclick="calc(this, 20)">
+                </td>
+                <td>
+                    <input type="checkbox" name="other2" onclick="calc(this, 2)">
+                </td>
+            </tr>
+            <tr align="center">
+                <td><b>$text{'chmod_sticky'}</b></td>
+                <td>
+                    <input type="checkbox" name="extra1" onclick="calc(this, 1000)">
+                </td>
+                <td><b>$text{'chmod_execute'}</b></td>
+                <td>
+                    <input type="checkbox" name="owner1" onclick="calc(this, 100)">
+                </td>
+                <td>
+                    <input type="checkbox" name="group1" onclick="calc(this, 10)">
+                </td>
+                <td>
+                    <input type="checkbox" name="other1" onclick="calc(this, 1)">
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label class="col-sm-10">$text{'chmod_octal'}</label>
+                </td>
+                <td>
+                </td>
+                <td colspan="2">
+                    <input class="form-control input-sm" type="text" name="permissions" maxlength="4" value="0000" onKeyUp="octalchange(this)">
+                </td>
+                <td colspan="2">
+                </td>
+            </tr>
+        </table>
+        <div class="row text-center">
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="chown" value="1" onclick="toggleChown(this)" class="styled"> $text{'change_owner'}</label>
+            </div>
+            <div class="checkbox-inline">
+                <label><input type="checkbox" name="chmod" value="1" onclick="toggleChmod(this)"> $text{'change_permissions'}</label>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+            <div class="form-group form-group-sm col-sm-6">
+                <label class="control-label">$text{'user_name'}</label>
+                <input class="form-control" type="text" name="owner">
+            </div>
+            <div class="form-group form-group-sm col-sm-6">
+                <label class="control-label">$text{'group_name'}</label>
+                <input class="form-control" type="text" name="group">
+            </div>
+            </div>
+        </div>
+        <div class="form-group form-group-sm">
+            <label>$text{'chmod_apply_to'}</label>
+            <div class="form-group form-group-sm">
+                <select class="form-control" name="applyto">
+                    <option value="1">$text{'chmod_dir_only'}</option>
+                    <option value="2">$text{'chmod_dir_and_its_files'}</option>
+                    <option value="3">$text{'chmod_all'}</option>
+                    <option value="4">$text{'chmod_dir_files_and_subs_files'}</option>
+                    <option value="5">$text{'chmod_dir_and_subs'}</option>
+                </select>
+            </div>
+        </div>
+        <input type='hidden' name='path' value=''>
+        <input type='hidden' name='name' value=''>
+    </form>
+</div>
+
+<div id="bookmarksDialog" class="modal fade">
+    <form name="manage-bookmarks">
+        <div class="form-group">
+            <textarea name="bookmarks" class="form-control" rows="5"></textarea>
+        </div>
+    </form>
+</div>
+
+<div id="compressDialog" class="modal fade">
+    <form name="compress" class="form-inline">
+        <div class="form-group">
+            <label>$text{'archive_name'}</label>
+            <input name="archivename" type="text" class="form-control" data-placement="right" data-content="$text{'provide_file_name'}" data-trigger="manual">
+        </div>
+        <select class="form-control" name="method">
+            <option value="tar">.tar.gz</option>
+            <option value="zip">.zip</option>
+        </select> 
+        <input type='hidden' name='path' value=''>
+    </form>
 </div>

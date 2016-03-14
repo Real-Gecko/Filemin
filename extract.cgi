@@ -3,21 +3,33 @@
 require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
+use JSON;
 
 &ReadParse();
-
 get_paths();
 
-$archive_type = mimetype($cwd.'/'.$in{'file'});
+if(!$in{'file'}) {
+    print encode_json({'error' => $text{'provide_correct_parameters'}});
+    exit;
+}
+
+# Remove exploiting "../"
+$file = $in{'file'};
+$file =~ s/\.\.//g;
+&simplify_path($file);
+
+print_ajax_header();
+
+$archive_type = mimetype($cwd.'/'.$file);
 
 if ($archive_type eq 'application/zip') {
-    &backquote_command("unzip $cwd/$in{'file'} -d $cwd");
-    &redirect("index.cgi?path=$path");
-} elsif (index($archive_type, "tar") != -1) {
-    &backquote_command("tar xf $cwd/$in{'file'} -C $cwd");
-    &redirect("index.cgi?path=$path");
+    &backquote_logged("unzip -o ".quotemeta("$cwd/$file").
+                      " -d ".quotemeta($cwd));
+    print encode_json({'success' => '1'});
+} elsif (index($archive_type, "tar") != -1 || index($archive_type, "gzip") != -1) {
+    &backquote_logged("tar xf ".quotemeta("$cwd/$file").
+                      " -C ".quotemeta($cwd));
+    print encode_json({'success' => '1'});
 } else {
-    &ui_print_header(undef, "Filemin", "");
-    print "$archive_type $text{'error_archive_type_not_supported'}";
-    &ui_print_footer("index.cgi?path=$path", $text{'previous_page'});
+    print encode_json({'error' => "$archive_type $text{'error_archive_type_not_supported'}"});
 }

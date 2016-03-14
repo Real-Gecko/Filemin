@@ -1,21 +1,25 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
+use lib './lib';
+use JSON;
 
 &ReadParse();
-
 get_paths();
 
+print_ajax_header();
+my @errors;
+
+
 if(!$in{'owner'} or !$in{'group'}) {
-    &redirect("index.cgi?path=$path");
+    print encode_json({'error' => $text{'provide_correct_parameters'}});
+    exit;
 }
 
 (my $login, my $pass, my $uid, my $gid) = getpwnam($in{'owner'});
 my $grid = getgrnam($in{'group'});
 my $recursive;
-if($in{'recursive'} eq 'true') { $recursive = '-R'; } else { $recursive = ''; }
-
-my @errors;
+if($in{'recursive'}) { $recursive = '-R'; } else { $recursive = ''; }
 
 if(! defined $login) {
     push @errors, "<b>$in{'owner'}</b> $text{'error_user_not_found'}";
@@ -26,17 +30,17 @@ if(! defined $grid) {
 }
 
 if (scalar(@errors) > 0) {
-        print_errors(@errors);
+    print encode_json({'error' => \@errors});
 } else {
     foreach $name (split(/\0/, $in{'name'})) {
 #        if(!chown $uid, $grid, $cwd.'/'.$name) {
-        if(system("chown $recursive $uid:$grid $cwd/$name") != 0) {
+        if(system_logged("chown $recursive $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chown'}: $?";
         }
     }
     if (scalar(@errors) > 0) {
-        print_errors(@errors);
+        print encode_json({'error' => \@errors});
     } else {
-        &redirect("index.cgi?path=$path");
+        print encode_json({'success' => 1});
     }
 }
