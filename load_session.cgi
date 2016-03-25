@@ -13,7 +13,7 @@ $confdir = get_config_dir();
 
 if(-e "$confdir/.session") {
     my $session = &read_file_contents($confdir.'/.session', 1);
-    print encode_json({'data' => $session});
+    print $session;
 } else {
     print encode_json({'error' => $text{'failed_to_read_file'}.' .session'})
 }

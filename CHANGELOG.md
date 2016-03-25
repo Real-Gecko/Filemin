@@ -1,7 +1,21 @@
 # Change Log
 
-## [Not released]
-- Fixed notitfications bugs
+## [1.1.1] - 2016-03-25
+### Fixed
+- Fixed notifications bugs
+- Fixed The Unified compatibility
+- Fixed filenames escaping on the userside - #98
+- Fixed non-latin folder names handling during session load
+
+### Added
+- Added 'Checking for update' message
+- Added module configuration link to index.cgi
+- Dutch translation by [Zen4All](https://github.com/Zen4All)
+- Filemin now follows window resize event - #92
+
+### Changed
+- Updated Bootstrap Table to version 1.10.1, patch is not needed any more
+- Russian translation updated
 
 ## [1.1.0] - 2016-02-08
 ### Fixed

@@ -57,7 +57,7 @@ do
 done
 
 cd distrib
-tar -zcf filemin-1.1.0.linux.wbm.gz filemin
+tar -zcf filemin-1.1.1.linux.wbm.gz filemin
 cd ../
 perl makemoduledeb.pl --target-dir distrib distrib/filemin
 rm -rf $TGDIR

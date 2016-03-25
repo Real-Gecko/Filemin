@@ -60,6 +60,6 @@ do
 done
 
 cd distrib
-tar -zcf filemin-1.1.0.freebsd.wbm.gz filemin
+tar -zcf filemin-1.1.1.freebsd.wbm.gz filemin
 cd ../
 rm -rf $TGDIR

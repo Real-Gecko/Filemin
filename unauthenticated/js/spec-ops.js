@@ -219,7 +219,7 @@ function deleteSelected(tab, name) {
         names = [name];
     }
     $.each(names, function (i, val) {
-        to_delete += '<li>' + val + '</li>';
+        to_delete += '<li>' + escapeHTML(val) + '</li>';
     });
     bootbox.confirm({
         title: text.delete,
@@ -237,13 +237,6 @@ function deleteSelected(tab, name) {
         },
         callback: function(result) {
             if(result) {
-//                var rows = $(tab.id + ' .list-table').bootstrapTable('getAllSelections');
-//                var names;
-//                if(rows.length > 0) {
-//                    names = rows.map(function(row) {return row.name;});
-//                } else {
-//                    names = [name];
-//                }
                 $.post("delete.cgi", {
                     path: tab.path,
                     name: names
@@ -265,7 +258,7 @@ function bookmark(tab) {
     $.post("bookmark.cgi", { 'path': tab.path })
     .done(function(response) {
         if(response.success) {
-            $('#bookmarks').append('<li><a data-item="goto">' + tab.path + '</a></li>');
+            $('#bookmarks').append('<li><a data-item="goto">' + escapeHTML(tab.path) + '</a></li>');
             showSuccess(null, text.bookmark_added);
         } else {
             showError(null, response.error)
@@ -353,7 +346,7 @@ function changeProperties(tab, row) {
         $(form).find(".size i").html(bytesToSize(row.size));
         $(form).find(".modified i").html(convertTimestamp(row.mtime));
         $(form).find(".accessed i").html(convertTimestamp(row.atime));
-        title = '<b>' + text.properties_of + '</b> <i>' + row.name + '</i>';
+        title = '<b>' + text.properties_of + '</b> <i>' + escapeHTML(row.name) + '</i>';
     } else {
         var stats = countStats(rows);
         if(stats.dirs === 0) {
@@ -378,7 +371,7 @@ function changeProperties(tab, row) {
     $(form).find('table :input').attr('disabled', true);
     $(form).find('.panel :input').attr('disabled', true);
 
-    $(form).find(".path i").html(tab.path);
+    $(form).find(".path i").html(escapeHTML(tab.path));
 
     bootbox.dialog({
         title: title,
@@ -737,13 +730,13 @@ function editFile(path, name, counter) {
         if(true) {
             var tabNum = counter;
             $('#tabs-control').append(
-                $('<li><a class="closable" data-toggle="tab" aria-controls="editor-' + tabNum + '" href="#editor-' + tabNum + '"><i class="fa fa-edit"></i> ' + name +
+                $('<li><a class="closable" data-toggle="tab" aria-controls="editor-' + tabNum + '" href="#editor-' + tabNum + '"><i class="fa fa-edit"></i> ' + escapeHTML(name) +
                 ' <button class="btn btn-xs btn-success close-tab pull-right" type="button" ' +
                 'title="' + text.close_tab + '"><i class="fa fa-close"></i></button>' +
                 '</a></li>')
             );
             var newTab = $('#tabs-control').find('a[href="#editor-' + tabNum + '"]');
-            $(newTab).attr('data-original-title', path + '/' + name).tooltip({trigger: 'hover', placement: 'bottom'});
+            $(newTab).attr('data-original-title', escapeHTML(path + '/' + name)).tooltip({trigger: 'hover', placement: 'bottom', html: true});
             $('#tabs-container').append(
                 $('\
                     <div class="tab-pane fade filemin-tab" id="editor-' + tabNum + '">\
@@ -940,7 +933,7 @@ function showSuccess(title, message) {
         icon: "fa fa-check-circle",
         type: 'success',
         title: title ? title : text.notice_success,
-        text: message ? message : ''
+        text: message ? escapeHTML(message) : ''
     });
 }
 
@@ -949,7 +942,7 @@ function showNotice(title, message) {
         icon: "fa fa-exclamation-circle",
         type: 'notice',
         title: title ? title : text.warning_title,
-        text: message ? message : ''
+        text: message ? escapeHTML(message) : ''
     });
 }
 
@@ -958,7 +951,7 @@ function showError(title, message) {
         icon: "fa fa-exclamation-triangle",
         type: 'error',
         title: title ? title : text.error_title,
-        text: message ? message : ''
+        text: message ? escapeHTML(message) : ''
     });
 }
 
@@ -968,7 +961,7 @@ function showWait(title, message) {
         type: 'notice',
         hide: false,
         title: title ? title : text.notice_wait,
-        text: message ? message : ''
+        text: message ? escapeHTML(message) : ''
     });
 }
 
@@ -978,7 +971,7 @@ function waitToSuccess(notice, title, message) {
         hide: true,
         icon: 'fa fa-check-circle',
         title: title ? title : text.notice_success,
-        text: message ? message : '',
+        text: message ? escapeHTML(message) : '',
         buttons: {
             closer: true,
         }

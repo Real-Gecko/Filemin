@@ -35,7 +35,7 @@
             height: $(window).height() - 158,
             /* Some locale changes */
             formatSearch: function() { return text.table_Search; },
-            formatNoMatches: function() { return text.table_NoMateches; },
+            formatNoMatches: function() { return text.table_NoMatches; },
             /* ------------------- */
             columns: [ {
                     checkbox: true
@@ -52,9 +52,9 @@
                             if(row.symlink == 'broken') {
                                 img = 'broken';
                             }
-                            return '<img src="images/icons/mime/' + img + '.png" class="pull-left"> <span class="name-column-link" rel="tooltip" title="' + row.link_target + '">' + value + '</span>';
+                            return '<img src="images/icons/mime/' + img + '.png" class="pull-left"> <span class="name-column-link" rel="tooltip" title="' + row.link_target + '">' + escapeHTML(value) + '</span>';
                         } else {
-                            return '<img src="images/icons/mime/' + img + '.png" class="pull-left"> <span class="name-column-link">' + value + '</span>';
+                            return '<img src="images/icons/mime/' + img + '.png" class="pull-left"> <span class="name-column-link">' + escapeHTML(value) + '</span>';
                         }
                     },
                     events: {
@@ -250,7 +250,7 @@
 
         this.searchTableOptions = {
             cookie: false,
-            formatNoMatches: function() { return text.table_search_NoMateches; },
+            formatNoMatches: function() { return text.table_search_NoMatches; },
             columns: [ {
                     checkbox: true
                 }, {
@@ -594,7 +594,7 @@
         }
         /* Setup tab tooltip */
         $(tab).children('.tab-title').html(escapeHTML(li[li.length -1]));
-        $(tab).attr('data-original-title', path).tooltip({trigger: 'hover', placement: 'bottom'});
+        $(tab).attr('data-original-title', escapeHTML(path)).tooltip({trigger: 'hover', placement: 'bottom', html: true});
 
         /* Update bottom panel */
         $('#bottom-stats').html(
@@ -658,11 +658,10 @@ $(document).ready( function () {
     .done(function(response) {
         if(!response.error) {
             showSuccess(null, text.session_loaded);
-            var data = JSON.parse(response.data);
             var tree = $('#filemin-tree .tree').fancytree('getTree');
             var root = tree.getRootNode();
-            root.addChildren(data.tree);
-            $.each(data.tabs, function(index, tab){
+            root.addChildren(response.tree);
+            $.each(response.tabs, function(index, tab){
                 filemin.newTab('navigator', tab.path, tab.cookieId);
             });
         } else {
@@ -1018,7 +1017,7 @@ $(document).ready( function () {
     $('#new-tab').click(function (e) {
         var tab = filemin.newTab('navigator');
         $('#tabs-control a:last').tab('show');
-        var w = $('.container-fluid').width();
+        // var w = $('.container-fluid').width();
     });
     
     /* Symlinks tooltip */
@@ -1029,67 +1028,8 @@ $(document).ready( function () {
     });
 
     /* Perform some UI manipulations on tab switch */
-    $(document).on('a[data-toggle="tab"] shown.bs.tab', function (e) {
-        var target = $(e.target).attr("href");
-        var $treePane = $('#filemin-tree');
-        var $tabsPane = $('#tabs-container');
-        var $bottomPanel = $('#bottom-panel');
-        var w = $('.container-fluid').width();
-        var h = $('body').height() - 158;
-        var tab = filemin.activeTab();
-        switch(true) {
-            case /editor/.test(target):
-                disableForEdit();
-                $bottomPanel.hide("slide", { direction: "down" }, 100);
-                $treePane.hide("slide", { direction: "left" }, 100);
-                $tabsPane.width(w);
-                break;
-            case /search/.test(target):
-                disableForSearch();
-                $('#hide-tree').addClass('disabled');
-                $bottomPanel.show("slide", { direction: "down" }, 100);
-                $treePane.hide("slide", { direction: "left" }, 100, function() {
-                    $tabsPane.width(w);
-                    $(target + ' .filemin-table').height(h);
-                    $(target + ' .filemin-table .list-table').bootstrapTable('resetView');
-                });
-                $('#bottom-stats').html(
-                    text.toolbar_files + ': ' + tab.stats.files + ' | ' +
-                    text.toolbar_folders + ': ' + tab.stats.dirs + ' | ' +
-                    text.toolbar_total + ': ' + tab.stats.total + ' | ' +
-                    tab.stats.size
-                );
-                break;
-            case /navigator/.test(target):
-                $('#main-menu .nav li').removeClass('disabled');
-                $('#hide-tree').removeClass('disabled');
-                $bottomPanel.show("slide", { direction: "down" }, 100);
-                if($('#hide-tree').attr('value') == "false") {
-                    $tabsPane.width(w - $treePane.outerWidth(true));
-                    $(target + ' .filemin-table').height(h);
-                    $(target + ' .filemin-table .list-table').bootstrapTable('resetView');
-                    $treePane.show("slide", { direction: "left" }, 100);
-                    var tree = $('#filemin-tree .tree').data("ui-fancytree").getTree();
-                    var key = tab.path;
-                    var node = tree.getNodeByKey(key);
-                    if(node !== null) {
-                        node.setActive(true, {noEvents: true});
-                        node.makeVisible();
-                        node.setExpanded(true, {noAnimation: true});
-                    }
-                } else {
-                    $tabsPane.width(w);
-                    $(target + ' .filemin-table').height(h);
-                    $(target + ' .filemin-table .list-table').bootstrapTable('resetView');
-                }
-                $('#bottom-stats').html(
-                    text.toolbar_files + ': ' + tab.stats.files + ' | ' +
-                    text.toolbar_folders + ': ' + tab.stats.dirs + ' | ' +
-                    text.toolbar_total + ': ' + tab.stats.total + ' | ' +
-                    tab.stats.size
-                );
-                break;
-        }
+    $(document).on('a[data-toggle="tab"] shown.bs.tab', function(e) {
+        panelResize(e);
     });
 });
 
@@ -1192,3 +1132,79 @@ $(window).on('beforeunload', function() {
         }
     });
 });
+
+var resizeId;
+$(window).resize(function() {
+    clearTimeout(resizeId);
+    resizeId = setTimeout(panelResize, 300);
+});
+ 
+function panelResize(e) {
+    var target;
+    if (e !== undefined) {
+        target = $(e.target).attr("href");
+    } else {
+        target = $('#tabs-control .active a').attr("href");
+    }
+    var $treePane = $('#filemin-tree');
+    var $tabsPane = $('#tabs-container');
+    var $bottomPanel = $('#bottom-panel');
+    var w = $('.container-fluid').width();
+    var h = $('body').height() - 158;
+    var tab = filemin.activeTab();
+    switch(true) {
+        case /editor/.test(target):
+            disableForEdit();
+            $bottomPanel.hide("slide", { direction: "down" }, 100);
+            $treePane.hide("slide", { direction: "left" }, 100);
+            $tabsPane.width(w);
+            $(target + ' .CodeMirror').height($(window).height() - 163);
+            break;
+        case /search/.test(target):
+            disableForSearch();
+            $('#hide-tree').addClass('disabled');
+            $bottomPanel.show("slide", { direction: "down" }, 100);
+            $treePane.hide("slide", { direction: "left" }, 100, function() {
+                $tabsPane.width(w);
+                $(target + ' .filemin-table').height(h);
+                $(target + ' .filemin-table .list-table').bootstrapTable('resetView', {height: h});
+            });
+            $('#bottom-stats').html(
+                text.toolbar_files + ': ' + tab.stats.files + ' | ' +
+                text.toolbar_folders + ': ' + tab.stats.dirs + ' | ' +
+                text.toolbar_total + ': ' + tab.stats.total + ' | ' +
+                tab.stats.size
+            );
+            break;
+        case /navigator/.test(target):
+            $('#main-menu .nav li').removeClass('disabled');
+            $('#hide-tree').removeClass('disabled');
+            $bottomPanel.show("slide", { direction: "down" }, 100);
+            if($('#hide-tree').attr('value') == "false") {
+                $tabsPane.width(w - $treePane.outerWidth(true));
+                $('ul.fancytree-container').height($(window).height() - 214);
+                $(target + ' .filemin-table').height(h);
+                $(target + ' .filemin-table .list-table').bootstrapTable('resetView', {height: h});
+                $treePane.show("slide", { direction: "left" }, 100);
+                var tree = $('#filemin-tree .tree').data("ui-fancytree").getTree();
+                var key = tab.path;
+                var node = tree.getNodeByKey(key);
+                if(node !== null) {
+                    node.setActive(true, {noEvents: true});
+                    node.makeVisible();
+                    node.setExpanded(true, {noAnimation: true});
+                }
+            } else {
+                $tabsPane.width(w);
+                $(target + ' .filemin-table').height(h);
+                $(target + ' .filemin-table .list-table').bootstrapTable('resetView', {height: h});
+            }
+            $('#bottom-stats').html(
+                text.toolbar_files + ': ' + tab.stats.files + ' | ' +
+                text.toolbar_folders + ': ' + tab.stats.dirs + ' | ' +
+                text.toolbar_total + ': ' + tab.stats.total + ' | ' +
+                tab.stats.size
+            );
+            break;
+    }
+}
