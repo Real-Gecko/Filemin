@@ -33,11 +33,11 @@ Features modern GUI with the help of numerous JS and CSS libraries. Makes file m
 
 ##Installation:
 Package for installation through Webmin interface
-For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-1.1.0.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-1.1.0.freebsd.wbm.gz).
+For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-1.1.1.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-1.1.1.freebsd.wbm.gz).
 
-[**Ubuntu**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_1.1.0_all.deb) and [**Debian**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_1.1.0_all.deb) users may prefer to install with
+[**Ubuntu**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_1.1.1_all.deb) and [**Debian**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_1.1.1_all.deb) users may prefer to install with
 
-`dpkg -i webmin-filemin_1.1.0_all.deb`.
+`dpkg -i webmin-filemin_1.1.1_all.deb`.
 
 Note that _dpkg_ way simply updates module without creating concurrent versions like installation from Webmin interface do.
 
