@@ -5,3 +5,5 @@ longdesc=Fast and light file manager written in perl
 version=1.1.1
 webmin=1
 usermin=1
+longdesc_pl.UTF-8=Szybki i lekki menadżer plików napisany w perl
+desc_pl.UTF-8=Filemin - menadżer plików
