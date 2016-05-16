@@ -847,6 +847,10 @@ function downloadSelected(tab, row) {
     }
 }
 
+function downloadSingle(path, name) {
+    window.location.href='download.cgi?path=' + encodeURIComponent(path) + '&file=' + encodeURIComponent(name);
+}
+
 function viewImage(path, name) {
     bootbox.dialog({
         title: name,

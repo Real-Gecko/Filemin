@@ -75,6 +75,8 @@
                             } else
                             if(row.archive){
                                 listArchive(tab.path, row.name);
+                            } else {
+                                downloadSingle(tab.path, row.name);
                             }
                             e.stopPropagation();
                         }
