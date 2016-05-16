@@ -143,19 +143,22 @@ function cutSelected(tab, name) {
 }
 
 function paste(tab) {
+    var notice = showWait(text.paste, text.notice_take_while);
     $.post("paste.cgi", { 'path': tab.path })
     .done(function(response) {
         if(response.error) {
-            showError(null, response.error)
+            waitToError(notice, text.error_title, response.error)
+        } else {
+            waitToSuccess(notice, text.notice_success, response.text);
         }
         $(tab.id + ' .list-table').bootstrapTable('refresh', { url: 'list.cgi?path=' + encodeURIComponent(tab.path) });
     }).fail(function(jqx, text, e) {
-        showError(null, text);
+        waitToError(notice, text.error_title, text);
     });
 }
 
 function extract(tab, name) {
-    notice = showWait(text.extraction_started);
+    var notice = showWait(text.extraction_started);
     $.post("extract.cgi", { 'path': tab.path, 'file': name })
     .done(function(response) {
         if(response.success) {

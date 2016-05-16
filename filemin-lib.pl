@@ -4,8 +4,11 @@ BEGIN { push(@INC, ".."); };
 use WebminCore;
 &init_config();
 use Encode qw(decode encode);
-use File::Basename;
 use POSIX;
+
+use lib './lib';
+use File::Basename;
+use File::MimeInfo;
 $templates_path = "unauthenticated/templates";
 
 sub get_paths {
@@ -238,6 +241,7 @@ sub filemin_progress_callback {
     }
 }
 
+# Simple hash to JSON conversion
 sub to_json {
     my %hash = @_;
     return "{".join(q{,}, map{qq{"$_":"$hash{$_}"}} keys %hash)."}";
@@ -271,6 +275,22 @@ sub oct_to_symbolic {
     if($oth & 1) { $res .= '+x' } else { $res .= '-x' }
 
     return $res;
+}
+
+sub suggest_filename {
+    my ($cwd, $name) = @_;
+    if (-e "$cwd/$name") {
+        if(-d "$cwd/$name") {
+            return suggest_filename($cwd, $name."_copy");
+        } else {
+            my $mime = mimetype("$cwd/$name");
+            my $ext = File::MimeInfo::extensions($mime);
+            $name =~ s/\.$ext//;
+            $ext = $ext ? ".$ext" : "";
+            return suggest_filename($cwd, $name."_copy".$ext);
+        }
+    }
+    return $name;
 }
 
 1;

@@ -1,8 +1,8 @@
 #!/usr/bin/perl
 
 require './filemin-lib.pl';
-use lib './lib';
-use JSON;
+#use lib './lib';
+#use JSON;
 
 &ReadParse();
 get_paths();
@@ -17,7 +17,7 @@ if(open(my $fh, ">", &get_paste_buffer_file())) {
         print $fh "$name\n";
     }
     close($fh);
-    print encode_json({'success' => 1, 'text' => "Cut ".scalar(@names)." files to buffer"});
+    print to_json('success' => 1, 'text' => scalar(@names)." $text{'cut_to_buffer'}");
 } else {
-    print encode_json({'error' => "$text{'error_writing_file'} .buffer $!"});
+    print to_json('error' => "$text{'error_writing_file'} .buffer $!");
 }

@@ -17,6 +17,8 @@ cp CHANGELOG.md $TGDIR
 cp LICENCE $TGDIR
 cp README.md $TGDIR
 cp acl_security.pl $TGDIR
+cp postinstall.pl $TGDIR
+cp uninstall.pl $TGDIR
 cp config $TGDIR
 cp config.info $TGDIR
 cp defaultacl $TGDIR
@@ -43,7 +45,17 @@ do
   fi
 done
 
+while IFS='=' read -r key value; do
+    case $key in
+        version)
+            VERSION="$value"
+            ;;
+     esac
+done < module.info
+
+echo "Packing Linux CDN version $VERSION"
+
 cd distrib
-tar -zcf filemin-1.1.1.cdn.linux.wbm.gz filemin
+tar -zcf filemin-$VERSION.cdn.linux.wbm.gz filemin
 cd ../
 rm -rf $TGDIR

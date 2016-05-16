@@ -114,12 +114,12 @@ ul.fancytree-container {
     width: 300px;
     max-width: 400px;
 }
-
+/*
 nav.navbar {
     min-height: 49px;
     height: 49px;
 }
-
+/*
 .navbar-nav > li > a {
     padding-top: 11px !important;
     padding-bottom: 12px !important;
@@ -127,10 +127,21 @@ nav.navbar {
     font-size: 16px;
     transition: ease background 0.3s;
 }
+*/
+.navbar {
+    margin-top: 3px;
+    margin-bottom: 15px;
+}
 
 .navbar-brand {
-    height: 48px;
-    padding: 0px;
+    /*height: 48px;*/
+    padding: 1px;
+}
+
+.navbar-default .navbar-nav > .open > a,
+.navbar-default .navbar-nav > .open > a:focus,
+.navbar-default .navbar-nav > .open > a:hover {
+    color: #333;
 }
 
 .breadcrumb {
@@ -225,7 +236,8 @@ td.column-field-name:hover {
 .table > thead > tr.selected > th,
 .table > thead > tr > td.selected,
 .table > thead > tr > th.selected {
-    background-color: #dff0d8;
+    /*background-color: #dff0d8;*/
+    background-color: #cff0c8;
 }
 
 tr, td {

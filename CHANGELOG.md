@@ -1,5 +1,21 @@
 # Change Log
 
+## [1.1.2] - 2016-05-16
+### Fixed
+- Fixed localization on "copy/cut/paste" messages
+- Fixed #102
+- Fixed #99
+
+### Added
+- Polish translation by [Piotr Kozica](https://github.com/vipkoza)
+- "copy/paste" to the same directory will create duplicates like "failo_copy.tar.gz"
+- Added message on copy start and end
+- Prevent overwriting Filemin with outdated core version of da module
+
+### Changed
+- Modified toolbar styling a little
+- Made selection highlighting more contrast
+
 ## [1.1.1] - 2016-03-25
 ### Fixed
 - Fixed notifications bugs

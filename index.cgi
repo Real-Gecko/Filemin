@@ -2,15 +2,23 @@
 # File manager written in perl
 
 require './filemin-lib.pl';
-use version;
 
-&ui_print_header(undef, "Filemin", "", undef, 1 , 0, 0);
+my $vc = eval #102 fix
+{
+  require version;
+  version->import();
+  1;
+};
+
+#use version;
+
+&ui_print_unbuffered_header(undef, "Filemin", "", undef, 1 , 0, 0);
 
 print "<h3>$text{'will_open'} <a target='_blank' href='/filemin/filemin.cgi'>$text{'new_tab'}</a><br></h3>";
 print "<script>window.open('/filemin/filemin.cgi','_blank');</script>";
 
 # Check for updates
-if($remote_user eq 'root') {
+if($remote_user eq 'root' & $vc) {
     print $text{'checking_for_update'};
     my $url = 'https://github.com/Real-Gecko/filemin/raw/master/module.info';
     my $tempfile = transname();
@@ -24,6 +32,8 @@ if($remote_user eq 'root') {
     my $local = version->parse($module_info{'version'});
     if($local < $remote) {
         print "<h4>$text{'newer_version_available'}<br><a href='update.cgi?version=$remote'>$text{'click_to_update'}</a></h4>";
+        system("chmod 755 $module_root_directory");
+        system("chattr -R -i $module_root_directory");
     } else {
         print $text{'module_up_to_date'};
     };
