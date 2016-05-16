@@ -42,6 +42,16 @@ For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin
 
 Note that _dpkg_ way simply updates module without creating concurrent versions like installation from Webmin interface do.
 
+## Update
+As of version 1.1.0 Filemin automatically checks for udpate and offers to install it if available.
+However currently Webmin itself bundles outdated 0.9 branch of the module and new version of Filemin is always downgraded with Webmin update.
+To avoid the issue version 1.1.2 of Filemin has built-in protection from such "updates", so if you have this version or higher when you're updating your Webmin you may encounter the following message:
+```
+dpkg: error processing archive /var/cache/apt/archives/webmin_1.795_all.deb (--unpack):
+ unable to create `/usr/share/webmin/filemin/config.cgi.dpkg-new' (while processing `./usr/share/webmin/filemin/config.cgi'): Permission denied
+```
+Just ignore it!
+
 ##Note for FreeBSD users.
 FreeBSD users are recommended to install _shared-mime-info_ package.
 
