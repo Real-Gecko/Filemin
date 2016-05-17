@@ -998,6 +998,19 @@ function waitToError(notice, title, text) {
     });
 }
 
+function waitToNotice(notice, title, text) {
+    notice.update({
+        type: 'notice',
+        hide: true,
+        icon: 'fa fa-exclamation-circle',
+        title: title ? title : text.error_title,
+        text: text ? text : '',
+        buttons: {
+            closer: true,
+        }
+    });
+}
+
 function countStats(data) {
     var total = data.length;
     var dirs = data.filter(function(el) { return el.directory }).length;

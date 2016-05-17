@@ -772,24 +772,25 @@ $(document).ready( function () {
             }
 
             data.tracker.get().find('div.progress').hide();
-            data.tracker.update({
-                type: 'success',
-                hide: true,
-                icon: 'fa fa-check-circle',
-                title: text.upload_success,
-                text: data.files[0].name,
-                buttons: {
-                    closer: true,
-                }
-            });
+            if(data.result.error) {
+                waitToError(data.tracker, null, data.result.error);
+            } else if(data.result.success) {
+                waitToSuccess(data.tracker, text.upload_success, data.files[0].name);
+            }
         },
         fail: function(e, data) {
-            new PNotify({
-                icon: "fa fa-exclamation-circle",
-                type: 'error',
-                'title': text.error_title,
-                'text': text
-            });
+            data.tracker.get().find('div.progress').hide();
+            if(data.errorThrown == 'abort') {
+                waitToNotice(data.tracker, text.upload_cancelled, data.files[0].name);
+            } else {
+                waitToError(data.tracker, text.error_title, data.textStatus);
+            }
+            var tabs = filemin.getTabsByPath(data.path);
+            for(i = 0; i < tabs.length; i++) {
+                if(tabs[i].path == data.path) {
+                    $(tabs[i].id + ' .list-table').bootstrapTable('refresh', { url: 'list.cgi?path=' + encodeURIComponent(tabs[i].path) });
+                }
+            }
         },
         add: function(e, data) {
             var tab = filemin.activeTab();
@@ -820,12 +821,12 @@ $(document).ready( function () {
                         })).get().on('pnotify.confirm', function() {
                             data.url = 'upload.cgi?path=' + encodeURIComponent(tab.path);
                             data.url += '&overwrite=1';
-                            data.submit();
+                            data.hJQX = data.submit();
                         });
                     }
                 } else {
                     data.url = 'upload.cgi?path=' + encodeURIComponent(tab.path);
-                    data.submit();
+                    data.hJQX = data.submit();
                 }
             }).fail(function(jqx, text, e) {
                 showError(null, text);
@@ -840,7 +841,8 @@ $(document).ready( function () {
                     <div class="progress-bar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0">\
                         <span class="sr-only">0%</span>\
                     </div>\
-                </div>',
+                </div><p></p>\
+                <button class="btn btn-xs btn-warning pull-right">' + text.dialog_cancel + '</button>',
                 icon: 'fa fa-spinner fa-spin',
                 hide: false,
                 buttons: {
@@ -849,6 +851,11 @@ $(document).ready( function () {
                 },
                 history: {
                     history: false
+                },
+                after_init: function(notice) {
+                    notice.elem.on('click', 'button', function() {
+                        data.hJQX.abort();
+                    });
                 }
             });
         },

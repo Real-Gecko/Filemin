@@ -227,3 +227,4 @@ checking_for_update=Checking for update...
 module_up_to_date=module is up to date
 copy_complete=Copying finished
 move_complete=Moving finished
+upload_cancelled=Upload cancelled

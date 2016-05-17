@@ -1,5 +1,16 @@
 # Change Log
 
+## [1.1.3] -
+### Fixed
+- Fixed #104
+- Fixed "Nested quantifiers in regex" caused by some dir names
+
+### Added
+- Upload can be cancelled
+
+### Changed
+- Upload will interrupt if error occurs
+
 ## [1.1.2] - 2016-05-16
 ### Fixed
 - Fixed localization on "copy/cut/paste" messages
