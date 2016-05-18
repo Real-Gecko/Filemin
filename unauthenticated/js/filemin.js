@@ -611,7 +611,7 @@
 /* Initialize coooool stuff */
 $(document).ready( function () {
     /* Set some defaults */
-    CodeMirror.modeURL = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.11.0/mode/%N/%N.min.js";
+    CodeMirror.modeURL = "https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.14.2/mode/%N/%N.min.js";
     var stack_bottomright = {"dir1": "up", "dir2": "left", "firstpos1": 10, "firstpos2": 10};
 
     PNotify.prototype.options.stack = stack_bottomright;

@@ -12,6 +12,15 @@
 ### Changed
 - Upload will interrupt if error occurs
 
+### Updated
+- Updated Blueimp File Upload to 9.12.1
+- Updated Bootstrap Select to 1.10.0
+- Updated Bootstrap Submenu to 2.0.4
+- Updated Codemirror to 5.14.2
+- Updated Font Awesome to 4.6.3
+- Updated jQuery to 2.2.3
+- Updated Fancytree to 2.18.0
+
 ## [1.1.2] - 2016-05-16
 ### Fixed
 - Fixed localization on "copy/cut/paste" messages
