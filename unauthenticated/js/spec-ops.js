@@ -733,7 +733,7 @@ function editFile(path, name, counter) {
         if(true) {
             var tabNum = counter;
             $('#tabs-control').append(
-                $('<li><a class="closable" data-toggle="tab" aria-controls="editor-' + tabNum + '" href="#editor-' + tabNum + '"><i class="fa fa-edit"></i> ' + escapeHTML(name) +
+                $('<li class="tab"><a class="closable" data-toggle="tab" aria-controls="editor-' + tabNum + '" href="#editor-' + tabNum + '"><i class="fa fa-edit"></i> ' + escapeHTML(name) +
                 ' <button class="btn btn-xs btn-success close-tab pull-right" type="button" ' +
                 'title="' + text.close_tab + '"><i class="fa fa-close"></i></button>' +
                 '</a></li>')

@@ -672,7 +672,7 @@ $(document).ready( function () {
             showNotice(null, text.no_session_found)
             filemin.newTab('navigator');
         }
-        $('#tabs-control a:last').tab('show');
+        $('#tabs-control a:eq(' + response.active + ')').tab('show');
     }).fail(function(jqx, text, e) {
         showError(text.error_title, text);
     });
@@ -1081,6 +1081,8 @@ $(document).ready( function () {
         filemin.currentTabId = $(e.target).attr('href');
         panelResize(e);
     });
+    
+    $('#tabs-control').sortable();
 });
 
 /* Resizables */
@@ -1177,7 +1179,8 @@ $(window).on('beforeunload', function() {
         data: {
             data: JSON.stringify({
                 'tabs': tabs,
-                'tree': tree.toDict()
+                'tree': tree.toDict(),
+                'active': $('#tabs-control li.active').index()
             })
         }
     });

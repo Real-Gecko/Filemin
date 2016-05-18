@@ -60,6 +60,12 @@ ul.fancytree-container {
     margin-right: 10px;
 }
 
+#tabs-plus {
+    float: left;
+    display: block;
+    border: none;
+}
+
 #tabs-control.nav > li.tab {
     min-width: 140px;
 }
@@ -90,7 +96,8 @@ ul.fancytree-container {
     margin-top: 1px;
 }
 
-#tabs-control.nav > li > a {
+#tabs-control.nav > li > a,
+#tabs-plus.nav > li > a {
     padding: 5px 15px;
     transition: background-color 0.3s ease;
 }
