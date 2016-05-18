@@ -16,6 +16,7 @@ Features modern GUI with the help of numerous JS and CSS libraries. Makes file m
 * [**PNotify**](https://github.com/sciactive/pnotify)
 * [**CodeMirror**](https://github.com/codemirror/CodeMirror)
 * [**Fancytree**](https://github.com/mar10/fancytree)
+* [**markdown-js**](https://github.com/evilstreak/markdown-js)
 
 ###Developed with
 [**Codiad Web IDE**](https://github.com/Codiad/Codiad)

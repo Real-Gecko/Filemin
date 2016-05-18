@@ -11,6 +11,7 @@
 - "Previous tab" concept - Filemin remembers previous tab and switches to it if current tab is closed
 - Active tab is saved in session and restored on restart
 - Tabs are sortable - drag'n'drop tabs to reorder
+- Changelog displayed on start
 
 ### Changed
 - Upload will interrupt if error occurs

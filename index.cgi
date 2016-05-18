@@ -12,10 +12,13 @@ my $vc = eval #102 fix
 
 #use version;
 
+$webprefix = $gconfig{'webprefix'};
+
 &ui_print_unbuffered_header(undef, "Filemin", "", undef, 1 , 0, 0);
 
 print "<h3>$text{'will_open'} <a target='_blank' href='/filemin/filemin.cgi'>$text{'new_tab'}</a><br></h3>";
 print "<script>window.open('/filemin/filemin.cgi','_blank');</script>";
+print "<script src='$webprefix/filemin/unauthenticated/js/markdown.min.js'></script>";
 
 # Check for updates
 if($remote_user eq 'root' & $vc) {
@@ -37,6 +40,21 @@ if($remote_user eq 'root' & $vc) {
     } else {
         print $text{'module_up_to_date'};
     };
+}
+
+# Display changelog
+if($remote_user eq 'root' & $vc) {
+    my $changelog = &read_file_contents('CHANGELOG.md');
+    
+    print '<hr><article id="changelog">';
+    print $changelog;
+    print '</article>';
+    
+    print "<script>\
+        var changelog = document.getElementById('changelog');
+        var content = changelog.innerHTML;
+        changelog.innerHTML = markdown.toHTML(content);
+    </script>";
 }
 
 &ui_print_footer("/", $text{'index'});
