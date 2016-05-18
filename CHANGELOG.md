@@ -8,6 +8,7 @@
 ### Added
 - Upload can be cancelled
 - Reload button in editor
+- "Previous tab" concept - Filemin remembers previous tab and switches to it if current tab is closed
 
 ### Changed
 - Upload will interrupt if error occurs

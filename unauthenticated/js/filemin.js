@@ -5,6 +5,8 @@
         var _self = this;
         this.tabs = [];
         this.tabcounter = 0;
+        this.previousTabId = "";
+        this.currentTabId = "";
         this.activeTab = function() {
             var id = $('#tabs-control').find('li.active a').attr('href');
             var ix = this.tabs.map(function(x) {return x.id; }).indexOf(id);
@@ -916,7 +918,13 @@ $(document).ready( function () {
                         callback: function() {
                             $(sender).parents('li').remove('li');
                             $(tabId).remove();
-                            $($('#tabs-control a')[ix - 1]).tab('show');
+                            if(tabId == filemin.currentTabId) {
+                                if($(filemin.previousTabId).length) {
+                                    $('a[href="' + filemin.previousTabId + '"]').tab('show');
+                                } else {
+                                    $($('#tabs-control a')[ix - 1]).tab('show');
+                                }
+                            }
                         }
                     },
                     cancel: {
@@ -928,7 +936,13 @@ $(document).ready( function () {
         } else {
             $(this).parents('li').remove('li');
             $(tabId).remove();
-            $($('#tabs-control a')[ix - 1]).tab('show');
+            if(tabId == filemin.currentTabId) {
+                if($(filemin.previousTabId).length) {
+                    $('a[href="' + filemin.previousTabId + '"]').tab('show');
+                } else {
+                    $($('#tabs-control a')[ix - 1]).tab('show');
+                }
+            }
             filemin.delTab(tabId);
         }
         if($('#tabs-control li').length == 1) {
@@ -1063,6 +1077,8 @@ $(document).ready( function () {
 
     /* Perform some UI manipulations on tab switch */
     $(document).on('a[data-toggle="tab"] shown.bs.tab', function(e) {
+        filemin.previousTabId = filemin.currentTabId;
+        filemin.currentTabId = $(e.target).attr('href');
         panelResize(e);
     });
 });
