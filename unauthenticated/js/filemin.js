@@ -940,7 +940,8 @@ $(document).ready( function () {
     });
 
     /* Save da failo */
-    $('#tabs-container').on('click', 'form[name="edit-file"] input[name="save"]', function() {
+    $('#tabs-container').on('click', 'form[name="edit-file"] button[name="save"]', function(e) {
+        e.preventDefault();
         var sender = $(this)[0];
         var form = sender.form;
         form.data.value = form.editor.getValue();
@@ -963,6 +964,30 @@ $(document).ready( function () {
             }
             var id = $(sender).parents('.filemin-tab').attr('id');
             $('a[href="#' + id + '"]').find('button').removeClass('btn-danger').addClass('btn-success');
+        }).fail(function(jqx, text, e) {
+            waitToError(notice, null, text);
+        });
+    });
+
+    /* Reload da failo*/
+    $('#tabs-container').on('click', 'form[name="edit-file"] button[name="reload"]', function(e) {
+        e.preventDefault();
+        var notice = showWait(text.table_LoadingMessage);
+        var sender = $(this)[0];
+        var form = sender.form;
+        $.ajax({
+            url: "get_file_contents.cgi?path=" + encodeURIComponent(form.path.value) +
+            "&name=" + encodeURIComponent(form.name.value),
+            dataType: 'text',
+            type: 'GET',
+            async: true,
+        })
+        .done(function(response) {
+            form.data.value = response;
+            form.editor.setValue(response);
+            var tabId = '#' + $(sender).parents('.filemin-tab').attr('id');
+            $('a[href="' + tabId + '"]').find('button').removeClass('btn-danger').addClass('btn-success');
+            notice.remove();
         }).fail(function(jqx, text, e) {
             waitToError(notice, null, text);
         });

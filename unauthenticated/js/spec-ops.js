@@ -749,7 +749,10 @@ function editFile(path, name, counter) {
                             </div>\
                             <input type="hidden" name="path" value="">\
                             <input type="hidden" name="name" value="">\
-                            <input class="btn btn-primary" type="button" name="save" value="' + text.save +'">' +
+                            <button class="btn btn-primary" name="save">\
+                            <i class="fa fa-floppy-o"></i> ' + text.save +'</button>\
+                            <button class="btn btn-default pull-right" name="reload">\
+                            <i class="fa fa-refresh"></i> '+ text.reload + '</button>' +
                             buildModeSelector() +
                         '</form>\
                     </div>'

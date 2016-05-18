@@ -7,6 +7,7 @@
 
 ### Added
 - Upload can be cancelled
+- Reload button in editor
 
 ### Changed
 - Upload will interrupt if error occurs
