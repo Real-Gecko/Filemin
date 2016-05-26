@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
 
 &ReadParse();
 get_paths();
@@ -22,15 +21,15 @@ my $recursive;
 if($in{'recursive'}) { $recursive = '-R'; } else { $recursive = ''; }
 
 if(! defined $login) {
-    push @errors, "<b>$in{'owner'}</b> $text{'error_user_not_found'}";
+    push @errors, "$in{'owner'} $text{'error_user_not_found'}";
 }
 
 if(! defined $grid) {
-    push @errors, "<b>$in{'group'}</b> $text{'error_group_not_found'}";
+    push @errors, "$in{'group'} $text{'error_group_not_found'}";
 }
 
 if (scalar(@errors) > 0) {
-    print encode_json({'error' => \@errors});
+    print status('error', \@errors);
 } else {
     foreach $name (split(/\0/, $in{'name'})) {
 #        if(!chown $uid, $grid, $cwd.'/'.$name) {
@@ -38,9 +37,9 @@ if (scalar(@errors) > 0) {
             push @errors, "$name - $text{'error_chown'}: $?";
         }
     }
-    if (scalar(@errors) > 0) {
-        print encode_json({'error' => \@errors});
-    } else {
-        print encode_json({'success' => 1});
-    }
+	if (scalar(@errors) > 0) {
+	    print status('error', \@errors);
+	} else {
+		print status('success', 1);
+	}
 }

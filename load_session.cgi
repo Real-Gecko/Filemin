@@ -2,7 +2,7 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
+use Mojo::JSON;
 
 &ReadParse();
 get_paths();
@@ -15,5 +15,5 @@ if(-e "$confdir/.session") {
     my $session = &read_file_contents($confdir.'/.session', 1);
     print $session;
 } else {
-    print encode_json({'error' => $text{'failed_to_read_file'}.' .session'})
+    print Mojo::JSON::to_json({'error' => $text{'failed_to_read_file'}.' .session'})
 }

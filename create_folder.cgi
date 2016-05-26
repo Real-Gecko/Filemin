@@ -16,12 +16,12 @@ if(!$in{'name'}) {
     print("{\"error\": \"$text{'provide_folder_name'}\"}");
 } else {
     if (-e "$cwd/$in{'name'}") {
-        print("{\"error\": \"<b>$name</b> $text{'error_exists'}\"}");
+        print("{\"error\": \"$name $text{'error_exists'}\"}");
     } else {
         if( mkdir ("$cwd/$name", oct(755)) ) {
-            print '{"success": "1"}';
+            print status('success', 1);
         } else {
-            print("{\"error\": \"$name - $text{'error_create'} $!\"}");
+            print status('error', "$name - $text{'error_create'} $!");
         }
     }
 }

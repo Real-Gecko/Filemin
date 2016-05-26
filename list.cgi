@@ -4,7 +4,7 @@
 require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
-use JSON;
+use Mojo::JSON;
 
 &ReadParse();
 get_paths();
@@ -123,5 +123,5 @@ if (scalar(@errors) > 0) {
     }
     print '{"error": "'.$result.'"}';
 } else {
-    print encode_json(\@result);
+    print Mojo::JSON::to_json(\@result);
 }

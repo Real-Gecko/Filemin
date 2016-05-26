@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
 
 &ReadParse();
 get_paths();
@@ -18,7 +17,7 @@ foreach $name (split(/\0/, $in{'name[]'})) {
 }
 
 if (scalar(@errors) > 0) {
-    print encode_json({'error' => \@errors});
+    print status('error', \@errors);
 } else {
-    print encode_json({'success' => 1});
+	print status('success', 1);
 }

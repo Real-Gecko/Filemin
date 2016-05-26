@@ -2,7 +2,7 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
+use Mojo::JSON;
 
 &ReadParse();
 get_paths();
@@ -19,4 +19,4 @@ $exists = (-e "$cwd/$name") ? 1 : 0;
 $directory = (-d "$cwd/$name") ? 1 : 0;
 $notice = &text('dialog_exists_overwrite', $name, $cwd) if $exists;
 
-print encode_json({'exists' => $exists, 'directory' => $directory, 'notice' => $notice})
+print Mojo::JSON::to_json({'exists' => $exists, 'directory' => $directory, 'notice' => $notice})

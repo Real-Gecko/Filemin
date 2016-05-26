@@ -2,14 +2,14 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
+use Mojo::JSON;
 
 &ReadParse();
 get_paths();
 
 # Exploits, exploits everywhere
 if(!$in{'archivename'} || ($in{'method'} ne 'tar' && $in{'method'} ne 'zip')) {
-    print encode_json({'error' => $text{'provide_correct_parameters'}});
+    print Mojo::JSON::to_json({'error' => $text{'provide_correct_parameters'}});
     exit;
 }
 

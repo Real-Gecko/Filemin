@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
 
 &ReadParse();
 get_paths();
@@ -32,11 +31,11 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
                    " ".quotemeta("$cwd/$name")) == 0 or push @errors, $base.$arr[$i]." $text{'error_symlink'} $!";
         }
     }
-    if (scalar(@errors) > 0) {
-        print encode_json({'error' => @errors});
-    } else {
-        print encode_json({'success' => '1'});
-    }
+	if (scalar(@errors) > 0) {
+	    print status('error', \@errors);
+	} else {
+		print status('success', 1);
+	}
 } else {
     print("{\"error\": \" Error .buffer $!\"}");
 }

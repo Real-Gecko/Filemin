@@ -3,13 +3,13 @@
 require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
-use JSON;
+use Mojo::JSON;
 
 &ReadParse();
 get_paths();
 
 if(!$in{'file'}) {
-    print encode_json({'error' => $text{'provide_correct_parameters'}});
+    print Mojo::JSON::to_json({'error' => $text{'provide_correct_parameters'}});
     exit;
 }
 
@@ -28,11 +28,11 @@ my $command;
 if ($archive_type eq 'application/zip') {
     $command = "unzip -l ".quotemeta("$cwd/$file");
     $result = `$command`;
-    print encode_json({'success' => $result});
+    print Mojo::JSON::to_json({'success' => $result});
 } elsif (index($archive_type, "tar") != -1 || index($archive_type, "gzip") != -1) {
     $command = "tar tvf ".quotemeta("$cwd/$file");
     $result = `$command`;
-    print encode_json({'success' => $result});
+    print Mojo::JSON::to_json({'success' => $result});
 } else {
-    print encode_json({'error' => "$archive_type $text{'error_archive_type_not_supported'}"});
+    print Mojo::JSON::to_json({'error' => "$archive_type $text{'error_archive_type_not_supported'}"});
 }

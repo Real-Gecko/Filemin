@@ -9,6 +9,7 @@ use POSIX;
 use lib './lib';
 use File::Basename;
 use File::MimeInfo;
+use Mojo::JSON;
 $templates_path = "unauthenticated/templates";
 
 sub get_paths {
@@ -242,10 +243,10 @@ sub filemin_progress_callback {
 }
 
 # Simple hash to JSON conversion
-sub to_json {
-    my %hash = @_;
-    return "{".join(q{,}, map{qq{"$_":"$hash{$_}"}} keys %hash)."}";
-}
+# sub to_json {
+#     my %hash = @_;
+#     return "{".join(q{,}, map{qq{"$_":"$hash{$_}"}} keys %hash)."}";
+# }
 
 sub oct_to_symbolic {
     my $permissions = $_[0];
@@ -291,6 +292,14 @@ sub suggest_filename {
         }
     }
     return $name;
+}
+
+sub status {
+	my($status, $message) = @_;
+	if(ref($message) eq "ARRAY") {
+		$message = join(', ', @{$message});
+	}
+	return Mojo::JSON::to_json({$status => $message});
 }
 
 1;

@@ -47,8 +47,7 @@ for my $key(keys %en_locale) {
     }
 }
 
-# Custom to JSON conversion to prevent UTF-8 binary encoding
-$text_to_js = to_json(%user_locale);
+$text_to_js = Mojo::JSON::to_json(\%user_locale);
 
 # Load interface templates
 $main_menu = get_template('main_menu.html');

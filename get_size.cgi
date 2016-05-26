@@ -3,7 +3,7 @@
 require './filemin-lib.pl';
 use lib './lib';
 use File::MimeInfo;
-use JSON;
+use Mojo::JSON;
 
 &ReadParse();
 get_paths();
@@ -16,7 +16,7 @@ $name =~ s/\.\.//g;
 &simplify_path($name);
 
 if(-d "$cwd/$name") {
-    print encode_json({'success' => 1, 'data' => &recursive_disk_usage("$cwd/$name")});
+    print Mojo::JSON::to_json({'success' => 1, 'data' => &recursive_disk_usage("$cwd/$name")});
 } else {
-    print encode_json({'error' => $text{'not_a_directory'}});
+    print Mojo::JSON::to_json({'error' => $text{'not_a_directory'}});
 }

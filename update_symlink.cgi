@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
 
 &ReadParse();
 
@@ -45,10 +44,13 @@ if($target) {
     }
 }
 
-if (scalar(@errors) > 0) {
-    print encode_json({'error' => \@errors});
-} else {
+if (!(scalar(@errors) > 0)) {
     my $command = "ln -sfn ".quotemeta($link)." ".quotemeta("$cwd/$name");
     system($command) == 0 or push @errors, $target." $text{'error_symlink'} $!";
-    print encode_json({'success' => '1'});
+}
+
+if (scalar(@errors) > 0) {
+    print status('error', \@errors);
+} else {
+	print status('success', 1);
 }

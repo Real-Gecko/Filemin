@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
 
 &ReadParse();
 get_paths();
@@ -40,6 +39,5 @@ if (!$host || !$in{'link'}) {
 }
 
 if (scalar(@errors) > 0) {
-    print encode_json({'error' => \@errors});
-
+    print status('error', \@errors);
 }

@@ -2,7 +2,6 @@
 
 require './filemin-lib.pl';
 use lib './lib';
-use JSON;
 
 &ReadParse();
 get_paths();
@@ -86,11 +85,11 @@ if(defined $in{'chown'}) {
     my $grid = getgrnam($in{'group'});
 
     if(!defined $login) {
-        push @errors, "<b>$in{'owner'}</b> $text{'error_user_not_found'}";
+        push @errors, "$in{'owner'} $text{'error_user_not_found'}";
     }
 
     if(!defined $grid) {
-        push @errors, "<b>$in{'group'}</b> $text{'error_group_not_found'}";
+        push @errors, "$in{'group'} $text{'error_group_not_found'}";
     }
 
     if (scalar(@errors) == 0) {
@@ -158,7 +157,7 @@ if(defined $in{'chown'}) {
 }
 
 if (scalar(@errors) > 0) {
-    print encode_json({'error' => \@errors});
+    print status('error', \@errors);
 } else {
-    print encode_json({'success' => 1});
+	print status('success', 1);
 }
