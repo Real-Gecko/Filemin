@@ -1,9 +1,11 @@
 # Change Log
 
-## [1.1.3] -
+## [2.0.0] - 2016-05-27
 ### Fixed
 - Fixed #104
 - Fixed "Nested quantifiers in regex" caused by some dir names
+- Switched to Mojo::JSON thus resolving localization issues in popup messages
+- Fixed Webmin 1.800 update issue
 
 ### Added
 - Upload can be cancelled

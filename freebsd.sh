@@ -14,13 +14,14 @@ cp -R lang $TGDIR
 cp -R lib $TGDIR
 cp -R unauthenticated/libs $TGDIR/unauthenticated
 cp -R unauthenticated/css/*.min.css $TGDIR/unauthenticated/css
+cp filemin-updater.bsd.tar.gz $TGDIR/unauthenticated/filemin-updater.tar.gz
 
 cp CHANGELOG.md $TGDIR
 cp LICENCE $TGDIR
 cp README.md $TGDIR
 cp acl_security.pl $TGDIR
-cp postinstall.pl $TGDIR
-cp uninstall.pl $TGDIR
+# cp postinstall.pl $TGDIR
+# cp uninstall.pl $TGDIR
 cp config $TGDIR
 cp config.info $TGDIR
 cp defaultacl $TGDIR

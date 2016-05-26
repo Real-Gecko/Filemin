@@ -7,6 +7,7 @@ use version;
 &ReadParse();
 
 &ui_print_unbuffered_header();
+$webprefix = $gconfig{'webprefix'};
 
 # Just in case
 if($remote_user eq 'root') {
@@ -29,6 +30,7 @@ if($remote_user eq 'root') {
     }
     else {
         print &text('module_updated', "<b>$irv->[0]->[0]</b>", "<b>$irv->[2]->[0]</b>"),"\n";
+		print "<a href='$webprefix/filemin/filemin.cgi'>Filemin</a>";
     }
 }
 
