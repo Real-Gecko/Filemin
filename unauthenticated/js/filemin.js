@@ -945,7 +945,7 @@ $(document).ready( function () {
             }
             filemin.delTab(tabId);
         }
-        if($('#tabs-control li').length == 1) {
+        if($('#tabs-control li').length == 0) {
             var $bottomPanel = $('#bottom-panel');
             $bottomPanel.hide("slide", { direction: "down" }, 100);
             var $treePane = $('#filemin-tree');
