@@ -1,6 +1,12 @@
 # filemin-lib.pl
 
-BEGIN { push(@INC, ".."); };
+BEGIN {
+    push(@INC, "..");
+    my $sp = __FILE__;
+    $sp =~ s!^(.*/)[^/]*$!\1!;
+    push(@INC, "$sp/lib");
+};
+
 use WebminCore;
 &init_config();
 use Encode qw(decode encode);
