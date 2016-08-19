@@ -225,3 +225,7 @@ toolbar_files=Files
 toolbar_folders=Folders
 checking_for_update=Zoen naar een update...
 module_up_to_date=module is up to date
+copy_complete=Kopiëren voltooid
+move_complete=Verplaatsen voltooid
+upload_cancelled=Upload afgebroken
+reload=Herladen
