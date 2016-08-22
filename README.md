@@ -35,18 +35,18 @@ Features modern GUI with the help of numerous JS and CSS libraries. Makes file m
 
 ##Installation:
 Package for installation through Webmin interface
-For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.0.1.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.0.1.freebsd.wbm.gz).
+For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.0.2.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.0.2.freebsd.wbm.gz).
 
-[**Ubuntu**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_2.0.1_all.deb) and [**Debian**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_2.0.1_all.deb) users may prefer to install with
+[**Ubuntu**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_2.0.2_all.deb) and [**Debian**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_2.0.2_all.deb) users may prefer to install with
 
-`dpkg -i webmin-filemin_2.0.1_all.deb`.
+`dpkg -i webmin-filemin_2.0.2_all.deb`.
 
 Note that _dpkg_ way simply updates module without creating concurrent versions like installation from Webmin interface do.
 
 ## Update
 As of version 1.1.0 Filemin automatically checks for udpate and offers to install it if available.
 However currently Webmin itself bundles outdated 0.9 branch of the module and new version of Filemin is always downgraded with Webmin update.
-To avoid the issue version 2.0.1 of Filemin install additional Filemin Updater module. Just click "Filemin Updater" option in "Others" menu of Webmin to reinstall Filemin.
+To avoid the issue since version 2.0.1 Filemin installs additional Filemin Updater module. Just click "Filemin Updater" option in "Others" menu of Webmin to reinstall Filemin.
 
 ##Note for FreeBSD users.
 FreeBSD users are recommended to install _shared-mime-info_ package.
