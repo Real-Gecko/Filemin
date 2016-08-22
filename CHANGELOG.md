@@ -1,5 +1,8 @@
 # Change Log
 
+## [2.0.2] - 2016-08-22
+- Dutch translation update by [Zen4All](https://github.com/Zen4All)
+
 ## [2.0.1] - 2016-07-17
 - Fixed #111
 
