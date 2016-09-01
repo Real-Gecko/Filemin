@@ -46,7 +46,7 @@ Note that _dpkg_ way simply updates module without creating concurrent versions 
 ## Update
 As of version 1.1.0 Filemin automatically checks for udpate and offers to install it if available.
 However currently Webmin itself bundles outdated 0.9 branch of the module and new version of Filemin is always downgraded with Webmin update.
-To avoid the issue since version 2.0.1 Filemin installs additional Filemin Updater module. Just click "Filemin Updater" option in "Others" menu of Webmin to reinstall Filemin.
+To avoid the issue since version 2.0.0 Filemin installs additional Filemin Updater module. Just click "Filemin Updater" option in "Others" menu of Webmin to reinstall Filemin.
 
 ##Note for FreeBSD users.
 FreeBSD users are recommended to install _shared-mime-info_ package.
