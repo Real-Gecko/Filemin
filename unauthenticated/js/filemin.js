@@ -213,6 +213,9 @@
                         case "symlink":
                             pasteSymlink(tab);
                             break;
+                        case "view-buffer":
+                            viewBuffer();
+                            break;
                         case "select_all":
                             $(this).bootstrapTable('checkAll');
                             break;
@@ -399,6 +402,9 @@
                             break;
                         case "cut_selected":
                             cutSelected(tab, row.name);
+                            break;
+                        case "view-buffer":
+                            viewBuffer();
                             break;
                         case "select_all":
                             $(this).bootstrapTable('checkAll');
@@ -737,6 +743,9 @@ $(document).ready( function () {
                 break;
             case "symlink":
                 pasteSymlink(tab);
+                break;
+            case "view-buffer":
+                viewBuffer();
                 break;
             case "get_sizes":
                 var $table = $(tab.id + ' .list-table'); 

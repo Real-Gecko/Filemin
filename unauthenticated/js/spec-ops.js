@@ -199,6 +199,33 @@ function listArchive(path, name) {
     });
 }
 
+function viewBuffer() {
+    var notice = showWait(text.table_LoadingMessage);
+    $.get("get_buffer.cgi")
+    .done(function(response) {
+        if(response.success) {
+            bootbox.dialog({
+                title: text.menu_buffer,
+                message: '<pre class="well">' + response.success + '</pre>',
+                size: 'large',
+                onEscape: true,
+                buttons: {
+                    cancel: {
+                        label: text.dialog_ok,
+                        className: "btn-primary"
+                    }
+                }
+            });
+            $('pre.well').height($(window).height() - 273);
+            notice.remove();
+        } else {
+            waitToError(notice, null, response.error);
+        }
+    }).fail(function(jqx, text, e) {
+        waitToError(notice, null, text);
+    });
+}
+
 function pasteSymlink(tab) {
     $.post("symlink.cgi", { 'path': tab.path })
     .done(function(response) {
