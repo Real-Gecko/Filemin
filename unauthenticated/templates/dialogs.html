@@ -269,3 +269,30 @@
         <input type='hidden' name='path' value=''>
     </form>
 </div>
+
+<div id="chconDialog" class="modal fade">
+    <form name="chcon">
+        <div class="form-group">
+            <label>$text{'dialog_selinux_user'}</label>
+            <input name="user" type="text" class="form-control" data-placement="top" data-content="$text{'provide_url'}" data-trigger="manual">
+        </div>
+        <div class="form-group">
+            <label>$text{'dialog_selinux_role'}</label>
+            <input name="role" type="text" class="form-control" data-placement="top" data-content="$text{'provide_url'}" data-trigger="manual">
+        </div>
+        <div class="form-group">
+            <label>$text{'dialog_selinux_type'}</label>
+            <input name="type" type="text" class="form-control" data-placement="top" data-content="$text{'provide_url'}" data-trigger="manual">
+        </div>
+        <div class="form-group">
+            <label>$text{'dialog_selinux_level'}</label>
+            <input name="level" type="text" class="form-control" data-placement="top" data-content="$text{'provide_url'}" data-trigger="manual">
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" name="recursive" value="1"> $text{'dialog_recursive'}
+            </label>
+        </div>
+        <input type='hidden' name='path' value=''>
+    </form>
+</div>

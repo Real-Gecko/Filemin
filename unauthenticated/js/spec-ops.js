@@ -496,6 +496,52 @@ function chownSelected(tab, row) {
     });
 }
 
+function chconSelected(tab, row) {
+    var rows = $(tab.id + ' .list-table').bootstrapTable('getAllSelections');
+    var form = $('<form/>')[0];
+    $(form).html($("#chconDialog form[name=chcon]").html());
+
+    form.path.value = tab.path;
+    if(rows.length === 0) {
+        var context = row.selinux_context.split(':');
+        form.user.value = context[0];
+        form.role.value = context[1];
+        form.type.value = context[2];
+        form.level.value = context[3];
+        rows = [row];
+    }
+    bootbox.dialog({
+        title: text.chcon_selected,
+        message: form,
+        onEscape: true,
+        buttons: {
+            confirm: {
+                label: text.dialog_change,
+                className: "btn-primary",
+                callback: function () {
+                    var names;
+                    names = rows.map(function(row) { return {name: 'name', value: row.name}; });
+                    data = $(form).serializeArray();
+                    $.post("chcon.cgi", data.concat(names))
+                    .done(function(response) {
+                        if(response.success) {
+                            $(tab.id + ' .list-table').bootstrapTable('refresh');//, { url: 'list.cgi?path=' + encodeURIComponent(tab.path) });
+                        } else {
+                            showError(text.error_chcon, response.error);
+                        }
+                    }).fail(function(jqx, text, e) {
+                        showError(null, text);
+                    });
+                }
+            },
+            cancel: {
+                label: text.dialog_cancel,
+                className: "btn-default"
+            }
+        }
+    });
+}
+
 function compressSelected(tab, row) {
     var rows = $(tab.id + ' .list-table').bootstrapTable('getAllSelections');
     var form = $('<form class="form-inline"/>')[0];

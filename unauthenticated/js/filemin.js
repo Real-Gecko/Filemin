@@ -106,6 +106,10 @@
                         return bytesToSize(value);
                     }
                 }, {
+                    field: 'selinux_context',
+                    title: 'SELinux',
+                    sortable: true,
+                }, {
                     field: 'mtime',
                     title: text.last_mod_time,
                     sortable: true,
@@ -234,6 +238,9 @@
                         case "chown_selected":
                             chownSelected(tab, row);
                             break;
+                        case "chcon_selected":
+                            chconSelected(tab, row);
+                            break;
                         case "compress_selected":
                             compressSelected(tab, row);
                             break;
@@ -324,6 +331,10 @@
                         return bytesToSize(value);
                     }
                 }, {
+                    field: 'selinux_context',
+                    title: 'SELinux',
+                    sortable: true,
+                }, {
                     field: 'mtime',
                     title: text.last_mod_time,
                     sortable: true,
@@ -403,6 +414,9 @@
                             break;
                         case "chown_selected":
                             chownSelected(tab, row);
+                            break;
+                        case "chcon_selected":
+                            chconSelected(tab, row);
                             break;
                         case "open_containing":
                             _self.newTab('navigator', path);
@@ -740,6 +754,11 @@ $(document).ready( function () {
             case "chown_selected":
                 if(checkSelected(tab)) {
                     chownSelected(tab);
+                }
+                break;
+            case "chcon_selected":
+                if(checkSelected(tab)) {
+                    chconSelected(tab);
                 }
                 break;
             case "compress_selected":

@@ -13,6 +13,10 @@ print_ajax_header();
 
 my @errors;
 
+# SELinux context
+my $selinux = &is_selinux_enabled();
+my %context = ();
+
 # To search
 if($in{'query'}) {
     if($in{'caseins'}) {
@@ -22,7 +26,16 @@ if($in{'query'}) {
     }
     @list = split('\n', &backquote_logged(
                     "find ".quotemeta($cwd)." $criteria ".quotemeta("*$in{'query'}*")));
-    @list = map { [ $_, lstat($_), mimetype($_), -d, -l $_ ] } @list;
+
+    # Get SELinux context
+    if(selinux) {
+        $command = "ls -dZ ".join(' ', map { qq /"$_"/ } @list);
+        $result = `$command`;
+        @searray = map { [split(/ /, $_, 5)] } split(/\n/, $result);
+        %context = map { $_->[4] => $_->[3] } @searray;
+    }
+
+    @list = map { [ $_, lstat($_), mimetype($_), -d, -l $_, $context{$_} ] } @list;
 # Or not to search
 } else {
     unless (opendir ( DIR, $cwd )) {
@@ -46,8 +59,17 @@ if($in{'query'}) {
             my %hash = map { $_, 1 } @tmp_list;
             @list = keys %hash;
         }
+
+        # Get SELinux context
+        if(selinux) {
+            $command = "ls -dZ ".join(' ', map { qq /"$_"/ } @list);
+            $result = `$command`;
+            @searray = map { [split(/ /, $_, 5)] } split(/\n/, $result);
+            %context = map { $_->[4] => $_->[3] } @searray;
+        }
+
         # Get info about directory entries
-        @info = map { [ $_, lstat($_), mimetype($_), -d, -l $_ ] } @list;
+        @info = map { [ $_, lstat($_), mimetype($_), -d, -l $_, $context{$_} ] } @list;
 
         # Filter out folders
         @folders = map {$_} grep {$_->[15] == 1 } @info;
@@ -111,7 +133,8 @@ foreach(@list) {
         'mtime' => $_->[10],
         'archive' => (index($type, "zip") != -1 or index($type, "compressed") != -1),
         'link_target' => $link_target,
-        'link_target_mime' => $link_target_mime
+        'link_target_mime' => $link_target_mime,
+        'selinux_context' => $_->[17]
     );
 
     push @result, \%entry;
