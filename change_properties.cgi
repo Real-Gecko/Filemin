@@ -18,6 +18,8 @@ if(defined $in{'chmod'}) {
     # Selected directories and files only
     if($in{'applyto'} eq '1') {
         foreach $name (split(/\0/, $in{'name'})) {
+            $name =~ s/\.\.//g;
+            &simplify_path($name);
             if (system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }
@@ -27,6 +29,8 @@ if(defined $in{'chmod'}) {
     # Selected files and directories and files in selected directories
     if($in{'applyto'} eq '2') {
         foreach $name (split(/\0/, $in{'name'})) {
+            $name =~ s/\.\.//g;
+            &simplify_path($name);
             if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }
@@ -41,6 +45,8 @@ if(defined $in{'chmod'}) {
     # All (recursive)
     if($in{'applyto'} eq '3') {
         foreach $name (split(/\0/, $in{'name'})) {
+            $name =~ s/\.\.//g;
+            &simplify_path($name);
             if(system_logged("chmod -R ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }
@@ -50,6 +56,8 @@ if(defined $in{'chmod'}) {
     # Selected files and files under selected directories and subdirectories
     if($in{'applyto'} eq '4') {
         foreach $name (split(/\0/, $in{'name'})) {
+            $name =~ s/\.\.//g;
+            &simplify_path($name);
             if(-f "$cwd/$name") {
                 if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                     push @errors, "$name - $text{'error_chmod'}: $?";
@@ -65,6 +73,8 @@ if(defined $in{'chmod'}) {
     # Selected directories and subdirectories
     if($in{'applyto'} eq '5') {
         foreach $name (split(/\0/, $in{'name'})) {
+            $name =~ s/\.\.//g;
+            &simplify_path($name);
             if(-d "$cwd/$name") {
                 if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                     push @errors, "$name - $text{'error_chmod'}: $?";
@@ -96,6 +106,8 @@ if(defined $in{'chown'}) {
         # Selected directories and files only
         if($in{'applyto'} eq '1') {
             foreach $name (split(/\0/, $in{'name'})) {
+                $name =~ s/\.\.//g;
+                &simplify_path($name);
                 if(system_logged("chown $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
                     push @errors, "$name - $text{'error_chown'}: $?";
                 }
@@ -105,6 +117,8 @@ if(defined $in{'chown'}) {
         # Selected files and directories and files in selected directories
         if($in{'applyto'} eq '2') {
             foreach $name (split(/\0/, $in{'name'})) {
+                $name =~ s/\.\.//g;
+                &simplify_path($name);
                 if(system_logged("chown $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
                     push @errors, "$name - $text{'error_chown'}: $?";
                 }
@@ -119,6 +133,8 @@ if(defined $in{'chown'}) {
         # All (recursive)
         if($in{'applyto'} eq '3') {
             foreach $name (split(/\0/, $in{'name'})) {
+                $name =~ s/\.\.//g;
+                &simplify_path($name);
                 if(system_logged("chown -R $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
                     push @errors, "$name - $text{'error_chown'}: $?";
                 }
@@ -128,6 +144,8 @@ if(defined $in{'chown'}) {
         # Selected files and files under selected directories and subdirectories
         if($in{'applyto'} eq '4') {
             foreach $name (split(/\0/, $in{'name'})) {
+                $name =~ s/\.\.//g;
+                &simplify_path($name);
                 if(-f "$cwd/$name") {
                     if(system_logged("chown $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
                         push @errors, "$name - $text{'error_chown'}: $?";
@@ -143,6 +161,8 @@ if(defined $in{'chown'}) {
         # Selected directories and subdirectories
         if($in{'applyto'} eq '5') {
             foreach $name (split(/\0/, $in{'name'})) {
+                $name =~ s/\.\.//g;
+                &simplify_path($name);
                 if(-d "$cwd/$name") {
                     if(system_logged("chown $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
                         push @errors, "$name - $text{'error_chown'}: $?";
@@ -159,5 +179,5 @@ if(defined $in{'chown'}) {
 if (scalar(@errors) > 0) {
     print status('error', \@errors);
 } else {
-	print status('success', 1);
+    print status('success', 1);
 }

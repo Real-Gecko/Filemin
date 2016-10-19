@@ -25,14 +25,16 @@ my $command;
 
 if($in{'method'} eq 'tar') {
     $command = "tar czf ".quotemeta("$cwd/$archivename.tar.gz").
-	       " -C ".quotemeta($cwd);
+           " -C ".quotemeta($cwd);
 } elsif($in{'method'} eq 'zip') {
     $command = "cd ".quotemeta($cwd)." && zip -r ".
-	       quotemeta("$cwd/$archivename.zip");
+           quotemeta("$cwd/$archivename.zip");
 }
 
 foreach my $name(split(/\0/, $in{'name'}))
 {
+    $name =~ s/\.\.//g;
+    &simplify_path($name);
     $name =~ s/$in{'cwd'}\///ig;
     $command .= " ".quotemeta($name);
 }
@@ -42,5 +44,5 @@ system_logged($command);
 if (scalar(@errors) > 0) {
     print status('error', \@errors);
 } else {
-	print status('success', 1);
+    print status('success', 1);
 }

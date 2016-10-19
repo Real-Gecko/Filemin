@@ -31,11 +31,11 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
                    " ".quotemeta("$cwd/$name")) == 0 or push @errors, $base.$arr[$i]." $text{'error_symlink'} $!";
         }
     }
-	if (scalar(@errors) > 0) {
-	    print status('error', \@errors);
-	} else {
-		print status('success', 1);
-	}
+    if (scalar(@errors) > 0) {
+        print status('error', \@errors);
+    } else {
+        print status('success', 1);
+    }
 } else {
     print("{\"error\": \" Error .buffer $!\"}");
 }

@@ -30,14 +30,15 @@ my $tempfile = transname();
 
 if($in{'method'} eq 'tar') {
     $command = "tar czf ".quotemeta($tempfile).
-	       " -C ".quotemeta($cwd);
+           " -C ".quotemeta($cwd);
 } elsif($in{'method'} eq 'zip') {
     $command = "cd ".quotemeta($cwd)." && zip -r ".
-	       quotemeta($tempfile);
+           quotemeta($tempfile);
 }
 
 foreach my $name(split(/\0/, $in{'name'}))
 {
+    $name = sanitize($name);
     $name =~ s/$in{'cwd'}\///ig;
     $command .= " ".quotemeta($name);
 }

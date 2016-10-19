@@ -10,7 +10,7 @@ use lib './lib';
 
 get_paths();
 
-my $file = $cwd.'/'.$in{'file'};
+my $file = $cwd.'/'.sanitize($in{'file'});
 my $size = -s "$file";
 #(my $name, my $dir, my $ext) = fileparse($file, qr/\.[^.]*/);
 print "Content-Type: application/x-download\n";

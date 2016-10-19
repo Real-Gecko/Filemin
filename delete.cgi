@@ -11,6 +11,8 @@ my @errors;
 print_ajax_header();
 
 foreach $name (split(/\0/, $in{'name[]'})) {
+    $name =~ s/\.\.//g;
+    &simplify_path($name);
     if(!&unlink_logged("$cwd/$name")) {
         push @errors, "$name - $text{'error_delete'}: $!";
     }
@@ -19,5 +21,5 @@ foreach $name (split(/\0/, $in{'name[]'})) {
 if (scalar(@errors) > 0) {
     print status('error', \@errors);
 } else {
-	print status('success', 1);
+    print status('success', 1);
 }

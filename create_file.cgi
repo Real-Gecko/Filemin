@@ -15,10 +15,10 @@ print_ajax_header();
 if(!$in{'name'}) {
     print("{\"error\": \"$text{'provide_file_name'}\"}");
 } else {
-    if (-e "$cwd/$in{'name'}") {
+    if (-e "$cwd/$name") {
         print("{\"error\": \"$name $text{'error_exists'}\"}");
     } else {
-        if (open my $fh, "> $cwd/$in{'name'}") {
+        if (open my $fh, "> $cwd/$name") {
             close($fh);
             print status('success', 1);
         } else {

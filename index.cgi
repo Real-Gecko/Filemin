@@ -23,19 +23,19 @@ print "<script src='$webprefix/filemin/unauthenticated/js/markdown.min.js'></scr
 
 # Check for updates
 if($remote_user eq 'root' & $vc) {
-	# Check if updater is installed
-	my $updater = &foreign_installed('filemin-updater');
-	if(!$updater) {
-		print "Installing updater<br>";
-		$irv = &webmin::install_webmin_module("$module_root_directory/unauthenticated/filemin-updater.tar.gz");
-	    if (!ref($irv)) {
-	        print "Installation failed $irv";
-	    }
-	    else {
-	        print "Updater Installed <b>$irv->[0]->[0]</b> <b>$irv->[2]->[0]</b><br>";
-	    }
-	}
-	# print $installer;
+    # Check if updater is installed
+    my $updater = &foreign_installed('filemin-updater');
+    if(!$updater) {
+        print "Installing updater<br>";
+        $irv = &webmin::install_webmin_module("$module_root_directory/unauthenticated/filemin-updater.tar.gz");
+        if (!ref($irv)) {
+            print "Installation failed $irv";
+        }
+        else {
+            print "Updater Installed <b>$irv->[0]->[0]</b> <b>$irv->[2]->[0]</b><br>";
+        }
+    }
+    # print $installer;
     print $text{'checking_for_update'};
     my $url = 'https://github.com/Real-Gecko/filemin/raw/master/module.info';
     my $tempfile = transname();

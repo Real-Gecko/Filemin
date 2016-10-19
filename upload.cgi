@@ -18,7 +18,7 @@ $boundary = $1;
 
 # Comment right now
 #if ($ENV{'CONTENT_LENGTH'} && $max && $ENV{'CONTENT_LENGTH'} > $max) {
-#  	&error($err);
+#      &error($err);
 #}
 
 #Read the data
@@ -103,5 +103,5 @@ while(index($line,"$boundary--") == -1) {
 if (scalar(@errors) > 0) {
     print status('error', \@errors);
 } else {
-	print status('success', 1);
+    print status('success', 1);
 }

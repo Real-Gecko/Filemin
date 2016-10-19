@@ -52,5 +52,5 @@ if (!(scalar(@errors) > 0)) {
 if (scalar(@errors) > 0) {
     print status('error', \@errors);
 } else {
-	print status('success', 1);
+    print status('success', 1);
 }

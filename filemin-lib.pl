@@ -308,5 +308,12 @@ sub status {
 	return Mojo::JSON::to_json({$status => $message});
 }
 
+sub sanitize {
+	my $param = @_[0];
+	$param =~ s/\.\.//g;
+	&simplify_path($param);
+	return $param;
+}
+
 1;
 

@@ -32,14 +32,15 @@ if (scalar(@errors) > 0) {
     print status('error', \@errors);
 } else {
     foreach $name (split(/\0/, $in{'name'})) {
-#        if(!chown $uid, $grid, $cwd.'/'.$name) {
+        $name =~ s/\.\.//g;
+        &simplify_path($name);
         if(system_logged("chown $recursive $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chown'}: $?";
         }
     }
-	if (scalar(@errors) > 0) {
-	    print status('error', \@errors);
-	} else {
-		print status('success', 1);
-	}
+    if (scalar(@errors) > 0) {
+        print status('error', \@errors);
+    } else {
+        print status('success', 1);
+    }
 }
