@@ -337,7 +337,8 @@ function changeProperties(tab, row) {
         form.permissions.value = row.permissions;
         form.owner.value = row.user;
         form.group.value = row.group;
-        form.name.value = row.name;
+//        form.name.value = row.name;
+        form.names = [row.name];
         octalchange(form.permissions);
         rows = [row];
         if(!row.directory) {
@@ -352,6 +353,7 @@ function changeProperties(tab, row) {
         title = '<b>' + text.properties_of + '</b> <i>' + escapeHTML(row.name) + '</i>';
     } else {
         var stats = countStats(rows);
+        form.names = rows.map(function(row) {return row.name});
         if(stats.dirs === 0) {
             $(form.getsize).hide();
         }
@@ -542,7 +544,8 @@ function checkSelected(tab) {
 
 function getSize(sender) {
     $(sender).prop('disabled', true);
-    $.post("get_size.cgi", {'name': sender.form.name.value, 'path': sender.form.path.value})
+//    $.post("get_size.cgi", {'name': sender.form.name.value, 'path': sender.form.path.value})
+    $.post("get_size.cgi", {'name': sender.form.names, 'path': sender.form.path.value})
     .done(function(response) {
         if(response.success) {
             $(sender.form).find(".size i").html(bytesToSize(response.data));
