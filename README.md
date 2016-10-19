@@ -3,6 +3,10 @@ Features modern GUI with the help of numerous JS and CSS libraries. Makes file m
 
 %100 AJAX - NO page reloads.
 
+###Builtin version
+Those who want to open Filemin in the same tab where Webmin main menu is, may want to try [**built in version**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.1.0.linux.builtin.wbm.gz).
+Works with every theme except Authentic.
+
 ### Libraries in use
 * [**jQuery**](https://github.com/jquery/jquery)
 * [**jQuery UI**](https://github.com/jquery/jquery-ui)
@@ -35,13 +39,7 @@ Features modern GUI with the help of numerous JS and CSS libraries. Makes file m
 
 ##Installation:
 Package for installation through Webmin interface
-For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.0.2.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.0.2.freebsd.wbm.gz).
-
-[**Ubuntu**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_2.0.2_all.deb) and [**Debian**](https://github.com/Real-Gecko/filemin/raw/master/distrib/webmin-filemin_2.0.2_all.deb) users may prefer to install with
-
-`dpkg -i webmin-filemin_2.0.2_all.deb`.
-
-Note that _dpkg_ way simply updates module without creating concurrent versions like installation from Webmin interface do.
+For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.1.0.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.1.0.freebsd.wbm.gz).
 
 ## Update
 As of version 1.1.0 Filemin automatically checks for udpate and offers to install it if available.

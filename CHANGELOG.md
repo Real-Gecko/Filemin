@@ -1,5 +1,13 @@
 # Change Log
 
+## [2.1.0] - 2016-10-20
+- Added JSON::PP package to lib to avoid dependency issue with CentOS
+- Fixed #119
+- Security fixes and tabs cleanup
+- Fixed #39 (SELinux support)
+- Added "View Buffer" functionality
+- Added builtin version
+
 ## [2.0.2] - 2016-08-22
 - Dutch translation update by [Zen4All](https://github.com/Zen4All)
 
