@@ -16,7 +16,12 @@ if(!$in{'archivename'} || ($in{'method'} ne 'tar' && $in{'method'} ne 'zip')) {
 # Prevent exploiting "../"
 $archivename = $in{'archivename'};
 $archivename =~ s/\.\.//g;
-&simplify_path($archivename);
+$archivename = &simplify_path($archivename);
+
+if( !$archivename ){
+
+    print status('error', $text{'failed_to_read_file'});
+}
 
 my $command;
 
@@ -50,7 +55,7 @@ my $size = -s $tempfile;
 print "Content-Type: application/x-download\n";
 print "Content-Disposition: attachment; filename=\"$archivename\"\n";
 print "Content-Length: $size\n\n";
-open (FILE, "< $tempfile") or die "can't open $tempfile: $!";
+open (FILE, '<', $tempfile) or die "can't open $tempfile: $!";
 binmode FILE;
 local $/ = \102400;
 while (<FILE>) {

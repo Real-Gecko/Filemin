@@ -33,7 +33,7 @@ if (scalar(@errors) > 0) {
 } else {
     foreach $name (split(/\0/, $in{'name'})) {
         $name =~ s/\.\.//g;
-        &simplify_path($name);
+        $name = &simplify_path($name);
         if(system_logged("chown $recursive $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chown'}: $?";
         }

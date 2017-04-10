@@ -16,7 +16,7 @@ if(!$in{'file'}) {
 # Remove exploiting "../"
 $file = $in{'file'};
 $file =~ s/\.\.//g;
-&simplify_path($file);
+$file = &simplify_path($file);
 
 print_ajax_header();
 

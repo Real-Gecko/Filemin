@@ -8,11 +8,11 @@ get_paths();
 # Remove exploiting "../" in new file names
 $name = $in{'name'};
 $name =~ s/\.\.//g;
-&simplify_path($name);
+$name = &simplify_path($name);
 
 print_ajax_header();
 
-if(!$in{'name'}) {
+if(!$in{'name'} || !defined($name)) {
     print("{\"error\": \"$text{'provide_folder_name'}\"}");
 } else {
     if (-e "$cwd/$name") {

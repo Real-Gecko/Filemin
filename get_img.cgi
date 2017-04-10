@@ -11,7 +11,14 @@ get_paths();
 # Remove exploiting of "../" in file names
 $name = $in{'name'};
 $name =~ s/\.\.//g;
-&simplify_path($name);
+$name = &simplify_path($name);
+
+if( !defined($name) ){
+
+	print_ajax_header();
+    print status('error', $text{'failed_to_read_file'});
+	exit;
+}
 
 my $img = $cwd.'/'.$name;
 my $size = -s "$img";

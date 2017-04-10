@@ -11,9 +11,9 @@ print_ajax_header();
 # Remove exploiting "../"
 $name = $in{'name'};
 $name =~ s/\.\.//g;
-&simplify_path($name);
+$name  = simplify_path($name);
 
-if(-e $cwd.'/'.$name) {
+if($name && -e $cwd.'/'.$name) {
     $data = &read_file_contents($cwd.'/'.$name);
     print $data;
 } else {
