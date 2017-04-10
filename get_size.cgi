@@ -15,13 +15,15 @@ $size = 0;
 foreach $name(@names) {
     # Remove exploiting of "../" in file parameters
     $name =~ s/\.\.//g;
-    &simplify_path($name);
+    $name = &simplify_path($name);
 
-    if(-d "$cwd/$name") {
+    if($name && -d "$cwd/$name") {
         $size = $size + &recursive_disk_usage("$cwd/$name");
-    } else {
+    } elsif( $name ) {
         my @fstat = stat "$cwd/$name";
         $size = $size + $fstat[7];
-    }
+    } else {
+		$size = undef;
+	}
 }
 print Mojo::JSON::to_json({'success' => 1, 'data' => $size});

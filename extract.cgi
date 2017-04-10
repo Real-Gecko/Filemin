@@ -15,7 +15,14 @@ if(!$in{'file'}) {
 # Remove exploiting "../"
 $file = $in{'file'};
 $file =~ s/\.\.//g;
-&simplify_path($file);
+$file = &simplify_path($file);
+
+if( !defined($file) ){
+
+	print_ajax_header();
+	print status('error', "$archive_type $text{'error_archive_type_not_supported'}");
+	exit;
+}
 
 print_ajax_header();
 

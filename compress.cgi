@@ -19,7 +19,7 @@ if(!$in{'archivename'} || ($in{'method'} ne 'tar' && $in{'method'} ne 'zip')) {
 # Remove exploiting "../" in new file names
 $archivename = $in{'archivename'};
 $archivename =~ s/\.\.//g;
-&simplify_path($archivename);
+$archivename = &simplify_path($archivename);
 
 my $command;
 
@@ -34,7 +34,7 @@ if($in{'method'} eq 'tar') {
 foreach my $name(split(/\0/, $in{'name'}))
 {
     $name =~ s/\.\.//g;
-    &simplify_path($name);
+    $name = &simplify_path($name) // next; # Missing/Invalid name - skip command
     $name =~ s/$in{'cwd'}\///ig;
     $command .= " ".quotemeta($name);
 }

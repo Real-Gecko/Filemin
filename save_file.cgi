@@ -13,7 +13,7 @@ my @errors;
 # Remove exploiting of "../" in parameters
 $file = $in{'name'};
 $file =~ s/\.\.//g;
-&simplify_path($file);
+$file = &simplify_path($file);
 
 # Correct end of lines
 $data = $in{'data'};

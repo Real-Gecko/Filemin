@@ -19,8 +19,8 @@ my $permissions = oct_to_symbolic($permissions);
 if($in{'applyto'} eq '1') {
     foreach $name (split(/\0/, $in{'name'})) {
         $name =~ s/\.\.//g;
-        &simplify_path($name);
-        if (system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
+        $name = &simplify_path($name);
+        if (!$name || system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chmod'}: $?";
         }
     }
@@ -30,11 +30,11 @@ if($in{'applyto'} eq '1') {
 if($in{'applyto'} eq '2') {
     foreach $name (split(/\0/, $in{'name'})) {
         $name =~ s/\.\.//g;
-        &simplify_path($name);
-        if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
+        $name = &simplify_path($name);
+        if(!$name || system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chmod'}: $?";
         }
-        if(-d "$cwd/$name") {
+        if($name && -d "$cwd/$name") {
             if(system_logged("find ".quotemeta("$cwd/$name")." -maxdepth 1 -type f -exec chmod ".quotemeta($permissions)." {} \\;") != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }
@@ -46,8 +46,8 @@ if($in{'applyto'} eq '2') {
 if($in{'applyto'} eq '3') {
     foreach $name (split(/\0/, $in{'name'})) {
         $name =~ s/\.\.//g;
-        &simplify_path($name);
-        if(system_logged("chmod -R ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
+        $name = &simplify_path($name);
+        if(!$name || system_logged("chmod -R ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
             push @errors, "$name - $text{'error_chmod'}: $?";
         }
     }
@@ -57,13 +57,13 @@ if($in{'applyto'} eq '3') {
 if($in{'applyto'} eq '4') {
     foreach $name (split(/\0/, $in{'name'})) {
         $name =~ s/\.\.//g;
-        &simplify_path($name);
-        if(-f "$cwd/$name") {
+        $name = &simplify_path($name);
+        if($name && -f "$cwd/$name") {
             if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }
         } else {
-            if(system_logged("find ".quotemeta("$cwd/$name")." -type f -exec chmod ".quotemeta($permissions)." {} \\;") != 0) {
+            if(!$name || system_logged("find ".quotemeta("$cwd/$name")." -type f -exec chmod ".quotemeta($permissions)." {} \\;") != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }
         }
@@ -74,8 +74,8 @@ if($in{'applyto'} eq '4') {
 if($in{'applyto'} eq '5') {
     foreach $name (split(/\0/, $in{'name'})) {
         $name =~ s/\.\.//g;
-        &simplify_path($name);
-        if(-d "$cwd/$name") {
+        $name = &simplify_path($name);
+        if($name && -d "$cwd/$name") {
             if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
                 push @errors, "$name - $text{'error_chmod'}: $?";
             }

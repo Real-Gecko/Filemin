@@ -11,7 +11,7 @@ print_ajax_header();
 
 $name = $in{'name'};
 $name =~ s/\.\.//g;
-&simplify_path($name);
+$name = &simplify_path($name);
 
 #print '{"success": "1"}';
 

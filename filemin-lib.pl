@@ -311,7 +311,7 @@ sub status {
 sub sanitize {
 	my $param = @_[0];
 	$param =~ s/\.\.//g;
-	&simplify_path($param);
+	$param = &simplify_path($param);
 	return $param;
 }
 
