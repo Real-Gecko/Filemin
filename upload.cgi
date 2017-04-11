@@ -53,7 +53,7 @@ while(index($line,"$boundary--") == -1) {
             push @errors, "$path/$file $text{'error_exists'}";
             last;
         } else {
-            if (!open(OUTFILE, ">$cwd/$file")) {
+            if (!open(OUTFILE, '>', "$cwd/$file")) {
                 push @errors, "$text{'error_opening_file_for_writing'} $path/$file - $!";
                 last; # Something went wrong, abort!
             } else {
