@@ -23,7 +23,7 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
         $arr[$i] =~ s/\.\.//g;
         $arr[$i] = &simplify_path($arr[$i]);
         my @p = split('/', $arr[$i]);
-        my $name = pop(\@p);
+        my $name = pop(@p);
         if (-e "$cwd/$name") {
             push @errors, "$cwd/$name $text{'error_exists'}";
         } else {

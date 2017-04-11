@@ -26,7 +26,7 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
             $arr[$i] =~ s/\.\.//g;
             $arr[$i] = &simplify_path($arr[$i]);
             my @p = split('/', $arr[$i]);
-            my $name = pop(\@p);
+            my $name = pop(@p);
             my $suggested_name = suggest_filename($cwd, $name);
             if ($act eq "copy") {
                 system("cp -r ".quotemeta($base.$arr[$i]).
