@@ -18,6 +18,7 @@ if(defined $in{'chmod'}) {
     # Selected directories and files only
     if($in{'applyto'} eq '1') {
         foreach $name (split(/\0/, $in{'name'})) {
+			next if $name eq '';
             $name =~ s/\.\.//g;
             $name = &simplify_path($name);
             if (system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
@@ -29,6 +30,7 @@ if(defined $in{'chmod'}) {
     # Selected files and directories and files in selected directories
     if($in{'applyto'} eq '2') {
         foreach $name (split(/\0/, $in{'name'})) {
+			next if $name eq '';
             $name =~ s/\.\.//g;
             $name = &simplify_path($name);
             if(system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
@@ -45,6 +47,7 @@ if(defined $in{'chmod'}) {
     # All (recursive)
     if($in{'applyto'} eq '3') {
         foreach $name (split(/\0/, $in{'name'})) {
+			next if $name eq '';
             $name =~ s/\.\.//g;
             $name = &simplify_path($name);
             if(system_logged("chmod -R ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
@@ -56,6 +59,7 @@ if(defined $in{'chmod'}) {
     # Selected files and files under selected directories and subdirectories
     if($in{'applyto'} eq '4') {
         foreach $name (split(/\0/, $in{'name'})) {
+			next if $name eq '';
             $name =~ s/\.\.//g;
             $name = &simplify_path($name);
             if(-f "$cwd/$name") {
@@ -73,6 +77,7 @@ if(defined $in{'chmod'}) {
     # Selected directories and subdirectories
     if($in{'applyto'} eq '5') {
         foreach $name (split(/\0/, $in{'name'})) {
+			next if $name eq '';
             $name =~ s/\.\.//g;
             $name = &simplify_path($name);
             if(-d "$cwd/$name") {
@@ -106,6 +111,7 @@ if(defined $in{'chown'}) {
         # Selected directories and files only
         if($in{'applyto'} eq '1') {
             foreach $name (split(/\0/, $in{'name'})) {
+				next if $name eq '';
                 $name =~ s/\.\.//g;
                 $name = &simplify_path($name);
                 if(system_logged("chown $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
@@ -117,6 +123,7 @@ if(defined $in{'chown'}) {
         # Selected files and directories and files in selected directories
         if($in{'applyto'} eq '2') {
             foreach $name (split(/\0/, $in{'name'})) {
+				next if $name eq '';
                 $name =~ s/\.\.//g;
                 $name = &simplify_path($name);
                 if(system_logged("chown $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
@@ -133,6 +140,7 @@ if(defined $in{'chown'}) {
         # All (recursive)
         if($in{'applyto'} eq '3') {
             foreach $name (split(/\0/, $in{'name'})) {
+				next if $name eq '';
                 $name =~ s/\.\.//g;
                 $name = &simplify_path($name);
                 if(system_logged("chown -R $uid:$grid ".quotemeta("$cwd/$name")) != 0) {
@@ -144,6 +152,7 @@ if(defined $in{'chown'}) {
         # Selected files and files under selected directories and subdirectories
         if($in{'applyto'} eq '4') {
             foreach $name (split(/\0/, $in{'name'})) {
+				next if $name eq '';
                 $name =~ s/\.\.//g;
                 $name = &simplify_path($name);
                 if(-f "$cwd/$name") {
@@ -161,6 +170,7 @@ if(defined $in{'chown'}) {
         # Selected directories and subdirectories
         if($in{'applyto'} eq '5') {
             foreach $name (split(/\0/, $in{'name'})) {
+				next if $name eq '';
                 $name =~ s/\.\.//g;
                 $name = &simplify_path($name);
                 if(-d "$cwd/$name") {

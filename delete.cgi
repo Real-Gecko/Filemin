@@ -11,6 +11,7 @@ my @errors;
 print_ajax_header();
 
 foreach $name (split(/\0/, $in{'name[]'})) {
+	next if $name eq '';
     $name =~ s/\.\.//g;
     $name = &simplify_path($name);
     if(!$name || !&unlink_logged("$cwd/$name")) {

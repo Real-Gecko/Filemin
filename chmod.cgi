@@ -18,6 +18,7 @@ my $permissions = oct_to_symbolic($permissions);
 # Selected directories and files only
 if($in{'applyto'} eq '1') {
     foreach $name (split(/\0/, $in{'name'})) {
+		next if $name eq '';
         $name =~ s/\.\.//g;
         $name = &simplify_path($name);
         if (!$name || system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
@@ -29,6 +30,7 @@ if($in{'applyto'} eq '1') {
 # Selected files and directories and files in selected directories
 if($in{'applyto'} eq '2') {
     foreach $name (split(/\0/, $in{'name'})) {
+		next if $name eq '';
         $name =~ s/\.\.//g;
         $name = &simplify_path($name);
         if(!$name || system_logged("chmod ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
@@ -45,6 +47,7 @@ if($in{'applyto'} eq '2') {
 # All (recursive)
 if($in{'applyto'} eq '3') {
     foreach $name (split(/\0/, $in{'name'})) {
+		next if $name eq '';
         $name =~ s/\.\.//g;
         $name = &simplify_path($name);
         if(!$name || system_logged("chmod -R ".quotemeta($permissions)." ".quotemeta("$cwd/$name")) != 0) {
@@ -56,6 +59,7 @@ if($in{'applyto'} eq '3') {
 # Selected files and files under selected directories and subdirectories
 if($in{'applyto'} eq '4') {
     foreach $name (split(/\0/, $in{'name'})) {
+		next if $name eq '';
         $name =~ s/\.\.//g;
         $name = &simplify_path($name);
         if($name && -f "$cwd/$name") {
@@ -73,6 +77,7 @@ if($in{'applyto'} eq '4') {
 # Selected directories and subdirectories
 if($in{'applyto'} eq '5') {
     foreach $name (split(/\0/, $in{'name'})) {
+		next if $name eq '';
         $name =~ s/\.\.//g;
         $name = &simplify_path($name);
         if($name && -d "$cwd/$name") {
