@@ -42,7 +42,7 @@ Package for installation through Webmin interface
 For [**Linux**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.1.0.linux.wbm.gz) distributions and for [**FreeBSD**](https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-2.1.0.freebsd.wbm.gz).
 
 ## Update
-As of version 1.1.0 Filemin automatically checks for udpate and offers to install it if available.
+As of version 1.1.0 Filemin automatically checks for update and offers to install it if available.
 However currently Webmin itself bundles outdated 0.9 branch of the module and new version of Filemin is always downgraded with Webmin update.
 To avoid the issue since version 2.0.0 Filemin installs additional Filemin Updater module. Just click "Filemin Updater" option in "Others" menu of Webmin to reinstall Filemin.
 
