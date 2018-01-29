@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.1.1] - 2018-01-29
+- Fix: simplify_path sub not used correct by [Denis Kanchev](https://github.com/Demayl)
+- Fixed #135 (Error on pasting)
+
 ## [2.1.0] - 2016-10-20
 - Added JSON::PP package to lib to avoid dependency issue with CentOS
 - Fixed #119

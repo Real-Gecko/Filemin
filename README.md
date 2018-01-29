@@ -36,6 +36,7 @@ Works with every theme except Authentic.
 * [**ffrewer**](https://github.com/ffrewer)
 * [**SavageCore**](https://github.com/SavageCore)
 * [**Piotr Kozica**](https://github.com/vipkoza)
+* [Denis Kanchev](https://github.com/Demayl)
 
 ##Installation:
 Package for installation through Webmin interface
