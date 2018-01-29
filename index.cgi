@@ -2,7 +2,11 @@
 # File manager written in perl
 
 require './filemin-lib.pl';
-&foreign_require("webmin", "webmin-lib.pl");
+
+$usermin = &get_product_name() eq 'usermin';
+if(!$usermin) {
+	&foreign_require("webmin", "webmin-lib.pl");
+}
 
 my $vc = eval #102 fix
 {
@@ -22,7 +26,7 @@ print "<script>window.open('$webprefix/filemin/filemin.cgi','_blank');</script>"
 print "<script src='$webprefix/filemin/unauthenticated/js/markdown.min.js'></script>";
 
 # Check for updates
-if($remote_user eq 'root' & $vc) {
+if($remote_user eq 'root' & $vc & !$usermin) {
     # Check if updater is installed
     my $updater = &foreign_installed('filemin-updater');
     if(!$updater) {
