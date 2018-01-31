@@ -85,8 +85,6 @@ sub get_paths {
         }
     }
     if ($error) {
-#        &error(&text('notallowed', &html_escape($cwd),
-#                                   &html_escape(join(" , ", @allowed_paths))));
         push @errors, &text('notallowed', &html_escape($cwd),
                                    &html_escape(join(" , ", @allowed_paths)));
     }

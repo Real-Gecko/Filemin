@@ -48,5 +48,5 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
         print Mojo::JSON::to_json({'success' => 1, 'text' => $success_text, 'from' => $dir});
     }
 } else {
-    print("{\"error\": \" Error .buffer $!\"}");
+    print Mojo::JSON::to_json({'error' => "Error .buffer $!"});
 }
