@@ -210,6 +210,9 @@
                         case "paste":
                             paste(tab);
                             break;
+                        case "paste-overwriting":
+                            paste(tab, 1);
+                            break;
                         case "symlink":
                             pasteSymlink(tab);
                             break;
@@ -642,6 +645,8 @@ $(document).ready( function () {
     PNotify.prototype.options.addclass = "stack-bottomright filemin";
 
     filemin = new Filemin();
+    
+    $('[ data-item="goto" ]').tooltip({trigger: 'hover', placement: 'bottom', html: true});
 
     /* Initialize tree */
     $('#filemin-tree .tree').fancytree({
@@ -740,6 +745,9 @@ $(document).ready( function () {
                 break;
             case "paste":
                 paste(tab);
+                break;
+            case "paste-overwriting":
+                paste(tab, 1);
                 break;
             case "symlink":
                 pasteSymlink(tab);

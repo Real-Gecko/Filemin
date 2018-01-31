@@ -24,7 +24,7 @@ function rename(tab, name) {
                         showError(text.error_rename, response.error);
                     }
                 }).fail(function(jqx, text, e) {
-                    showError(text.error_title, text)
+                    showError(text.error_title, text);
                 });
             }
         }
@@ -109,7 +109,7 @@ function copySelected(tab, name) {
         $.post("copy.cgi", { 'path': tab.path, 'name': names })
         .done(function(response) {
             if(response.success) {
-                showSuccess(null, response.text)
+                showSuccess(null, response.text);
             } else {
                 showError(text.error_copy, response.error);
             }
@@ -142,14 +142,18 @@ function cutSelected(tab, name) {
     }
 }
 
-function paste(tab) {
+function paste(tab, overwrite = 0) {
     var notice = showWait(text.paste, text.notice_take_while);
-    $.post("paste.cgi", { 'path': tab.path })
+    $.post("paste.cgi", { 'path': tab.path , 'overwrite': overwrite })
     .done(function(response) {
         if(response.error) {
-            waitToError(notice, text.error_title, response.error)
+            waitToError(notice, text.error_title, response.error);
         } else {
             waitToSuccess(notice, text.notice_success, response.text);
+            var toUpdate = filemin.getTabsByPath(response.from);
+            toUpdate.forEach(function(ftab){
+                $(ftab.id + ' .list-table').bootstrapTable('refresh', { url: 'list.cgi?path=' + encodeURIComponent(ftab.path) });
+            });
         }
         $(tab.id + ' .list-table').bootstrapTable('refresh', { url: 'list.cgi?path=' + encodeURIComponent(tab.path) });
     }).fail(function(jqx, text, e) {
@@ -288,7 +292,9 @@ function bookmark(tab) {
     $.post("bookmark.cgi", { 'path': tab.path })
     .done(function(response) {
         if(response.success) {
-            $('#bookmarks').append('<li><a data-item="goto">' + escapeHTML(tab.path) + '</a></li>');
+            $('#bookmarks').append('<li><a data-item="goto" data-original-title="' + escapeHTML(tab.path) + '">' + escapeHTML(tab.path) + '</a></li>');
+            $('[ data-item="goto" ]').tooltip({trigger: 'hover', placement: 'bottom', html: true});
+
             showSuccess(null, text.bookmark_added);
         } else {
             showError(null, response.error)
@@ -777,9 +783,10 @@ function manageBookmarks() {
                             });
                             $.each(lines, function(ix, el) {
                                 if(el !== '') {
-                                    $(ul).append('<li><a data-item="goto">' + el + '</a><li>');
+                                    $(ul).append('<li><a data-item="goto" data-original-title="' + el + '">' + el + '</a><li>');
                                 }
                             });
+                            $('[ data-item="goto" ]').tooltip({trigger: 'hover', placement: 'bottom', html: true});
                         } else {
                             showError(null, response.error);
                         }
@@ -1137,6 +1144,7 @@ function disableForSearch() {
     $('#main-menu .nav li a[data-item="upload_files"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="get_from_url"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="paste"]').parent().addClass('disabled');
+    $('#main-menu .nav li a[data-item="paste_overwriting"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="symlink"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="get_sizes"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="compress_selected"]').parent().addClass('disabled');
@@ -1153,6 +1161,7 @@ function disableForEdit() {
     $('#main-menu .nav li a[data-item="copy_selected"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="cut_selected"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="paste"]').parent().addClass('disabled');
+    $('#main-menu .nav li a[data-item="paste_overwriting"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="symlink"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="get_sizes"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="chmod_selected"]').parent().addClass('disabled');

@@ -85,8 +85,6 @@ sub get_paths {
         }
     }
     if ($error) {
-#        &error(&text('notallowed', &html_escape($cwd),
-#                                   &html_escape(join(" , ", @allowed_paths))));
         push @errors, &text('notallowed', &html_escape($cwd),
                                    &html_escape(join(" , ", @allowed_paths)));
     }
@@ -155,7 +153,7 @@ sub get_bookmarks {
     }
     $result = '';
     foreach $bookmark(@$bookmarks) {
-        $result.= "<li><a data-item='goto'>$bookmark</a><li>";
+        $result.= "<li><a data-item='goto' data-original-title='$bookmark'>$bookmark</a><li>";
     }
     return $result;
 }

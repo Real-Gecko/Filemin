@@ -2,8 +2,8 @@
 OLD="bin\/perl"
 NEW="local\/bin\/perl"
 FILES="*.cgi"
-TGDIR="./distrib/filemin"
-DISTR="./distrib"
+TGDIR="./upload/filemin"
+DISTR="./upload"
 mkdir -p $TGDIR
 mkdir -p $TGDIR/unauthenticated
 mkdir -p $TGDIR/unauthenticated/js
@@ -72,7 +72,8 @@ done < module.info
 
 echo "Packing FreeBSD version $VERSION"
 
-cd distrib
+cd $DISTR
 tar -zcf filemin-$VERSION.freebsd.wbm.gz filemin
+tar -zcf filemin-$VERSION.freebsd.full.wbm.gz filemin
 cd ../
 rm -rf $TGDIR

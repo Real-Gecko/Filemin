@@ -26,12 +26,13 @@ my $result;
 my $command;
 
 if ($archive_type eq 'application/zip') {
-    $command = "unzip -l ".quotemeta("$cwd/$file");
+    $command = "unzip -l ".quotemeta("$cwd/$file")." 2>&1";
     $result = `$command`;
     print Mojo::JSON::to_json({'success' => $result});
 } elsif (index($archive_type, "tar") != -1 || index($archive_type, "gzip") != -1) {
-    $command = "tar tvf ".quotemeta("$cwd/$file");
+    $command = "tar tvf ".quotemeta("$cwd/$file")." 2>&1";
     $result = `$command`;
+    # $result = system($command);
     print Mojo::JSON::to_json({'success' => $result});
 } else {
     print Mojo::JSON::to_json({'error' => "$archive_type $text{'error_archive_type_not_supported'}"});

@@ -1,10 +1,40 @@
 # Change Log
+## [2.2.0] - 2018-01-31
+### Fixed
+- Fixed [#126](https://github.com/Real-Gecko/Filemin/issues/126)
+- Fixed [#124](https://github.com/Real-Gecko/Filemin/issues/124)
+- Fixed [#125](https://github.com/Real-Gecko/Filemin/issues/125)
+- Fixed listing of corrupt archives
+- Fixed [#127](https://github.com/Real-Gecko/Filemin/issues/127)
+
+### Added
+- Added symlink for text/csv file mimetype image to point to text/plain
+
+### Changed
+- Some code cleanup
+- Updates are now downloaded form release assets to avoid keeping binary release files in repo itself
+- Update now will respect installed Filemin flavour, so cdn version will seek for cdn update etc
+
+### Updated
+- Updated Bootstrap to 3.3.7
+- Updated jQuery to 2.2.4
+- Updated jQueryUI to 1.12.1
+- Updated Blueimp File Upload to 9.20.0
+- Updated Bootstrap Select to 1.12.4
+
+## [2.1.1] - 2018-01-29
+### Fixed
+- Fix: simplify_path sub not used correct by [Denis Kanchev](https://github.com/Demayl)
+- Fixed [#135](https://github.com/Real-Gecko/Filemin/issues/135) (Error on pasting)
 
 ## [2.1.0] - 2016-10-20
-- Added JSON::PP package to lib to avoid dependency issue with CentOS
-- Fixed #119
+### Fixed
+- Fixed [#119](https://github.com/Real-Gecko/Filemin/issues/119)
 - Security fixes and tabs cleanup
-- Fixed #39 (SELinux support)
+- Fixed [#39](https://github.com/Real-Gecko/Filemin/issues/39) (SELinux support)
+
+### Added
+- Added JSON::PP package to lib to avoid dependency issue with CentOS
 - Added "View Buffer" functionality
 - Added builtin version
 
@@ -12,11 +42,12 @@
 - Dutch translation update by [Zen4All](https://github.com/Zen4All)
 
 ## [2.0.1] - 2016-07-17
-- Fixed #111
+### Fixed
+- Fixed [#111](https://github.com/Real-Gecko/Filemin/issues/111)
 
 ## [2.0.0] - 2016-05-27
 ### Fixed
-- Fixed #104
+- Fixed [#104](https://github.com/Real-Gecko/Filemin/issues/104)
 - Fixed "Nested quantifiers in regex" caused by some dir names
 - Switched to Mojo::JSON thus resolving localization issues in popup messages
 - Fixed Webmin 1.800 update issue
@@ -44,8 +75,8 @@
 ## [1.1.2] - 2016-05-16
 ### Fixed
 - Fixed localization on "copy/cut/paste" messages
-- Fixed #102
-- Fixed #99
+- Fixed [#102](https://github.com/Real-Gecko/Filemin/issues/102)
+- Fixed [#99](https://github.com/Real-Gecko/Filemin/issues/99)
 
 ### Added
 - Polish translation by [Piotr Kozica](https://github.com/vipkoza)
@@ -61,14 +92,14 @@
 ### Fixed
 - Fixed notifications bugs
 - Fixed The Unified compatibility
-- Fixed filenames escaping on the userside - #98
+- Fixed filenames escaping on the userside - [#98](https://github.com/Real-Gecko/Filemin/issues/98)
 - Fixed non-latin folder names handling during session load
 
 ### Added
 - Added 'Checking for update' message
 - Added module configuration link to index.cgi
 - Dutch translation by [Zen4All](https://github.com/Zen4All)
-- Filemin now follows window resize event - #92
+- Filemin now follows window resize event - [#92](https://github.com/Real-Gecko/Filemin/issues/92)
 
 ### Changed
 - Updated Bootstrap Table to version 1.10.1, patch is not needed any more
@@ -76,23 +107,23 @@
 
 ## [1.1.0] - 2016-02-08
 ### Fixed
-- Fixed HTML special characters decoding - #82
+- Fixed HTML special characters decoding - [#82](https://github.com/Real-Gecko/Filemin/issues/82)
 - Fixed relative symlinks navigation in "chroot"
-- Checked scripts for incorrect variables usage - #90
+- Checked scripts for incorrect variables usage - [#90](https://github.com/Real-Gecko/Filemin/issues/90)
 - Security tightening
 - Modal forms submitted via AJAX on CR key instead of reloading page
 - Fixed tooltips width
 
 ### Added
-- Automagic update - #86
+- Automagic update - [#86](https://github.com/Real-Gecko/Filemin/issues/86)
 - Multiple navigator tabs
-- Treeview folder structure - #68
+- Treeview folder structure - [#68](https://github.com/Real-Gecko/Filemin/issues/68)
 - Sessions, tabs are saved and restored
 - Row is highlighted on context menu call if no other rows selected
 - Extended symlinks support
 - Images preview
 - Listing archive contents
-- Get multiple folder sizes - #50
+- Get multiple folder sizes - [#50](https://github.com/Real-Gecko/Filemin/issues/50)
 - CodeMirror mode selector
 
 ### Changed
@@ -102,7 +133,7 @@
 - More contrast notifications
 - Check for editable files done on the user side
 - Search results are opened in separate tab
-- Default left click behavior change - #79
+- Default left click behavior change - [#79](https://github.com/Real-Gecko/Filemin/issues/79)
   * Editable files opened for edition
   * Images previewed
   * Archives listed
@@ -115,13 +146,13 @@
 ## [0.9.6] - 2015-08-27
 ### Fixed
 - Fixed 'Undefined subroutine &filemin::ceil Caused on some systems by not including POSIX package in filemin-lib.pl.
-- Fixing conflict with Authentic Theme codeMirror by Ilia. #42
-- Working as non UNIX user is now possible. By Jamie Cameron. #52
-- Pasting a directory either by copy or cut pasted not the directory, but it's content. #54
+- Fixing conflict with Authentic Theme codeMirror by Ilia. [#42](https://github.com/Real-Gecko/Filemin/issues/42)
+- Working as non UNIX user is now possible. By Jamie Cameron. [#52](https://github.com/Real-Gecko/Filemin/issues/52)
+- Pasting a directory either by copy or cut pasted not the directory, but it's content. [#54](https://github.com/Real-Gecko/Filemin/issues/54)
 
 ### Added
 - Added ACL options to allowing running as a specific user, thanks Jamie :)
-- Module is now installable from Usermin. When running in Usermin, access is always as the connected user. #46
+- Module is now installable from Usermin. When running in Usermin, access is always as the connected user. [#46](https://github.com/Real-Gecko/Filemin/issues/46)
 
 ### Changed
 - WARNING: work as root is now DEFAULT behavior.
@@ -136,8 +167,8 @@
 
 ## [0.9.5] - 2015-08-07
 ### Fixed
-- Permissions column configurable and displayable. #35
-- README instructions for Debian/Ubuntu fixed. #36
+- Permissions column configurable and displayable. [#35](https://github.com/Real-Gecko/Filemin/issues/35)
+- README instructions for Debian/Ubuntu fixed. [#36](https://github.com/Real-Gecko/Filemin/issues/36)
 
 ### Added
 - Made top level menu items translatable.
@@ -150,7 +181,7 @@
 
 ## [0.9.4] - 2015-07-31
 ### Fixed
-- Removed Data::Dumper declaration. #31
+- Removed Data::Dumper declaration. [#31](https://github.com/Real-Gecko/Filemin/issues/31)
 
 ### Added
 - Implemented "Search". Users may search files and folders by name, wildcards supported.
@@ -167,14 +198,14 @@
 - Added "Save and close" button on file edit page.
   Save button now saves and reopens file for editing again,
   while save and close saves and redirects back to originated folder.
-- Added Codemirror to module for syntax highlighting, thanks to https://github.com/pabloko for solution. #21
+- Added Codemirror to module for syntax highlighting, thanks to https://github.com/pabloko for solution. [#21](https://github.com/Real-Gecko/Filemin/issues/21)
   Under Authentic 14.01 now works too, thanks to https://github.com/qooob for fix.
-- Added new toolbar style - menu-like with dropdowns (Authentic only). #28
-- Added zip compression method, user now can select between 'zip' and 'tar' compression methods. #24
+- Added new toolbar style - menu-like with dropdowns (Authentic only). [#28](https://github.com/Real-Gecko/Filemin/issues/28)
+- Added zip compression method, user now can select between 'zip' and 'tar' compression methods. [#24](https://github.com/Real-Gecko/Filemin/issues/24)
 
 ### Changed
 - Update Russian translation.
-- Chmodding now have new option to apply new permissions to: #27
+- Chmodding now have new option to apply new permissions to: [#27](https://github.com/Real-Gecko/Filemin/issues/27)
   * Selected directories and files only
   * Selected files and directorires and files in selected directories
   * All (recursive)
@@ -189,8 +220,8 @@
   Added "Work as root" option to ACL, if enabled for any particular user he/she will work as 'root',
   but directory access will still be limited to those listed in ACL.
   BEWARE!!! DO NOT ENABLE THIS OPTION FOR ANYONE UNLESS YOU'RE REALLY SURE WHAT ARE YOU DOING!!!
-- YAML files are now editable. #17
-- Using Perl's '-d' to determine if entry is file or folder. #20
+- YAML files are now editable. [#17
+- Using Perl's '-d' to determine if entry is file or folder. [#20](https://github.com/Real-Gecko/Filemin/issues/20)
 
 ### Changed
 - Removed unused CGI dependency.
@@ -199,7 +230,7 @@
 
 ## [0.9.2] - 2015-06-18
 ###Fixed
-- CRLF is replaced with UNIX style LF while saving a file. #11
+- CRLF is replaced with UNIX style LF while saving a file. [#11](https://github.com/Real-Gecko/Filemin/issues/11)
 - Removed "openlayers" folder. How did it get in here???? :D
 - Fixed "select-unselect" checkbox behavior for old themes.
 - Fixed copy/cut/paste functionality.
@@ -234,7 +265,7 @@
 
 ## [0.9.1] - 2015-05-29
 ### Fixed
-- Not sure if it was an issue, cause I was unable to reproduce "User without $HOME" scenario. However added some code to handle this, just in case. #8
+- Not sure if it was an issue, cause I was unable to reproduce "User without $HOME" scenario. However added some code to handle this, just in case. [#8](https://github.com/Real-Gecko/Filemin/issues/8)
 
 ### Added
 - Added BWTheme support.
@@ -242,7 +273,7 @@
 - Added $in{'...'} parameters check in some operations to prevent errors if user submits emtpy form by hitting "Enter".
 - Added sticky bit and setgid to chmod.
 - Added .deb package for distribution flexibility.
-- Added HDD icon for "/" while under root for legacy themes. #5
+- Added HDD icon for "/" while under root for legacy themes. [#5](https://github.com/Real-Gecko/Filemin/issues/5)
 
 ### Changed
 - Changed license to BSD style.
@@ -257,8 +288,8 @@
 - Added a work around to fix JS hell provided by Framed Theme family with "onmouseover" and "onmouseout" events, that led to unselectable rows by "Select All" and "Inverse Selection" operations.
 - Using the same class to highlight rows as Authentic.
 - Moved icons to images folder, as Authentic Theme author improved third party modules' files handling.
-- Switched to Regexp::Common for URI validation in "HTTP Download" operation to avoid additional dependencies. #6
-- Removed Archive::* dependencies, all archive extraction procedures now go through system calls. *.tar.gz, *.tar.xz, *.tar.bz2, *.zip archive types tested. #7
+- Switched to Regexp::Common for URI validation in "HTTP Download" operation to avoid additional dependencies. [#6](https://github.com/Real-Gecko/Filemin/issues/6)
+- Removed Archive::* dependencies, all archive extraction procedures now go through system calls. *.tar.gz, *.tar.xz, *.tar.bz2, *.zip archive types tested. [#7](https://github.com/Real-Gecko/Filemin/issues/7)
 
 ## [0.9] - 2015-05-08
 ### Mielstone reached
@@ -267,14 +298,14 @@
 - BEWARE: uncompressing archive still overwrites existing files!
 
 ### Fixed
-- Some misspellings fixed. #3
+- Some misspellings fixed. [#3](https://github.com/Real-Gecko/Filemin/issues/3)
 - Minor tweaks for modern interface
 - More verbose output on errors
 
 ### Changed
-- After long discussion upper-left toolbar finally looks good in modern interface. #1
+- After long discussion upper-left toolbar finally looks good in modern interface. [#1](https://github.com/Real-Gecko/Filemin/issues/1)
   Thanks to https://github.com/Goeny for his brilliant solution and https://github.com/qooob for debugging
-- Replaced '~' for '/' directory with FontAwesome's HDD icon, still open for discussion... #5
+- Replaced '~' for '/' directory with FontAwesome's HDD icon, still open for discussion... [#5](https://github.com/Real-Gecko/Filemin/issues/5)
 
 ## [0.8.3] - 2015-05-06
 ### Added
