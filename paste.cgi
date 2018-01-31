@@ -42,10 +42,10 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
         foreach $error(@errors) {
             $result.= "$error<br>";
         }
-        print '{"error": "'.$result.'"}';
+        print Mojo::JSON::to_json({'error' => $result});
     } else {
         my $success_text = ($act eq "copy") ? $text{'copy_complete'} : $text {'move_complete'};
-        print("{\"success\" : \"1\", \"text\" : \"$success_text\"}");
+        print Mojo::JSON::to_json({'success' => 1, 'text' => $success_text, 'from' => $dir});
     }
 } else {
     print("{\"error\": \" Error .buffer $!\"}");

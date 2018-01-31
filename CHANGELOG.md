@@ -3,6 +3,9 @@
 ### Fixed
 - Fixed #126
 
+### Added
+- Added symlink for text/csv file mimetype image to point to text/plain
+
 ### Updated
 - Updated Bootstrap to 3.3.7
 - Updated jQuery to 2.2.4

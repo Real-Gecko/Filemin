@@ -150,6 +150,10 @@ function paste(tab) {
             waitToError(notice, text.error_title, response.error)
         } else {
             waitToSuccess(notice, text.notice_success, response.text);
+            var toUpdate = filemin.getTabsByPath(response.from);
+            toUpdate.forEach(function(ftab){
+                $(ftab.id + ' .list-table').bootstrapTable('refresh', { url: 'list.cgi?path=' + encodeURIComponent(ftab.path) });
+            });
         }
         $(tab.id + ' .list-table').bootstrapTable('refresh', { url: 'list.cgi?path=' + encodeURIComponent(tab.path) });
     }).fail(function(jqx, text, e) {
