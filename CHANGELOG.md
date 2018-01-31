@@ -1,14 +1,28 @@
 # Change Log
+## [2.2.0] - 2018-
+### Fixed
+- Fixed #126
+
+### Updated
+- Updated Bootstrap to 3.3.7
+- Updated jQuery to 2.2.4
+- Updated jQueryUI to 1.12.1
+- Updated Blueimp File Upload to 9.20.0
+- Updated Bootstrap Select to 1.12.4
 
 ## [2.1.1] - 2018-01-29
+### Fixed
 - Fix: simplify_path sub not used correct by [Denis Kanchev](https://github.com/Demayl)
 - Fixed #135 (Error on pasting)
 
 ## [2.1.0] - 2016-10-20
-- Added JSON::PP package to lib to avoid dependency issue with CentOS
+### Fixed
 - Fixed #119
 - Security fixes and tabs cleanup
 - Fixed #39 (SELinux support)
+
+### Added
+- Added JSON::PP package to lib to avoid dependency issue with CentOS
 - Added "View Buffer" functionality
 - Added builtin version
 
@@ -16,6 +30,7 @@
 - Dutch translation update by [Zen4All](https://github.com/Zen4All)
 
 ## [2.0.1] - 2016-07-17
+### Fixed
 - Fixed #111
 
 ## [2.0.0] - 2016-05-27
