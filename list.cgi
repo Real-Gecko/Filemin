@@ -52,7 +52,7 @@ if($in{'query'}) {
             for $path (@allowed_paths) {
                 my $slashed = $path;
                 $slashed .= "/" if ($slashed !~ /\/$/);
-                push @tmp_list, grep { $slashed =~ /\Q^$_\/\E/ ||
+                push @tmp_list, grep { $slashed =~ /^\Q$_\/\E/ ||
                                        $_ =~ /\Q$slashed\E/ } @list;
             }
             # Remove duplicates

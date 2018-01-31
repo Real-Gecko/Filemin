@@ -8,7 +8,7 @@ get_paths();
 
 print_ajax_header();
 
-if(open(my $fh, "<".&get_paste_buffer_file())) {
+if(open(my $fh, "<", &get_paste_buffer_file())) {
     my @arr = <$fh>;
     close($fh);
     my $act = $arr[0];

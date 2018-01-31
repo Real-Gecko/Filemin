@@ -13,6 +13,7 @@ print_ajax_header();
 $size = 0;
 @names = (split(/\0/, $in{'name[]'}));
 foreach $name(@names) {
+	next if $name eq '';
     # Remove exploiting of "../" in file parameters
     $name =~ s/\.\.//g;
     $name = &simplify_path($name);
