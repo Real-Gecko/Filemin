@@ -1,5 +1,5 @@
 # Change Log
-## [2.2.0] - 2018-
+## [2.2.0] - 2018-01-31
 ### Fixed
 - Fixed [#126](https://github.com/Real-Gecko/Filemin/issues/126)
 - Fixed [#124](https://github.com/Real-Gecko/Filemin/issues/124)
