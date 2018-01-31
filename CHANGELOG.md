@@ -2,7 +2,10 @@
 ## [2.2.0] - 2018-
 ### Fixed
 - Fixed #126
+- Fixed #124
 - Fixed #125
+- Fixed listing of corrupt archives
+- Fixed #127
 
 ### Added
 - Added symlink for text/csv file mimetype image to point to text/plain

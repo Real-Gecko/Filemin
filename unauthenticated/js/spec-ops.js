@@ -142,9 +142,9 @@ function cutSelected(tab, name) {
     }
 }
 
-function paste(tab) {
+function paste(tab, overwrite = 0) {
     var notice = showWait(text.paste, text.notice_take_while);
-    $.post("paste.cgi", { 'path': tab.path })
+    $.post("paste.cgi", { 'path': tab.path , 'overwrite': overwrite })
     .done(function(response) {
         if(response.error) {
             waitToError(notice, text.error_title, response.error)
@@ -1144,6 +1144,7 @@ function disableForSearch() {
     $('#main-menu .nav li a[data-item="upload_files"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="get_from_url"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="paste"]').parent().addClass('disabled');
+    $('#main-menu .nav li a[data-item="paste_overwriting"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="symlink"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="get_sizes"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="compress_selected"]').parent().addClass('disabled');
@@ -1160,6 +1161,7 @@ function disableForEdit() {
     $('#main-menu .nav li a[data-item="copy_selected"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="cut_selected"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="paste"]').parent().addClass('disabled');
+    $('#main-menu .nav li a[data-item="paste_overwriting"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="symlink"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="get_sizes"]').parent().addClass('disabled');
     $('#main-menu .nav li a[data-item="chmod_selected"]').parent().addClass('disabled');

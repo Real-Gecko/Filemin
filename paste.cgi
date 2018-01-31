@@ -18,7 +18,8 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
     $dir =~ s/\.\.//g;
     $dir = &simplify_path($dir);
     my @errors;
-    if ($cwd eq &simplify_path($base.$dir) & $act eq "cut")  {
+
+    if ($cwd eq &simplify_path($base.$dir) & ($act eq "cut" || $in{'overwrite'}))  {
         push @errors, $text{'error_pasting_nonsence'};
     } else {
         for(my $i = 2;$i <= scalar(@arr)-1;$i++) {
@@ -27,7 +28,12 @@ if(open(my $fh, "<".&get_paste_buffer_file())) {
             $arr[$i] = &simplify_path($arr[$i]);
             my @p = split('/', $arr[$i]);
             my $name = pop(@p);
-            my $suggested_name = suggest_filename($cwd, $name);
+            my $suggested_name;
+            if ($in{'overwrite'}) {
+                $suggested_name = $name;
+            } else {
+                $suggested_name = suggest_filename($cwd, $name);
+            }
             if ($act eq "copy") {
                 system("cp -r ".quotemeta($base.$arr[$i]).
                        " ".quotemeta("$cwd/$suggested_name")) == 0 or push @errors, $base.$arr[$i]." $text{'error_copy'} $!";

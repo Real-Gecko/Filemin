@@ -210,6 +210,9 @@
                         case "paste":
                             paste(tab);
                             break;
+                        case "paste-overwriting":
+                            paste(tab, 1);
+                            break;
                         case "symlink":
                             pasteSymlink(tab);
                             break;
@@ -742,6 +745,9 @@ $(document).ready( function () {
                 break;
             case "paste":
                 paste(tab);
+                break;
+            case "paste-overwriting":
+                paste(tab, 1);
                 break;
             case "symlink":
                 pasteSymlink(tab);
