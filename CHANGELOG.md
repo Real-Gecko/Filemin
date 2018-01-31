@@ -2,9 +2,13 @@
 ## [2.2.0] - 2018-
 ### Fixed
 - Fixed #126
+- Fixed #125
 
 ### Added
 - Added symlink for text/csv file mimetype image to point to text/plain
+
+### Changed
+- Some code cleanup
 
 ### Updated
 - Updated Bootstrap to 3.3.7

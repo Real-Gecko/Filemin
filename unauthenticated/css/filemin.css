@@ -206,6 +206,11 @@ nav.navbar {
     padding-right: 5px;
 }
 
+#bookmarks [data-item="goto"] {
+    max-width: 340px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 /*
 .column-field-name {
     cursor: pointer;

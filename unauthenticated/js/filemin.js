@@ -642,6 +642,8 @@ $(document).ready( function () {
     PNotify.prototype.options.addclass = "stack-bottomright filemin";
 
     filemin = new Filemin();
+    
+    $('[ data-item="goto" ]').tooltip({trigger: 'hover', placement: 'bottom', html: true});
 
     /* Initialize tree */
     $('#filemin-tree .tree').fancytree({

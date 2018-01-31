@@ -292,7 +292,9 @@ function bookmark(tab) {
     $.post("bookmark.cgi", { 'path': tab.path })
     .done(function(response) {
         if(response.success) {
-            $('#bookmarks').append('<li><a data-item="goto">' + escapeHTML(tab.path) + '</a></li>');
+            $('#bookmarks').append('<li><a data-item="goto" data-original-title="' + escapeHTML(tab.path) + '">' + escapeHTML(tab.path) + '</a></li>');
+            $('[ data-item="goto" ]').tooltip({trigger: 'hover', placement: 'bottom', html: true});
+
             showSuccess(null, text.bookmark_added);
         } else {
             showError(null, response.error)
@@ -781,9 +783,10 @@ function manageBookmarks() {
                             });
                             $.each(lines, function(ix, el) {
                                 if(el !== '') {
-                                    $(ul).append('<li><a data-item="goto">' + el + '</a><li>');
+                                    $(ul).append('<li><a data-item="goto" data-original-title="' + el + '">' + el + '</a><li>');
                                 }
                             });
+                            $('[ data-item="goto" ]').tooltip({trigger: 'hover', placement: 'bottom', html: true});
                         } else {
                             showError(null, response.error);
                         }

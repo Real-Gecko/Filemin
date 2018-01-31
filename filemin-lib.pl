@@ -153,7 +153,7 @@ sub get_bookmarks {
     }
     $result = '';
     foreach $bookmark(@$bookmarks) {
-        $result.= "<li><a data-item='goto'>$bookmark</a><li>";
+        $result.= "<li><a data-item='goto' data-original-title='$bookmark'>$bookmark</a><li>";
     }
     return $result;
 }
