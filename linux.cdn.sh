@@ -1,7 +1,7 @@
 #!/bin/sh
 FILES="*.cgi"
-TGDIR="./distrib/filemin"
-DISTR="./distrib"
+TGDIR="./upload/filemin"
+DISTR="./upload"
 mkdir -p $TGDIR
 mkdir -p $TGDIR/unauthenticated
 mkdir -p $TGDIR/unauthenticated/js
@@ -24,7 +24,7 @@ cp config $TGDIR
 cp config.info $TGDIR
 cp defaultacl $TGDIR
 cp filemin-lib.pl $TGDIR
-cp module.info $TGDIR
+sed -e "s/flavour=full/flavour=cdn/g" "module.info" > "$TGDIR/module.info"
 
 for f in $FILES
 do
@@ -56,7 +56,7 @@ done < module.info
 
 echo "Packing Linux CDN version $VERSION"
 
-cd distrib
-tar -zcf filemin-$VERSION.cdn.linux.wbm.gz filemin
+cd $DISTR
+tar -zcf filemin-$VERSION.linux.cdn.wbm.gz filemin
 cd ../
 rm -rf $TGDIR

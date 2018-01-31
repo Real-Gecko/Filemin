@@ -2,8 +2,8 @@
 OLD="https:\/\/cdnjs.cloudflare.com\/ajax"
 NEW="unauthenticated"
 FILES="*.cgi"
-TGDIR="./distrib/filemin"
-DISTR="./distrib"
+TGDIR="./upload/filemin"
+DISTR="./upload"
 mkdir -p $TGDIR
 mkdir -p $TGDIR/unauthenticated
 mkdir -p $TGDIR/unauthenticated/js
@@ -69,8 +69,9 @@ done < module.info
 
 echo "Packing Linux version $VERSION"
 
-cd distrib
+cd $DISTR
 tar -zcf filemin-$VERSION.linux.wbm.gz filemin
+tar -zcf filemin-$VERSION.linux.full.wbm.gz filemin
 cd ../
-perl makemoduledeb.pl --target-dir distrib distrib/filemin
+perl makemoduledeb.pl --target-dir $DISTR $TGDIR
 rm -rf $TGDIR

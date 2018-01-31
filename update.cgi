@@ -13,14 +13,16 @@ $webprefix = $gconfig{'webprefix'};
 if($remote_user eq 'root') {
     my $os = $gconfig{'os_type'};
     my $version = $in{'version'};
+    my $flavour = $in{'flavour'};
     if(index($os, 'linux') != -1) {
         $os = 'linux';
-    } elsif (index($os, 'freebsd') != -1){
+    } elsif (index($os, 'freebsd') != -1) {
         $os = 'freebsd';
     } else {
         &error('WHAT???');
     }
-    my $url = "https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-$version.$os.wbm.gz";
+    # my $url = "https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-$version.$os.wbm.gz";
+    my $url = "https://github.com/Real-Gecko/Filemin/releases/download/$version/filemin-$version.$os.$flavour.wbm.gz";
     my $tempfile = transname();
     my ($host, $port, $page, $ssl) = &parse_http_url($url);
     &http_download($host, $port, $page, $tempfile, undef, \&progress_callback, $ssl);

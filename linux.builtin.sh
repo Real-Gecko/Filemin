@@ -2,8 +2,8 @@
 OLD="https:\/\/cdnjs.cloudflare.com\/ajax"
 NEW="unauthenticated"
 FILES="*.cgi"
-TGDIR="./distrib/filemin"
-DISTR="./distrib"
+TGDIR="./upload/filemin"
+DISTR="./upload"
 mkdir -p $TGDIR
 mkdir -p $TGDIR/unauthenticated
 mkdir -p $TGDIR/unauthenticated/js
@@ -26,7 +26,7 @@ cp config $TGDIR
 cp config.info $TGDIR
 cp defaultacl $TGDIR
 cp filemin-lib.pl $TGDIR
-cp module.info $TGDIR
+sed -e "s/flavour=full/flavour=builtin/g" "module.info" > "$TGDIR/module.info"
 
 for f in $FILES
 do
@@ -70,7 +70,7 @@ done < module.info
 echo "Packing Linux builtin version $VERSION"
 mv -f $TGDIR/filemin.cgi $TGDIR/index.cgi
 
-cd distrib
+cd $DISTR
 tar -zcf filemin-$VERSION.linux.builtin.wbm.gz filemin
 cd ../
 rm -rf $TGDIR

@@ -24,7 +24,7 @@ function rename(tab, name) {
                         showError(text.error_rename, response.error);
                     }
                 }).fail(function(jqx, text, e) {
-                    showError(text.error_title, text)
+                    showError(text.error_title, text);
                 });
             }
         }
@@ -109,7 +109,7 @@ function copySelected(tab, name) {
         $.post("copy.cgi", { 'path': tab.path, 'name': names })
         .done(function(response) {
             if(response.success) {
-                showSuccess(null, response.text)
+                showSuccess(null, response.text);
             } else {
                 showError(text.error_copy, response.error);
             }
@@ -147,7 +147,7 @@ function paste(tab, overwrite = 0) {
     $.post("paste.cgi", { 'path': tab.path , 'overwrite': overwrite })
     .done(function(response) {
         if(response.error) {
-            waitToError(notice, text.error_title, response.error)
+            waitToError(notice, text.error_title, response.error);
         } else {
             waitToSuccess(notice, text.notice_success, response.text);
             var toUpdate = filemin.getTabsByPath(response.from);
