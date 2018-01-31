@@ -33,6 +33,7 @@ Features modern GUI with the help of numerous JS and CSS libraries. Makes file m
 * [**SavageCore**](https://github.com/SavageCore)
 * [**Piotr Kozica**](https://github.com/vipkoza)
 * [**Denis Kanchev**](https://github.com/Demayl)
+* [**eldk**](https://github.com/eldk)
 
 ## Installation:
 Package for installation through Webmin interface
