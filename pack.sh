@@ -1,3 +1,4 @@
+#!/bin/bash
 rm upload/*
 cp unauthenticated/js/filemin.js unauthenticated/js/filemin.min.js
 cp unauthenticated/js/spec-ops.js unauthenticated/js/spec-ops.min.js

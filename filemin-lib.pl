@@ -98,7 +98,7 @@ sub get_paths {
     if (scalar(@errors) > 0) {
         $result = '';
         foreach $error(@errors) {
-            $result.= "$error<br>";
+            $result.= "$error\\n";
         }
         print_ajax_header();
         print '{"error": "'.$result.'"}';

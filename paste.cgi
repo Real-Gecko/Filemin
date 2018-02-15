@@ -46,7 +46,7 @@ if(open(my $fh, "<", &get_paste_buffer_file())) {
     if (scalar(@errors) > 0) {
         $result = '';
         foreach $error(@errors) {
-            $result.= "$error<br>";
+            $result.= "$error\\n";
         }
         print Mojo::JSON::to_json({'error' => $result});
     } else {

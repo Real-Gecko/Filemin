@@ -142,7 +142,7 @@ foreach(@list) {
 if (scalar(@errors) > 0) {
     $result = '';
     foreach $error(@errors) {
-        $result.= "$error<br>";
+        $result.= "$error\\n";
     }
     print '{"error": "'.$result.'"}';
 } else {

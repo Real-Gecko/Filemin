@@ -1,4 +1,15 @@
 # Change Log
+## [2.2.1] - 2018-02-15
+### Fixed
+- By [**Denis Kanchev**](https://github.com/Demayl)
+  - Fix: simplify_path sub not used correct
+  - fix: typo in quote regex in list.cgi for allowed_paths
+  - fix: typo on pop in paste.cgi and symlink.cgi - so they work again
+  - imp: use 3 arg open
+  - fix: skip empty name of files - they are not needed because the path is separate from their name and empty name means nothing.
+- Small typo fix by [**eldk**](https://github.com/eldk)
+- Fixed new line handling for JSON, thus making module work in Usermin
+
 ## [2.2.0] - 2018-01-31
 ### Fixed
 - Fixed [#126](https://github.com/Real-Gecko/Filemin/issues/126)
