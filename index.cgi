@@ -41,7 +41,7 @@ if($remote_user eq 'root' & $vc & !$usermin) {
     } else {
         my %updater_info = &get_module_info('filemin-updater');
         $installed = version->parse($updater_info{'version'});
-        $latest = version->parse('1.0.1');
+        $latest = version->parse('1.0.2');
         if ($installed < $latest) {
             print "Updating updater<br>";
             $irv = &webmin::install_webmin_module("$module_root_directory/unauthenticated/filemin-updater.tar.gz");
@@ -66,8 +66,9 @@ if($remote_user eq 'root' & $vc & !$usermin) {
     my $remote = version->parse($remote_module_info{'version'});
     my $local = version->parse($module_info{'version'});
     my $flavour = $module_info{'flavour'};
+    &save_module_config({'flavour' => $flavour}, 'filemin-updater');
     if($local < $remote) {
-        print "<h4>$text{'newer_version_available'}<br><a href='update.cgi?version=$remote&flavour=$flavour'>$text{'click_to_update'}</a></h4>";
+        print "<h4>$text{'newer_version_available'}<br><a href='update.cgi?version=$remote'>$text{'click_to_update'}</a></h4>";
     } else {
         print $text{'module_up_to_date'};
     };

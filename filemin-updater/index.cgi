@@ -28,7 +28,7 @@ if($remote_user eq 'root' & $vc) {
     %module_info = &get_module_info('filemin');
     my $remote = version->parse($remote_module_info{'version'});
     my $local = version->parse($module_info{'version'});
-    my $flavour = $in{'flavour'};
+    my $flavour = $config{'flavour'};
     if($local < $remote) {
 	    my $os = $gconfig{'os_type'};
 	    if(index($os, 'linux') != -1) {

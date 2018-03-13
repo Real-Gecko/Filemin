@@ -2,5 +2,5 @@ desc=Filemin Updater
 os_support=*-linux freebsd
 name=Filemin Updater
 longdesc=Filemin updater
-version=1.0.1
+version=1.0.2
 webmin=1

@@ -70,7 +70,7 @@ done < module.info
 echo "Packing Linux version $VERSION"
 
 cd $DISTR
-tar -zcf filemin-$VERSION.linux.wbm.gz filemin
+# tar -zcf filemin-$VERSION.linux.wbm.gz filemin
 tar -zcf filemin-$VERSION.linux.full.wbm.gz filemin
 cd ../
 perl makemoduledeb.pl --target-dir $DISTR $TGDIR

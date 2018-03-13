@@ -73,7 +73,7 @@ done < module.info
 echo "Packing FreeBSD version $VERSION"
 
 cd $DISTR
-tar -zcf filemin-$VERSION.freebsd.wbm.gz filemin
+# tar -zcf filemin-$VERSION.freebsd.wbm.gz filemin
 tar -zcf filemin-$VERSION.freebsd.full.wbm.gz filemin
 cd ../
 rm -rf $TGDIR

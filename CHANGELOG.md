@@ -1,4 +1,8 @@
 # Change Log
+## [2.2.2] - 2018-03-13
+### Fixed
+- Fixed [#141](https://github.com/Real-Gecko/Filemin/issues/141) - updater will keep Filemin flavour in own config.
+
 ## [2.2.1] - 2018-02-15
 ### Fixed
 - By [**Denis Kanchev**](https://github.com/Demayl)
