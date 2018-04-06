@@ -39,7 +39,7 @@ if($remote_user eq 'root' & $vc) {
 	        &error('WHAT???');
 	    }
 	   # my $url = "https://github.com/Real-Gecko/filemin/raw/master/distrib/filemin-$remote.$os.wbm.gz";
-        my $url = "https://github.com/Real-Gecko/Filemin/releases/download/$version/filemin-$version.$os.$flavour.wbm.gz";
+        my $url = "https://github.com/Real-Gecko/Filemin/releases/download/$remote/filemin-$remote.$os.$flavour.wbm.gz";
 	    my $tempfile = transname();
 	    my ($host, $port, $page, $ssl) = &parse_http_url($url);
 	    &http_download($host, $port, $page, $tempfile, undef, \&progress_callback, $ssl);

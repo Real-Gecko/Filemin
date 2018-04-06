@@ -41,7 +41,7 @@ if($remote_user eq 'root' & $vc & !$usermin) {
     } else {
         my %updater_info = &get_module_info('filemin-updater');
         $installed = version->parse($updater_info{'version'});
-        $latest = version->parse('1.0.2');
+        $latest = version->parse('1.0.3');
         if ($installed < $latest) {
             print "Updating updater<br>";
             $irv = &webmin::install_webmin_module("$module_root_directory/unauthenticated/filemin-updater.tar.gz");
